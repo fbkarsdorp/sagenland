@@ -1,0 +1,2740 @@
+[
+ {
+  "col": "A.A. Jaarsma",
+  "n": 16872,
+  "sage": 14087,
+  "tellers": 775,
+  "years": [
+   1940,
+   1980
+  ],
+  "days": 885,
+  "per_day": 19.1,
+  "top1": 0.02,
+  "top5": 0.05,
+  "med_per_teller": 16,
+  "visits_per_teller": 1.68,
+  "per_visit": 14.4,
+  "places": 109,
+  "radius_km": 8.2,
+  "typed": 0.44,
+  "genres": {
+   "sage": 14087,
+   "mop": 2400,
+   "sprookje": 337
+  },
+  "lang": "Fries (Woudfries)"
+ },
+ {
+  "col": "Theo Meder",
+  "n": 3718,
+  "sage": 360,
+  "tellers": 462,
+  "years": [
+   776,
+   2024
+  ],
+  "days": 811,
+  "per_day": 4.6,
+  "top1": 0.08,
+  "top5": 0.25,
+  "med_per_teller": 1.0,
+  "visits_per_teller": 1.89,
+  "per_visit": 2.1,
+  "places": 140,
+  "radius_km": 39.8,
+  "typed": 0.02,
+  "genres": {
+   "mop": 2157,
+   "broodjeaapverhaal": 446,
+   "raadsel": 364
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "Henk Kooijman",
+  "n": 2576,
+  "sage": 2544,
+  "tellers": 349,
+  "years": [
+   1962,
+   1964
+  ],
+  "days": 115,
+  "per_day": 22.4,
+  "top1": 0.01,
+  "top5": 0.05,
+  "med_per_teller": 7,
+  "visits_per_teller": 1.04,
+  "per_visit": 12.5,
+  "places": 145,
+  "radius_km": 17.9,
+  "typed": 0.4,
+  "genres": {
+   "sage": 2544,
+   "-": 15,
+   "personal narrative": 13
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "Overbeke, Aernout van",
+  "n": 2118,
+  "sage": 0,
+  "tellers": 1,
+  "years": [
+   1651,
+   2006
+  ],
+  "days": 2,
+  "per_day": 1059.0,
+  "top1": 1.0,
+  "top5": 1.0,
+  "med_per_teller": 2118,
+  "visits_per_teller": 2.0,
+  "per_visit": 1059.0,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.0,
+  "genres": {
+   "mop": 2113,
+   "raadsel": 5
+  },
+  "lang": "17e-eeuws Nederlands"
+ },
+ {
+  "col": "Ruben A. Koman",
+  "n": 1550,
+  "sage": 778,
+  "tellers": 332,
+  "years": [
+   1660,
+   2013
+  ],
+  "days": 367,
+  "per_day": 4.2,
+  "top1": 0.07,
+  "top5": 0.25,
+  "med_per_teller": 1.0,
+  "visits_per_teller": 1.5,
+  "per_visit": 3.0,
+  "places": 169,
+  "radius_km": 147.8,
+  "typed": 0.12,
+  "genres": {
+   "sage": 778,
+   "mop": 302,
+   "broodjeaapverhaal": 158
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "M.-J. Deraemaeker",
+  "n": 1378,
+  "sage": 1378,
+  "tellers": 174,
+  "years": [
+   1977,
+   1977
+  ],
+  "days": 1,
+  "per_day": 1378.0,
+  "top1": 0.03,
+  "top5": 0.11,
+  "med_per_teller": 6.5,
+  "visits_per_teller": 1.0,
+  "per_visit": 7.9,
+  "places": 2,
+  "radius_km": 2.4,
+  "typed": 0.3,
+  "genres": {
+   "sage": 1378
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "N. Coremans",
+  "n": 1371,
+  "sage": 1371,
+  "tellers": 159,
+  "years": [
+   1977,
+   1977
+  ],
+  "days": 1,
+  "per_day": 1371.0,
+  "top1": 0.04,
+  "top5": 0.11,
+  "med_per_teller": 7,
+  "visits_per_teller": 1.0,
+  "per_visit": 8.6,
+  "places": 3,
+  "radius_km": 11.7,
+  "typed": 0.35,
+  "genres": {
+   "sage": 1371
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "M. Dreezen",
+  "n": 1298,
+  "sage": 1293,
+  "tellers": 196,
+  "years": [
+   1964,
+   1967
+  ],
+  "days": 2,
+  "per_day": 649.0,
+  "top1": 0.03,
+  "top5": 0.13,
+  "med_per_teller": 5.0,
+  "visits_per_teller": 1.01,
+  "per_visit": 6.6,
+  "places": 5,
+  "radius_km": 3.4,
+  "typed": 0.75,
+  "genres": {
+   "sage": 1293,
+   "mop": 3,
+   "sprookje": 2
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "S. Top",
+  "n": 1158,
+  "sage": 1158,
+  "tellers": 232,
+  "years": [
+   1964,
+   1964
+  ],
+  "days": 1,
+  "per_day": 1158.0,
+  "top1": 0.02,
+  "top5": 0.09,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.0,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.85,
+  "genres": {
+   "sage": 1158
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "C. Kusters",
+  "n": 1142,
+  "sage": 1094,
+  "tellers": 108,
+  "years": [
+   1962,
+   1966
+  ],
+  "days": 96,
+  "per_day": 11.9,
+  "top1": 0.03,
+  "top5": 0.12,
+  "med_per_teller": 10.0,
+  "visits_per_teller": 1.17,
+  "per_visit": 9.1,
+  "places": 26,
+  "radius_km": 8.8,
+  "typed": 0.36,
+  "genres": {
+   "sage": 1094,
+   "personal narrative": 36,
+   "legende": 5
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "E. Tielemans",
+  "n": 1079,
+  "sage": 1079,
+  "tellers": 125,
+  "years": [
+   1978,
+   1978
+  ],
+  "days": 1,
+  "per_day": 1079.0,
+  "top1": 0.02,
+  "top5": 0.1,
+  "med_per_teller": 8,
+  "visits_per_teller": 1.0,
+  "per_visit": 8.6,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.31,
+  "genres": {
+   "sage": 1079
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "L. Pauwels",
+  "n": 1019,
+  "sage": 1019,
+  "tellers": 196,
+  "years": [
+   1969,
+   1969
+  ],
+  "days": 1,
+  "per_day": 1019.0,
+  "top1": 0.03,
+  "top5": 0.12,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.2,
+  "places": 3,
+  "radius_km": 3.0,
+  "typed": 0.43,
+  "genres": {
+   "sage": 1019
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "M. Hermans",
+  "n": 956,
+  "sage": 956,
+  "tellers": 104,
+  "years": [
+   1966,
+   1966
+  ],
+  "days": 1,
+  "per_day": 956.0,
+  "top1": 0.05,
+  "top5": 0.16,
+  "med_per_teller": 8.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 9.2,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.65,
+  "genres": {
+   "sage": 956
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "Wever, F.",
+  "n": 946,
+  "sage": 926,
+  "tellers": 160,
+  "years": [
+   1962,
+   1968
+  ],
+  "days": 155,
+  "per_day": 6.1,
+  "top1": 0.02,
+  "top5": 0.08,
+  "med_per_teller": 5.0,
+  "visits_per_teller": 1.16,
+  "per_visit": 5.1,
+  "places": 93,
+  "radius_km": 13.8,
+  "typed": 0.74,
+  "genres": {
+   "sage": 926,
+   "sprookje": 13,
+   "personal narrative": 2
+  },
+  "lang": "Gronings"
+ },
+ {
+  "col": "A. Michielsen",
+  "n": 888,
+  "sage": 888,
+  "tellers": 144,
+  "years": [
+   1964,
+   1964
+  ],
+  "days": 1,
+  "per_day": 888.0,
+  "top1": 0.04,
+  "top5": 0.15,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 6.1,
+  "places": 4,
+  "radius_km": 2.5,
+  "typed": 0.36,
+  "genres": {
+   "sage": 888
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "W. Achten",
+  "n": 879,
+  "sage": 879,
+  "tellers": 118,
+  "years": [
+   1967,
+   1971
+  ],
+  "days": 5,
+  "per_day": 175.8,
+  "top1": 0.04,
+  "top5": 0.15,
+  "med_per_teller": 6.0,
+  "visits_per_teller": 1.1,
+  "per_visit": 6.8,
+  "places": 2,
+  "radius_km": 2.1,
+  "typed": 0.72,
+  "genres": {
+   "sage": 879
+  },
+  "lang": "Midden-Limburgs"
+ },
+ {
+  "col": "B. Van Grieken",
+  "n": 867,
+  "sage": 867,
+  "tellers": 121,
+  "years": [
+   1958,
+   1965
+  ],
+  "days": 2,
+  "per_day": 433.5,
+  "top1": 0.06,
+  "top5": 0.2,
+  "med_per_teller": 4,
+  "visits_per_teller": 1.0,
+  "per_visit": 7.1,
+  "places": 3,
+  "radius_km": 2.9,
+  "typed": 0.34,
+  "genres": {
+   "sage": 867
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "M. De Groot",
+  "n": 852,
+  "sage": 852,
+  "tellers": 176,
+  "years": [
+   1967,
+   1967
+  ],
+  "days": 1,
+  "per_day": 852.0,
+  "top1": 0.04,
+  "top5": 0.14,
+  "med_per_teller": 3.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.8,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.49,
+  "genres": {
+   "sage": 852
+  },
+  "lang": "Oost-Vlaams"
+ },
+ {
+  "col": "S. Keuning",
+  "n": 846,
+  "sage": 839,
+  "tellers": 138,
+  "years": [
+   1962,
+   1963
+  ],
+  "days": 92,
+  "per_day": 9.2,
+  "top1": 0.03,
+  "top5": 0.09,
+  "med_per_teller": 6.0,
+  "visits_per_teller": 1.01,
+  "per_visit": 6.1,
+  "places": 74,
+  "radius_km": 10.8,
+  "typed": 0.59,
+  "genres": {
+   "sage": 839,
+   "personal narrative": 3,
+   "mop": 3
+  },
+  "lang": "Fries"
+ },
+ {
+  "col": "W. Van Houcke",
+  "n": 832,
+  "sage": 832,
+  "tellers": 101,
+  "years": [
+   1960,
+   1970
+  ],
+  "days": 2,
+  "per_day": 416.0,
+  "top1": 0.03,
+  "top5": 0.14,
+  "med_per_teller": 7,
+  "visits_per_teller": 1.03,
+  "per_visit": 8.0,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.57,
+  "genres": {
+   "sage": 832
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "J. Venken",
+  "n": 826,
+  "sage": 826,
+  "tellers": 109,
+  "years": [
+   1958,
+   1968
+  ],
+  "days": 3,
+  "per_day": 275.3,
+  "top1": 0.04,
+  "top5": 0.18,
+  "med_per_teller": 5,
+  "visits_per_teller": 1.01,
+  "per_visit": 7.5,
+  "places": 2,
+  "radius_km": 0.7,
+  "typed": 0.67,
+  "genres": {
+   "sage": 826
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "F. Vandesype",
+  "n": 825,
+  "sage": 825,
+  "tellers": 117,
+  "years": [
+   1977,
+   1977
+  ],
+  "days": 1,
+  "per_day": 825.0,
+  "top1": 0.04,
+  "top5": 0.16,
+  "med_per_teller": 5,
+  "visits_per_teller": 1.0,
+  "per_visit": 7.1,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.27,
+  "genres": {
+   "sage": 825
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "T. Daniëls",
+  "n": 820,
+  "sage": 820,
+  "tellers": 129,
+  "years": [
+   1964,
+   1965
+  ],
+  "days": 2,
+  "per_day": 410.0,
+  "top1": 0.03,
+  "top5": 0.13,
+  "med_per_teller": 5,
+  "visits_per_teller": 1.01,
+  "per_visit": 6.3,
+  "places": 2,
+  "radius_km": 15.3,
+  "typed": 0.81,
+  "genres": {
+   "sage": 820
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "S. Van Bael - Lehouck",
+  "n": 809,
+  "sage": 809,
+  "tellers": 165,
+  "years": [
+   1967,
+   1969
+  ],
+  "days": 2,
+  "per_day": 404.5,
+  "top1": 0.03,
+  "top5": 0.12,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.02,
+  "per_visit": 4.8,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.63,
+  "genres": {
+   "sage": 809
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "M. Van Der Linden",
+  "n": 804,
+  "sage": 804,
+  "tellers": 95,
+  "years": [
+   1964,
+   1964
+  ],
+  "days": 1,
+  "per_day": 804.0,
+  "top1": 0.03,
+  "top5": 0.13,
+  "med_per_teller": 7,
+  "visits_per_teller": 1.0,
+  "per_visit": 8.5,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.48,
+  "genres": {
+   "sage": 804
+  },
+  "lang": "Oost-Vlaams"
+ },
+ {
+  "col": "A.R. Hol",
+  "n": 794,
+  "sage": 788,
+  "tellers": 51,
+  "years": [
+   1962,
+   1965
+  ],
+  "days": 37,
+  "per_day": 21.5,
+  "top1": 0.04,
+  "top5": 0.21,
+  "med_per_teller": 16,
+  "visits_per_teller": 1.1,
+  "per_visit": 14.1,
+  "places": 13,
+  "radius_km": 5.6,
+  "typed": 0.55,
+  "genres": {
+   "sage": 788,
+   "personal narrative": 4,
+   "-": 1
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "D. Herbots",
+  "n": 782,
+  "sage": 780,
+  "tellers": 147,
+  "years": [
+   1974,
+   1974
+  ],
+  "days": 1,
+  "per_day": 782.0,
+  "top1": 0.03,
+  "top5": 0.1,
+  "med_per_teller": 5,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.3,
+  "places": 6,
+  "radius_km": 15.0,
+  "typed": 0.58,
+  "genres": {
+   "sage": 780,
+   "sprookje": 2
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "A. Abeels",
+  "n": 780,
+  "sage": 780,
+  "tellers": 79,
+  "years": [
+   1965,
+   1965
+  ],
+  "days": 1,
+  "per_day": 780.0,
+  "top1": 0.06,
+  "top5": 0.22,
+  "med_per_teller": 7,
+  "visits_per_teller": 1.0,
+  "per_visit": 9.9,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.55,
+  "genres": {
+   "sage": 780
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "H. Hendrickx",
+  "n": 779,
+  "sage": 779,
+  "tellers": 114,
+  "years": [
+   1962,
+   1962
+  ],
+  "days": 1,
+  "per_day": 779.0,
+  "top1": 0.04,
+  "top5": 0.15,
+  "med_per_teller": 5.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 6.8,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.39,
+  "genres": {
+   "sage": 779
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "G.H. Linssen",
+  "n": 749,
+  "sage": 725,
+  "tellers": 104,
+  "years": [
+   1962,
+   1967
+  ],
+  "days": 77,
+  "per_day": 9.7,
+  "top1": 0.03,
+  "top5": 0.11,
+  "med_per_teller": 7.0,
+  "visits_per_teller": 1.1,
+  "per_visit": 6.6,
+  "places": 49,
+  "radius_km": 8.3,
+  "typed": 0.57,
+  "genres": {
+   "sage": 725,
+   "personal narrative": 11,
+   "-": 5
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "L. D'haeze",
+  "n": 748,
+  "sage": 748,
+  "tellers": 184,
+  "years": [
+   1975,
+   1975
+  ],
+  "days": 1,
+  "per_day": 748.0,
+  "top1": 0.03,
+  "top5": 0.12,
+  "med_per_teller": 3.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.1,
+  "places": 2,
+  "radius_km": 0.5,
+  "typed": 0.39,
+  "genres": {
+   "sage": 748
+  },
+  "lang": "Oost-Vlaams"
+ },
+ {
+  "col": "M. Vankerkhoven",
+  "n": 743,
+  "sage": 743,
+  "tellers": 145,
+  "years": [
+   1964,
+   1964
+  ],
+  "days": 1,
+  "per_day": 743.0,
+  "top1": 0.04,
+  "top5": 0.13,
+  "med_per_teller": 4,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.1,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.66,
+  "genres": {
+   "sage": 743
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "P. Knabben",
+  "n": 743,
+  "sage": 742,
+  "tellers": 132,
+  "years": [
+   1965,
+   1970
+  ],
+  "days": 3,
+  "per_day": 247.7,
+  "top1": 0.05,
+  "top5": 0.18,
+  "med_per_teller": 3.5,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.6,
+  "places": 4,
+  "radius_km": 1.0,
+  "typed": 0.64,
+  "genres": {
+   "sage": 742,
+   "sprookje": 1
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "M. Vander Cruysse",
+  "n": 740,
+  "sage": 740,
+  "tellers": 142,
+  "years": [
+   1964,
+   1967
+  ],
+  "days": 3,
+  "per_day": 246.7,
+  "top1": 0.03,
+  "top5": 0.12,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.01,
+  "per_visit": 5.1,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.5,
+  "genres": {
+   "sage": 740
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "C. Bakker",
+  "n": 703,
+  "sage": 377,
+  "tellers": 25,
+  "years": [
+   1881,
+   1922
+  ],
+  "days": 63,
+  "per_day": 11.2,
+  "top1": 0.47,
+  "top5": 0.82,
+  "med_per_teller": 3,
+  "visits_per_teller": 2.84,
+  "per_visit": 4.0,
+  "places": 30,
+  "radius_km": 5.5,
+  "typed": 0.43,
+  "genres": {
+   "sage": 377,
+   "mop": 183,
+   "sprookje": 127
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "W. Jackers",
+  "n": 668,
+  "sage": 668,
+  "tellers": 225,
+  "years": [
+   1958,
+   1958
+  ],
+  "days": 1,
+  "per_day": 668.0,
+  "top1": 0.03,
+  "top5": 0.1,
+  "med_per_teller": 2,
+  "visits_per_teller": 1.0,
+  "per_visit": 3.0,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.78,
+  "genres": {
+   "sage": 668
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "F. Van Houdenhove",
+  "n": 650,
+  "sage": 650,
+  "tellers": 154,
+  "years": [
+   1967,
+   1978
+  ],
+  "days": 3,
+  "per_day": 216.7,
+  "top1": 0.05,
+  "top5": 0.15,
+  "med_per_teller": 3.0,
+  "visits_per_teller": 1.02,
+  "per_visit": 4.1,
+  "places": 3,
+  "radius_km": 7.3,
+  "typed": 0.64,
+  "genres": {
+   "sage": 650
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "M.-R. Nijsters",
+  "n": 645,
+  "sage": 645,
+  "tellers": 167,
+  "years": [
+   1967,
+   1969
+  ],
+  "days": 2,
+  "per_day": 322.5,
+  "top1": 0.03,
+  "top5": 0.13,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.01,
+  "per_visit": 3.8,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.55,
+  "genres": {
+   "sage": 645
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "A. Van Looy",
+  "n": 629,
+  "sage": 629,
+  "tellers": 77,
+  "years": [
+   1964,
+   1964
+  ],
+  "days": 1,
+  "per_day": 629.0,
+  "top1": 0.07,
+  "top5": 0.24,
+  "med_per_teller": 6,
+  "visits_per_teller": 1.0,
+  "per_visit": 8.0,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.5,
+  "genres": {
+   "sage": 629
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "Ype Poortinga",
+  "n": 627,
+  "sage": 280,
+  "tellers": 106,
+  "years": [
+   1933,
+   1979
+  ],
+  "days": 191,
+  "per_day": 3.3,
+  "top1": 0.07,
+  "top5": 0.31,
+  "med_per_teller": 2.0,
+  "visits_per_teller": 2.42,
+  "per_visit": 2.4,
+  "places": 36,
+  "radius_km": 10.6,
+  "typed": 0.11,
+  "genres": {
+   "sage": 279,
+   "mop": 209,
+   "sprookje": 120
+  },
+  "lang": "Fries"
+ },
+ {
+  "col": "P. Vandewalle",
+  "n": 622,
+  "sage": 619,
+  "tellers": 100,
+  "years": [
+   1968,
+   1968
+  ],
+  "days": 1,
+  "per_day": 622.0,
+  "top1": 0.06,
+  "top5": 0.2,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 6.2,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.45,
+  "genres": {
+   "sage": 619,
+   "sprookje": 3
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "C. Dewaele",
+  "n": 604,
+  "sage": 604,
+  "tellers": 120,
+  "years": [
+   1958,
+   1967
+  ],
+  "days": 3,
+  "per_day": 201.3,
+  "top1": 0.04,
+  "top5": 0.14,
+  "med_per_teller": 3.0,
+  "visits_per_teller": 1.02,
+  "per_visit": 5.0,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.46,
+  "genres": {
+   "sage": 604
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "C. De Winne",
+  "n": 586,
+  "sage": 586,
+  "tellers": 44,
+  "years": [
+   1997,
+   1999
+  ],
+  "days": 19,
+  "per_day": 30.8,
+  "top1": 0.08,
+  "top5": 0.27,
+  "med_per_teller": 9.0,
+  "visits_per_teller": 1.08,
+  "per_visit": 14.3,
+  "places": 6,
+  "radius_km": 1.9,
+  "typed": 0.4,
+  "genres": {
+   "sage": 586
+  },
+  "lang": "Oost-Vlaams"
+ },
+ {
+  "col": "G. Van Loock",
+  "n": 584,
+  "sage": 584,
+  "tellers": 145,
+  "years": [
+   1957,
+   1957
+  ],
+  "days": 1,
+  "per_day": 584.0,
+  "top1": 0.03,
+  "top5": 0.15,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.0,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.41,
+  "genres": {
+   "sage": 584
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "A. Princen",
+  "n": 583,
+  "sage": 583,
+  "tellers": 81,
+  "years": [
+   1965,
+   1968
+  ],
+  "days": 2,
+  "per_day": 291.5,
+  "top1": 0.05,
+  "top5": 0.2,
+  "med_per_teller": 6,
+  "visits_per_teller": 1.06,
+  "per_visit": 6.8,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.72,
+  "genres": {
+   "sage": 583
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "C. Ooms",
+  "n": 582,
+  "sage": 582,
+  "tellers": 100,
+  "years": [
+   1968,
+   1968
+  ],
+  "days": 1,
+  "per_day": 582.0,
+  "top1": 0.05,
+  "top5": 0.16,
+  "med_per_teller": 4.5,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.8,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.49,
+  "genres": {
+   "sage": 582
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "J. Van Hout",
+  "n": 578,
+  "sage": 578,
+  "tellers": 102,
+  "years": [
+   1962,
+   1962
+  ],
+  "days": 1,
+  "per_day": 578.0,
+  "top1": 0.04,
+  "top5": 0.15,
+  "med_per_teller": 4.5,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.7,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.5,
+  "genres": {
+   "sage": 578
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "A.-M. Devynck",
+  "n": 571,
+  "sage": 571,
+  "tellers": 123,
+  "years": [
+   1965,
+   1985
+  ],
+  "days": 2,
+  "per_day": 285.5,
+  "top1": 0.04,
+  "top5": 0.17,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.01,
+  "per_visit": 4.6,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.44,
+  "genres": {
+   "sage": 571
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "A. Vanden Herrewegen",
+  "n": 566,
+  "sage": 566,
+  "tellers": 115,
+  "years": [
+   1975,
+   1975
+  ],
+  "days": 1,
+  "per_day": 566.0,
+  "top1": 0.03,
+  "top5": 0.13,
+  "med_per_teller": 4,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.9,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.3,
+  "genres": {
+   "sage": 566
+  },
+  "lang": "Oost-Vlaams"
+ },
+ {
+  "col": "W. Van Wesenbeek",
+  "n": 548,
+  "sage": 548,
+  "tellers": 107,
+  "years": [
+   1969,
+   1969
+  ],
+  "days": 1,
+  "per_day": 548.0,
+  "top1": 0.04,
+  "top5": 0.16,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.1,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.39,
+  "genres": {
+   "sage": 548
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "R. Jageneau",
+  "n": 548,
+  "sage": 547,
+  "tellers": 68,
+  "years": [
+   1965,
+   1966
+  ],
+  "days": 2,
+  "per_day": 274.0,
+  "top1": 0.05,
+  "top5": 0.18,
+  "med_per_teller": 7.0,
+  "visits_per_teller": 1.01,
+  "per_visit": 7.9,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.73,
+  "genres": {
+   "sage": 547,
+   "sprookje": 1
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "Engels, G.G.",
+  "n": 540,
+  "sage": 497,
+  "tellers": 50,
+  "years": [
+   1957,
+   1970
+  ],
+  "days": 36,
+  "per_day": 15.0,
+  "top1": 0.09,
+  "top5": 0.28,
+  "med_per_teller": 9.5,
+  "visits_per_teller": 1.12,
+  "per_visit": 9.6,
+  "places": 18,
+  "radius_km": 5.1,
+  "typed": 0.53,
+  "genres": {
+   "sage": 497,
+   "mop": 22,
+   "personal narrative": 11
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "J. Wauters",
+  "n": 539,
+  "sage": 539,
+  "tellers": 97,
+  "years": [
+   1962,
+   1962
+  ],
+  "days": 1,
+  "per_day": 539.0,
+  "top1": 0.07,
+  "top5": 0.22,
+  "med_per_teller": 4,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.6,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.44,
+  "genres": {
+   "sage": 539
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "V. Michiels-Lecock",
+  "n": 527,
+  "sage": 526,
+  "tellers": 93,
+  "years": [
+   1973,
+   1973
+  ],
+  "days": 1,
+  "per_day": 527.0,
+  "top1": 0.03,
+  "top5": 0.14,
+  "med_per_teller": 5,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.7,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.49,
+  "genres": {
+   "sage": 526,
+   "sprookje": 1
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "O. Mattheeuws",
+  "n": 520,
+  "sage": 520,
+  "tellers": 109,
+  "years": [
+   1963,
+   1963
+  ],
+  "days": 1,
+  "per_day": 520.0,
+  "top1": 0.04,
+  "top5": 0.13,
+  "med_per_teller": 4,
+  "visits_per_teller": 1.0,
+  "per_visit": 7.5,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.55,
+  "genres": {
+   "sage": 520
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "M.-P. Kesteleyn",
+  "n": 519,
+  "sage": 519,
+  "tellers": 80,
+  "years": [
+   1964,
+   1964
+  ],
+  "days": 1,
+  "per_day": 519.0,
+  "top1": 0.06,
+  "top5": 0.2,
+  "med_per_teller": 4.5,
+  "visits_per_teller": 1.0,
+  "per_visit": 6.3,
+  "places": 2,
+  "radius_km": 4.1,
+  "typed": 0.65,
+  "genres": {
+   "sage": 519
+  },
+  "lang": "Oost-Vlaams"
+ },
+ {
+  "col": "S. Bohez",
+  "n": 500,
+  "sage": 500,
+  "tellers": 100,
+  "years": [
+   1956,
+   1956
+  ],
+  "days": 1,
+  "per_day": 500.0,
+  "top1": 0.06,
+  "top5": 0.2,
+  "med_per_teller": 3.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.8,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.5,
+  "genres": {
+   "sage": 500
+  },
+  "lang": "Oost-Vlaams"
+ },
+ {
+  "col": "G. Degeest",
+  "n": 495,
+  "sage": 495,
+  "tellers": 70,
+  "years": [
+   1960,
+   1960
+  ],
+  "days": 1,
+  "per_day": 495.0,
+  "top1": 0.07,
+  "top5": 0.23,
+  "med_per_teller": 5.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 6.7,
+  "places": 2,
+  "radius_km": 4.8,
+  "typed": 0.45,
+  "genres": {
+   "sage": 495
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "R. Celis",
+  "n": 493,
+  "sage": 493,
+  "tellers": 67,
+  "years": [
+   1954,
+   1954
+  ],
+  "days": 1,
+  "per_day": 493.0,
+  "top1": 0.05,
+  "top5": 0.22,
+  "med_per_teller": 6,
+  "visits_per_teller": 1.0,
+  "per_visit": 7.4,
+  "places": 3,
+  "radius_km": 4.7,
+  "typed": 0.92,
+  "genres": {
+   "sage": 493
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "K. Erard",
+  "n": 488,
+  "sage": 487,
+  "tellers": 122,
+  "years": [
+   1966,
+   1968
+  ],
+  "days": 2,
+  "per_day": 244.0,
+  "top1": 0.04,
+  "top5": 0.15,
+  "med_per_teller": 3.0,
+  "visits_per_teller": 1.02,
+  "per_visit": 3.9,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.6,
+  "genres": {
+   "sage": 487,
+   "sprookje": 1
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "M. Van den Berg",
+  "n": 478,
+  "sage": 478,
+  "tellers": 91,
+  "years": [
+   1955,
+   1955
+  ],
+  "days": 1,
+  "per_day": 478.0,
+  "top1": 0.07,
+  "top5": 0.23,
+  "med_per_teller": 4,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.3,
+  "places": 2,
+  "radius_km": 3.0,
+  "typed": 0.38,
+  "genres": {
+   "sage": 478
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "Giselinde Kuipers",
+  "n": 477,
+  "sage": 0,
+  "tellers": 7,
+  "years": [
+   1995,
+   2000
+  ],
+  "days": 5,
+  "per_day": 95.4,
+  "top1": 0.52,
+  "top5": 0.98,
+  "med_per_teller": 23,
+  "visits_per_teller": 1.14,
+  "per_visit": 52.6,
+  "places": 8,
+  "radius_km": 30.1,
+  "typed": 0.0,
+  "genres": {
+   "raadsel": 289,
+   "mop": 188
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "L. Cumps",
+  "n": 472,
+  "sage": 472,
+  "tellers": 92,
+  "years": [
+   1965,
+   1985
+  ],
+  "days": 2,
+  "per_day": 236.0,
+  "top1": 0.05,
+  "top5": 0.19,
+  "med_per_teller": 3.5,
+  "visits_per_teller": 1.01,
+  "per_visit": 5.1,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.46,
+  "genres": {
+   "sage": 472
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "R. Callens",
+  "n": 456,
+  "sage": 456,
+  "tellers": 138,
+  "years": [
+   1967,
+   1968
+  ],
+  "days": 2,
+  "per_day": 228.0,
+  "top1": 0.04,
+  "top5": 0.16,
+  "med_per_teller": 2.0,
+  "visits_per_teller": 1.01,
+  "per_visit": 3.3,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.53,
+  "genres": {
+   "sage": 456
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "D. Lecock",
+  "n": 455,
+  "sage": 455,
+  "tellers": 77,
+  "years": [
+   1974,
+   1974
+  ],
+  "days": 1,
+  "per_day": 455.0,
+  "top1": 0.05,
+  "top5": 0.21,
+  "med_per_teller": 4,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.9,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.3,
+  "genres": {
+   "sage": 455
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "T. Bijlsma",
+  "n": 446,
+  "sage": 431,
+  "tellers": 81,
+  "years": [
+   1965,
+   1968
+  ],
+  "days": 51,
+  "per_day": 8.7,
+  "top1": 0.04,
+  "top5": 0.17,
+  "med_per_teller": 5,
+  "visits_per_teller": 1.11,
+  "per_visit": 4.9,
+  "places": 42,
+  "radius_km": 9.6,
+  "typed": 0.6,
+  "genres": {
+   "sage": 431,
+   "personal narrative": 8,
+   "mop": 6
+  },
+  "lang": "Fries"
+ },
+ {
+  "col": "W. Van Hoof",
+  "n": 440,
+  "sage": 440,
+  "tellers": 101,
+  "years": [
+   1963,
+   1963
+  ],
+  "days": 1,
+  "per_day": 440.0,
+  "top1": 0.04,
+  "top5": 0.14,
+  "med_per_teller": 4,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.4,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.63,
+  "genres": {
+   "sage": 440
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "F. Beckers",
+  "n": 435,
+  "sage": 435,
+  "tellers": 130,
+  "years": [
+   1947,
+   1974
+  ],
+  "days": 2,
+  "per_day": 217.5,
+  "top1": 0.04,
+  "top5": 0.15,
+  "med_per_teller": 2.0,
+  "visits_per_teller": 1.01,
+  "per_visit": 3.3,
+  "places": 4,
+  "radius_km": 7.1,
+  "typed": 0.99,
+  "genres": {
+   "sage": 435
+  },
+  "lang": "Zuid-Limburgs"
+ },
+ {
+  "col": "L. Smets",
+  "n": 422,
+  "sage": 422,
+  "tellers": 103,
+  "years": [
+   1963,
+   1963
+  ],
+  "days": 1,
+  "per_day": 422.0,
+  "top1": 0.04,
+  "top5": 0.16,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.1,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.41,
+  "genres": {
+   "sage": 422
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "Folgert Karsdorp",
+  "n": 420,
+  "sage": 0,
+  "tellers": 190,
+  "years": [
+   1781,
+   2014
+  ],
+  "days": 122,
+  "per_day": 3.4,
+  "top1": 0.02,
+  "top5": 0.1,
+  "med_per_teller": 1.0,
+  "visits_per_teller": 1.27,
+  "per_visit": 1.1,
+  "places": 2,
+  "radius_km": 2.6,
+  "typed": 0.0,
+  "genres": {
+   "sprookje": 418,
+   "broodjeaapverhaal": 1,
+   "-": 1
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "I. Savelkouls",
+  "n": 419,
+  "sage": 331,
+  "tellers": 7,
+  "years": [
+   1925,
+   2006
+  ],
+  "days": 11,
+  "per_day": 38.1,
+  "top1": 0.56,
+  "top5": 0.97,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.43,
+  "per_visit": 6.3,
+  "places": 13,
+  "radius_km": 33.3,
+  "typed": 0.32,
+  "genres": {
+   "sage": 331,
+   "exempel": 38,
+   "broodjeaapverhaal": 19
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "L. De Wit",
+  "n": 417,
+  "sage": 417,
+  "tellers": 89,
+  "years": [
+   1956,
+   1956
+  ],
+  "days": 1,
+  "per_day": 417.0,
+  "top1": 0.07,
+  "top5": 0.25,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.7,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.5,
+  "genres": {
+   "sage": 417
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "A. Schoolmeesters",
+  "n": 410,
+  "sage": 410,
+  "tellers": 49,
+  "years": [
+   1977,
+   1977
+  ],
+  "days": 1,
+  "per_day": 410.0,
+  "top1": 0.07,
+  "top5": 0.27,
+  "med_per_teller": 7,
+  "visits_per_teller": 1.0,
+  "per_visit": 8.4,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.35,
+  "genres": {
+   "sage": 410
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "A. Roeck",
+  "n": 408,
+  "sage": 408,
+  "tellers": 95,
+  "years": [
+   1950,
+   1950
+  ],
+  "days": 1,
+  "per_day": 408.0,
+  "top1": 0.05,
+  "top5": 0.17,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.3,
+  "places": 7,
+  "radius_km": 3.9,
+  "typed": 0.63,
+  "genres": {
+   "sage": 408
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "M.H. Dinnissen",
+  "n": 407,
+  "sage": 389,
+  "tellers": 34,
+  "years": [
+   1964,
+   1968
+  ],
+  "days": 17,
+  "per_day": 23.9,
+  "top1": 0.1,
+  "top5": 0.37,
+  "med_per_teller": 10.0,
+  "visits_per_teller": 1.2,
+  "per_visit": 13.6,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.59,
+  "genres": {
+   "sage": 389,
+   "personal narrative": 8,
+   "raadsel": 5
+  },
+  "lang": "Gendts (Achterhoeks)"
+ },
+ {
+  "col": "J. Aspeslagh",
+  "n": 390,
+  "sage": 390,
+  "tellers": 90,
+  "years": [
+   1958,
+   1968
+  ],
+  "days": 2,
+  "per_day": 195.0,
+  "top1": 0.05,
+  "top5": 0.23,
+  "med_per_teller": 2.0,
+  "visits_per_teller": 1.01,
+  "per_visit": 4.3,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.58,
+  "genres": {
+   "sage": 390
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "H. Schoefs",
+  "n": 389,
+  "sage": 389,
+  "tellers": 38,
+  "years": [
+   1995,
+   1996
+  ],
+  "days": 21,
+  "per_day": 18.5,
+  "top1": 0.07,
+  "top5": 0.31,
+  "med_per_teller": 8.5,
+  "visits_per_teller": 1.72,
+  "per_visit": 7.8,
+  "places": 2,
+  "radius_km": 0.3,
+  "typed": 0.37,
+  "genres": {
+   "sage": 389
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "S. Libaut",
+  "n": 386,
+  "sage": 386,
+  "tellers": 36,
+  "years": [
+   1999,
+   1999
+  ],
+  "days": 1,
+  "per_day": 386.0,
+  "top1": 0.08,
+  "top5": 0.32,
+  "med_per_teller": 9.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 10.6,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.33,
+  "genres": {
+   "sage": 386
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "M. Houtmeyers",
+  "n": 386,
+  "sage": 386,
+  "tellers": 67,
+  "years": [
+   1957,
+   1957
+  ],
+  "days": 1,
+  "per_day": 386.0,
+  "top1": 0.05,
+  "top5": 0.24,
+  "med_per_teller": 4,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.7,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.53,
+  "genres": {
+   "sage": 386
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "Elise de Bree",
+  "n": 383,
+  "sage": 5,
+  "tellers": 32,
+  "years": [
+   1998,
+   2000
+  ],
+  "days": 36,
+  "per_day": 10.6,
+  "top1": 0.4,
+  "top5": 0.78,
+  "med_per_teller": 1.0,
+  "visits_per_teller": 1.28,
+  "per_visit": 6.4,
+  "places": 17,
+  "radius_km": 36.6,
+  "typed": 0.01,
+  "genres": {
+   "raadsel": 180,
+   "mop": 120,
+   "broodjeaapverhaal": 75
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "P. Henderickx",
+  "n": 379,
+  "sage": 379,
+  "tellers": 83,
+  "years": [
+   1959,
+   1959
+  ],
+  "days": 1,
+  "per_day": 379.0,
+  "top1": 0.05,
+  "top5": 0.21,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.5,
+  "places": 2,
+  "radius_km": 1.5,
+  "typed": 0.51,
+  "genres": {
+   "sage": 379
+  },
+  "lang": "Oost-Vlaams"
+ },
+ {
+  "col": "P. Smets",
+  "n": 375,
+  "sage": 375,
+  "tellers": 81,
+  "years": [
+   1965,
+   1965
+  ],
+  "days": 1,
+  "per_day": 375.0,
+  "top1": 0.07,
+  "top5": 0.22,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.6,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.42,
+  "genres": {
+   "sage": 375
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "Hendrik Entjes",
+  "n": 373,
+  "sage": 319,
+  "tellers": 34,
+  "years": [
+   1967,
+   1977
+  ],
+  "days": 22,
+  "per_day": 17.0,
+  "top1": 0.27,
+  "top5": 0.53,
+  "med_per_teller": 6.0,
+  "visits_per_teller": 1.61,
+  "per_visit": 9.9,
+  "places": 24,
+  "radius_km": 33.5,
+  "typed": 0.48,
+  "genres": {
+   "sage": 317,
+   "personal narrative": 32,
+   "mop": 11
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "Hendrik Entjes; Jaap Brand",
+  "n": 365,
+  "sage": 313,
+  "tellers": 38,
+  "years": [
+   1966,
+   1977
+  ],
+  "days": 36,
+  "per_day": 10.1,
+  "top1": 0.1,
+  "top5": 0.37,
+  "med_per_teller": 6.5,
+  "visits_per_teller": 1.45,
+  "per_visit": 5.9,
+  "places": 28,
+  "radius_km": 79.9,
+  "typed": 0.57,
+  "genres": {
+   "sage": 308,
+   "personal narrative": 35,
+   "raadsel": 7
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "M. Deschrijver",
+  "n": 362,
+  "sage": 361,
+  "tellers": 70,
+  "years": [
+   1961,
+   1964
+  ],
+  "days": 2,
+  "per_day": 181.0,
+  "top1": 0.07,
+  "top5": 0.26,
+  "med_per_teller": 3.0,
+  "visits_per_teller": 1.03,
+  "per_visit": 5.0,
+  "places": 2,
+  "radius_km": 2.8,
+  "typed": 0.49,
+  "genres": {
+   "sage": 361,
+   "mop": 1
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "C. Van Eyen",
+  "n": 362,
+  "sage": 362,
+  "tellers": 29,
+  "years": [
+   1989,
+   1989
+  ],
+  "days": 1,
+  "per_day": 362.0,
+  "top1": 0.1,
+  "top5": 0.37,
+  "med_per_teller": 12,
+  "visits_per_teller": 1.0,
+  "per_visit": 12.5,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.2,
+  "genres": {
+   "sage": 362
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "H. Van Hoof",
+  "n": 360,
+  "sage": 360,
+  "tellers": 54,
+  "years": [
+   1958,
+   1958
+  ],
+  "days": 1,
+  "per_day": 360.0,
+  "top1": 0.13,
+  "top5": 0.36,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 6.7,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.49,
+  "genres": {
+   "sage": 360
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "R. Kunst",
+  "n": 357,
+  "sage": 1,
+  "tellers": 1,
+  "years": [
+   1996,
+   2003
+  ],
+  "days": 8,
+  "per_day": 44.6,
+  "top1": 1.0,
+  "top5": 1.0,
+  "med_per_teller": 357,
+  "visits_per_teller": 8.0,
+  "per_visit": 44.6,
+  "places": 4,
+  "radius_km": 0.3,
+  "typed": 0.0,
+  "genres": {
+   "mop": 285,
+   "raadsel": 68,
+   "broodjeaapverhaal": 3
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "I. Kenens",
+  "n": 356,
+  "sage": 356,
+  "tellers": 54,
+  "years": [
+   1957,
+   1957
+  ],
+  "days": 1,
+  "per_day": 356.0,
+  "top1": 0.05,
+  "top5": 0.23,
+  "med_per_teller": 6.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 6.6,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.78,
+  "genres": {
+   "sage": 356
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "M. Reynaert",
+  "n": 350,
+  "sage": 350,
+  "tellers": 69,
+  "years": [
+   1965,
+   1965
+  ],
+  "days": 1,
+  "per_day": 350.0,
+  "top1": 0.05,
+  "top5": 0.21,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.1,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.61,
+  "genres": {
+   "sage": 350
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "H. Verherstraeten",
+  "n": 349,
+  "sage": 349,
+  "tellers": 93,
+  "years": [
+   1970,
+   1998
+  ],
+  "days": 2,
+  "per_day": 174.5,
+  "top1": 0.06,
+  "top5": 0.21,
+  "med_per_teller": 2,
+  "visits_per_teller": 1.11,
+  "per_visit": 3.4,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.51,
+  "genres": {
+   "sage": 349
+  },
+  "lang": "Oost-Vlaams"
+ },
+ {
+  "col": "Coen Eggen",
+  "n": 340,
+  "sage": 335,
+  "tellers": 66,
+  "years": [
+   1954,
+   1974
+  ],
+  "days": 56,
+  "per_day": 6.1,
+  "top1": 0.07,
+  "top5": 0.21,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.02,
+  "per_visit": 5.3,
+  "places": 40,
+  "radius_km": 5.8,
+  "typed": 0.64,
+  "genres": {
+   "sage": 335,
+   "personal narrative": 3,
+   "mop": 1
+  },
+  "lang": "Limburgs"
+ },
+ {
+  "col": "R. Aertsen",
+  "n": 338,
+  "sage": 338,
+  "tellers": 87,
+  "years": [
+   1953,
+   1953
+  ],
+  "days": 1,
+  "per_day": 338.0,
+  "top1": 0.04,
+  "top5": 0.2,
+  "med_per_teller": 3,
+  "visits_per_teller": 1.0,
+  "per_visit": 3.9,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.36,
+  "genres": {
+   "sage": 338
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "M. Vermaelen",
+  "n": 330,
+  "sage": 328,
+  "tellers": 29,
+  "years": [
+   1979,
+   1979
+  ],
+  "days": 1,
+  "per_day": 330.0,
+  "top1": 0.08,
+  "top5": 0.34,
+  "med_per_teller": 11,
+  "visits_per_teller": 1.0,
+  "per_visit": 11.4,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.25,
+  "genres": {
+   "sage": 328,
+   "sprookje": 2
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "Moniek Vis",
+  "n": 328,
+  "sage": 3,
+  "tellers": 3,
+  "years": [
+   2001,
+   2001
+  ],
+  "days": 10,
+  "per_day": 32.8,
+  "top1": 0.58,
+  "top5": 1.0,
+  "med_per_teller": 17,
+  "visits_per_teller": 1.67,
+  "per_visit": 9.6,
+  "places": 2,
+  "radius_km": 53.2,
+  "typed": 0.0,
+  "genres": {
+   "raadsel": 171,
+   "mop": 149,
+   "broodjeaapverhaal": 4
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "W. Luyts",
+  "n": 328,
+  "sage": 328,
+  "tellers": 56,
+  "years": [
+   1956,
+   1956
+  ],
+  "days": 1,
+  "per_day": 328.0,
+  "top1": 0.08,
+  "top5": 0.26,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.8,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.44,
+  "genres": {
+   "sage": 328
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "Waling Dykstra",
+  "n": 326,
+  "sage": 286,
+  "tellers": 1,
+  "years": [
+   1896,
+   1896
+  ],
+  "days": 1,
+  "per_day": 326.0,
+  "top1": 1.0,
+  "top5": 1.0,
+  "med_per_teller": 1,
+  "visits_per_teller": 1.0,
+  "per_visit": 1.0,
+  "places": 2,
+  "radius_km": 0.1,
+  "typed": 0.35,
+  "genres": {
+   "sage": 286,
+   "mop": 22,
+   "sprookje": 16
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "Willem Kuiper",
+  "n": 324,
+  "sage": 0,
+  "tellers": 3,
+  "years": [
+   1201,
+   2004
+  ],
+  "days": 5,
+  "per_day": 64.8,
+  "top1": 0.99,
+  "top5": 1.0,
+  "med_per_teller": 2,
+  "visits_per_teller": 1.33,
+  "per_visit": 64.0,
+  "places": 4,
+  "radius_km": 10.8,
+  "typed": 0.0,
+  "genres": {
+   "mop": 254,
+   "sprookje": 69,
+   "mythe": 1
+  },
+  "lang": "Middelnederlands"
+ },
+ {
+  "col": "A. Tinneveld",
+  "n": 322,
+  "sage": 250,
+  "tellers": 41,
+  "years": [
+   1838,
+   1974
+  ],
+  "days": 8,
+  "per_day": 40.2,
+  "top1": 0.21,
+  "top5": 0.49,
+  "med_per_teller": 4,
+  "visits_per_teller": 1.0,
+  "per_visit": 32.1,
+  "places": 11,
+  "radius_km": 4.7,
+  "typed": 0.37,
+  "genres": {
+   "sage": 250,
+   "sprookje": 45,
+   "mop": 27
+  },
+  "lang": "Liemers"
+ },
+ {
+  "col": "G. Speecke",
+  "n": 321,
+  "sage": 321,
+  "tellers": 64,
+  "years": [
+   1959,
+   1959
+  ],
+  "days": 1,
+  "per_day": 321.0,
+  "top1": 0.07,
+  "top5": 0.27,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 5.0,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.58,
+  "genres": {
+   "sage": 321
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "H. Van Wassenhove",
+  "n": 312,
+  "sage": 312,
+  "tellers": 93,
+  "years": [
+   1967,
+   1967
+  ],
+  "days": 1,
+  "per_day": 312.0,
+  "top1": 0.06,
+  "top5": 0.2,
+  "med_per_teller": 2,
+  "visits_per_teller": 1.0,
+  "per_visit": 3.4,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.43,
+  "genres": {
+   "sage": 312
+  },
+  "lang": "West-Vlaams"
+ },
+ {
+  "col": "R. Cambré",
+  "n": 309,
+  "sage": 309,
+  "tellers": 82,
+  "years": [
+   1966,
+   1966
+  ],
+  "days": 1,
+  "per_day": 309.0,
+  "top1": 0.05,
+  "top5": 0.22,
+  "med_per_teller": 3.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 3.8,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.39,
+  "genres": {
+   "sage": 309
+  },
+  "lang": "Antwerps"
+ },
+ {
+  "col": "Ilse Slootweg",
+  "n": 290,
+  "sage": 233,
+  "tellers": 18,
+  "years": [
+   1933,
+   2007
+  ],
+  "days": 7,
+  "per_day": 41.4,
+  "top1": 0.16,
+  "top5": 0.54,
+  "med_per_teller": 3.0,
+  "visits_per_teller": 1.06,
+  "per_visit": 3.2,
+  "places": 79,
+  "radius_km": 30.3,
+  "typed": 0.63,
+  "genres": {
+   "sage": 233,
+   "legende": 20,
+   "mop": 15
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "Peter Burger",
+  "n": 283,
+  "sage": 2,
+  "tellers": 113,
+  "years": [
+   1479,
+   2005
+  ],
+  "days": 150,
+  "per_day": 1.9,
+  "top1": 0.12,
+  "top5": 0.21,
+  "med_per_teller": 1,
+  "visits_per_teller": 1.32,
+  "per_visit": 1.2,
+  "places": 19,
+  "radius_km": 119.8,
+  "typed": 0.0,
+  "genres": {
+   "broodjeaapverhaal": 273,
+   "mop": 7,
+   "sage": 2
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "G. Goyvaerts",
+  "n": 280,
+  "sage": 280,
+  "tellers": 42,
+  "years": [
+   1967,
+   1967
+  ],
+  "days": 1,
+  "per_day": 280.0,
+  "top1": 0.1,
+  "top5": 0.33,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 6.4,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.56,
+  "genres": {
+   "sage": 280
+  },
+  "lang": "Brabants"
+ },
+ {
+  "col": "V. Van Onsem",
+  "n": 278,
+  "sage": 278,
+  "tellers": 68,
+  "years": [
+   1967,
+   1967
+  ],
+  "days": 1,
+  "per_day": 278.0,
+  "top1": 0.05,
+  "top5": 0.18,
+  "med_per_teller": 3.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.1,
+  "places": 0,
+  "radius_km": null,
+  "typed": 0.49,
+  "genres": {
+   "sage": 278
+  },
+  "lang": "Oost-Vlaams"
+ },
+ {
+  "col": "J.R.W. Sinninghe",
+  "n": 274,
+  "sage": 168,
+  "tellers": 14,
+  "years": [
+   1825,
+   1980
+  ],
+  "days": 33,
+  "per_day": 8.3,
+  "top1": 0.41,
+  "top5": 0.72,
+  "med_per_teller": 1.0,
+  "visits_per_teller": 1.08,
+  "per_visit": 2.5,
+  "places": 77,
+  "radius_km": 72.0,
+  "typed": 0.24,
+  "genres": {
+   "sage": 168,
+   "sprookje": 88,
+   "mop": 13
+  },
+  "lang": "Standaardnederlands"
+ },
+ {
+  "col": "Vries, Johan de",
+  "n": 274,
+  "sage": 263,
+  "tellers": 60,
+  "years": [
+   1962,
+   1971
+  ],
+  "days": 49,
+  "per_day": 5.6,
+  "top1": 0.05,
+  "top5": 0.2,
+  "med_per_teller": 4.0,
+  "visits_per_teller": 1.0,
+  "per_visit": 4.6,
+  "places": 28,
+  "radius_km": 7.8,
+  "typed": 0.79,
+  "genres": {
+   "sage": 263,
+   "personal narrative": 8,
+   "mop": 2
+  },
+  "lang": "Zeeuws"
+ },
+ {
+  "col": "Engelbertink, Hennie",
+  "n": 266,
+  "sage": 243,
+  "tellers": 33,
+  "years": [
+   1970,
+   1986
+  ],
+  "days": 21,
+  "per_day": 12.7,
+  "top1": 0.11,
+  "top5": 0.38,
+  "med_per_teller": 7,
+  "visits_per_teller": 1.09,
+  "per_visit": 7.4,
+  "places": 15,
+  "radius_km": 9.8,
+  "typed": 0.63,
+  "genres": {
+   "sage": 242,
+   "personal narrative": 15,
+   "broodjeaapverhaal": 2
+  },
+  "lang": "Twents"
+ },
+ {
+  "col": "Jan Pietersz. Meerhuysen",
+  "n": 264,
+  "sage": 0,
+  "tellers": 1,
+  "years": [
+   1659,
+   1659
+  ],
+  "days": 1,
+  "per_day": 264.0,
+  "top1": 1.0,
+  "top5": 1.0,
+  "med_per_teller": 264,
+  "visits_per_teller": 1.0,
+  "per_visit": 264.0,
+  "places": 1,
+  "radius_km": null,
+  "typed": 0.0,
+  "genres": {
+   "mop": 264
+  },
+  "lang": "17e-eeuws Nederlands"
+ },
+ {
+  "col": "Linda de Boer",
+  "n": 263,
+  "sage": 161,
+  "tellers": 4,
+  "years": [
+   1918,
+   2006
+  ],
+  "days": 4,
+  "per_day": 65.8,
+  "top1": 0.73,
+  "top5": 1.0,
+  "med_per_teller": 6.5,
+  "visits_per_teller": 1.0,
+  "per_visit": 13.0,
+  "places": 5,
+  "radius_km": 2.1,
+  "typed": 0.22,
+  "genres": {
+   "sage": 161,
+   "legende": 88,
+   "mop": 7
+  },
+  "lang": "Standaardnederlands"
+ }
+]

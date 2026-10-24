@@ -1,0 +1,11 @@
+node_modules
+/dist
+/.venv
+.DS_Store
+# the raw archive export (the game's data is built into public/data by scripts/build_data.py)
+/data/
+# articles used as background reading: not ours to publish
+/literature/
+# source recordings and earlier attempts; the game's own music is in public/music
+/music/
+/backup/

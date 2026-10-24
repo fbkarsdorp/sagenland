@@ -1,0 +1,1787 @@
+{
+ "61": {
+  "nl": "Onzichtbare werkgeesten 's nachts aan het werk",
+  "en": "Invisible work spirits labouring at night",
+  "being": "kabouter",
+  "places": [
+   "boerderij",
+   "bos"
+  ],
+  "gist": "'s Nachts hoort men kloppen, zagen of karnen zonder iemand te zien; werkgeesten of kabouters doen het werk."
+ },
+ "63": {
+  "nl": "Kabouters doen 's nachts het werk",
+  "en": "Gnomes do the work at night",
+  "being": "kabouter",
+  "places": [
+   "huis",
+   "molen"
+  ],
+  "gist": "Kabouters werken 's nachts heimelijk voor de mensen, tot ze verjaagd worden en wegtrekken."
+ },
+ "102": {
+  "nl": "Kabouterkoning dood, kabouters trekken weg",
+  "en": "Gnome king dead, the gnomes depart",
+  "being": "kabouter",
+  "places": [
+   "brug"
+  ],
+  "gist": "Na de dood van hun aanvoerder Kyrië trekken de kabouters in een lange stoet voorgoed uit de streek."
+ },
+ "103": {
+  "nl": "Kabouters verdwijnen door klokgelui",
+  "en": "Gnomes vanish at the sound of church bells",
+  "being": "kabouter",
+  "places": [
+   "kerk",
+   "huis"
+  ],
+  "gist": "Kabouters lenen en poetsen ketels voor de mensen, maar verdwijnen zodra de kerkklokken gaan luiden."
+ },
+ "131": {
+  "nl": "Heiligenbeeld keert terug naar vindplaats",
+  "en": "Saint's statue returns to where it was found",
+  "being": "heilige",
+  "places": [
+   "kapel",
+   "bos",
+   "kerk"
+  ],
+  "gist": "Een gevonden heiligenbeeld wordt naar de kerk gebracht, maar staat telkens weer op de vindplaats, waar men een kapel bouwt."
+ },
+ "133": {
+  "nl": "Heiligenbeeld laat zich niet verplaatsen",
+  "en": "Saint's statue refuses to be moved",
+  "being": "heilige",
+  "places": [
+   "kerk",
+   "kapel",
+   "bos"
+  ],
+  "gist": "Wie een heiligenbeeld wil wegvoeren of verzetten, komt niet vooruit tot het beeld op zijn plaats blijft."
+ },
+ "161": {
+  "nl": "Achtervolger werpt bijl in de deur",
+  "en": "Pursuer hurls an axe into the door",
+  "being": "witte_wieven",
+  "places": [
+   "boerderij",
+   "huis"
+  ],
+  "gist": "Iemand die witte wieven beledigt wordt tot huis achtervolgd; de geworpen bijl of knuppel blijft in de deur steken."
+ },
+ "171": {
+  "nl": "Door alvermannetjes misleid en verdwaald",
+  "en": "Led astray by elves",
+  "being": "kabouter",
+  "places": [
+   "weg",
+   "heide"
+  ],
+  "gist": "Iemand raakt 's avonds op bekend terrein verdwaald door alvermannetjes en vindt pas na lang dolen de weg terug."
+ },
+ "181": {
+  "nl": "Dwaallicht lokt mensen naar het water",
+  "en": "Will-o'-the-wisp lures people to the water",
+  "being": "dwaallicht",
+  "places": [
+   "water",
+   "veen"
+  ],
+  "gist": "Dwaallichtjes, zielen van ongedoopte kinderen, leiden voorbijgangers naar water of moeras omdat ze gedoopt willen worden."
+ },
+ "182": {
+  "nl": "Dwaallichtjes als zielen van ongedoopte kinderen",
+  "en": "Wisps as souls of unbaptised children",
+  "being": "dwaallicht",
+  "places": [
+   "water",
+   "kerkhof"
+  ],
+  "gist": "Lichtjes die 's nachts boven water en velden zweven zijn de rusteloze zielen van ongedoopt gestorven kinderen."
+ },
+ "183": {
+  "nl": "Lichtje boven verborgen geld",
+  "en": "Light hovering over hidden money",
+  "being": "dwaallicht",
+  "places": [
+   "weg"
+  ],
+  "gist": "Op een plek verschijnt telkens een lichtje; wanneer daar verborgen geld wordt gevonden, blijft het voortaan weg."
+ },
+ "186": {
+  "nl": "Spot met heiligenbeeld gestraft",
+  "en": "Mocking a holy image is punished",
+  "being": "heilige",
+  "places": [
+   "kerk",
+   "weg"
+  ],
+  "gist": "Wie een Christus- of heiligenbeeld beledigt of wegwerpt, wordt kort daarna op wonderlijke wijze gestraft."
+ },
+ "191": {
+  "nl": "Mariabeeld gaat alleen in processie",
+  "en": "Statue of Mary walks the procession alone",
+  "being": "heilige",
+  "places": [
+   "kerk"
+  ],
+  "gist": "Als de processie wordt afgelast, gaat het Mariabeeld zelf op pad en hangt het de volgende ochtend vol modder."
+ },
+ "192": {
+  "nl": "Door de maar bereden",
+  "en": "Ridden by the nightmare",
+  "being": "mare",
+  "places": [
+   "huis"
+  ],
+  "gist": "Wie verlamd, benauwd of ongelukkig is, wordt gezegd 's nachts door de maar bereden te zijn."
+ },
+ "193": {
+  "nl": "Vuurman steekt brand",
+  "en": "Fire-man sets things ablaze",
+  "being": "dwaallicht",
+  "places": [
+   "boerderij",
+   "weg"
+  ],
+  "gist": "Een vuurman zweeft uit de beemden en steekt huizen, wagens of bomen in brand."
+ },
+ "194": {
+  "nl": "Vuurman is verdoemde landmeter",
+  "en": "Fire-man is a damned land surveyor",
+  "being": "dwaallicht",
+  "places": [
+   "heide"
+  ],
+  "gist": "Een gloeiende man moet 's nachts rondwaren omdat hij bij leven het land vals heeft gemeten."
+ },
+ "195": {
+  "nl": "Vurige geest om valse eed of grensverzetting",
+  "en": "Fiery ghost for false oath or moved boundary",
+  "being": "dwaallicht",
+  "places": [
+   "veen",
+   "heide",
+   "bos"
+  ],
+  "gist": "Wie een valse eed zwoer of een grenssteen verlegde, moet na zijn dood als vurige geest ronddolen."
+ },
+ "196": {
+  "nl": "Gloeiende geest van een misdadiger",
+  "en": "Glowing ghost of a criminal",
+  "being": "dwaallicht",
+  "places": [
+   "heide",
+   "galg"
+  ],
+  "gist": "Op de plek waar een moordenaar werd terechtgesteld of begraven, zien mensen 's nachts een brandende gedaante."
+ },
+ "212": {
+  "nl": "Vuurman brandt hand in de deur",
+  "en": "Fire-man burns his hand into the door",
+  "being": "dwaallicht",
+  "places": [
+   "huis",
+   "veen"
+  ],
+  "gist": "Een aangeroepen vuurman of dwaallicht achtervolgt iemand tot huis en laat een ingebrande hand op de deur achter."
+ },
+ "220": {
+  "nl": "Vuurbol als doodsvoorteken",
+  "en": "Fireball as an omen of death",
+  "being": "dwaallicht",
+  "places": [],
+  "gist": "Een vuurbol of vuurman verschijnt in de lucht, waarna iemand ziek wordt of sterft."
+ },
+ "252": {
+  "nl": "Plaaggeest springt op de rug",
+  "en": "Tormenting spirit leaps onto one's back",
+  "being": "spookdier",
+  "places": [
+   "weg",
+   "put"
+  ],
+  "gist": "Een plaaggeest of zwarte hond springt een nachtelijke voorbijganger op de rug en laat zich een eind dragen."
+ },
+ "256": {
+  "nl": "Spookdier belaagt reiziger",
+  "en": "Phantom animal harasses a traveller",
+  "being": "spookdier",
+  "places": [
+   "weg",
+   "kerkhof"
+  ],
+  "gist": "Een spookdier verspert de weg, loopt voor de wagen of zit iemand achterna en verdwijnt onverklaarbaar."
+ },
+ "258": {
+  "nl": "Spook door geestelijke verbannen",
+  "en": "Ghost banished by a priest",
+  "being": "spook",
+  "places": [
+   "kasteel",
+   "molen",
+   "boerderij"
+  ],
+  "gist": "Een spook of spookdier dat een plek onveilig maakt, wordt door een pastoor of pater overlezen en verbannen."
+ },
+ "291": {
+  "nl": "Mare berijdt de slaper",
+  "en": "The mare rides the sleeper",
+  "being": "mare",
+  "places": [
+   "huis"
+  ],
+  "gist": "Iemand wordt 's nachts door de maar bereden: verstijfd, benauwd en niet in staat te roepen."
+ },
+ "301": {
+  "nl": "Witte juffer wijst verborgen schat",
+  "en": "White lady points out a hidden treasure",
+  "being": "schat",
+  "places": [
+   "kasteel"
+  ],
+  "gist": "Een witte vrouw moet rondwaren om verborgen geld en vraagt een voorbijganger de schat op te halen."
+ },
+ "302": {
+  "nl": "Spinnende witte vrouw",
+  "en": "The spinning white woman",
+  "being": "witte_wieven",
+  "places": [
+   "water",
+   "weg"
+  ],
+  "gist": "Bij water of langs de weg zit 's nachts een witte vrouw te spinnen, die wie haar goed behandelt voorspoed brengt."
+ },
+ "304": {
+  "nl": "Witte juffer straft spotter",
+  "en": "White lady punishes a mocker",
+  "being": "witte_wieven",
+  "places": [
+   "weg",
+   "kapel"
+  ],
+  "gist": "Wie de witte juffer of witte wieven uitdaagt of bespot, wordt geslagen, achtervolgd of met ziekte gestraft."
+ },
+ "305": {
+  "nl": "Goedheid en wraak van witte wieven",
+  "en": "Kindness and revenge of the white women",
+  "being": "witte_wieven",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Witte wieven helpen wie hen eten geeft, bijvoorbeeld met het hooi, maar wreken zich op wie hen kwaad doet."
+ },
+ "310": {
+  "nl": "Witte juffer op een spookplaats",
+  "en": "White lady haunting a certain spot",
+  "being": "witte_wieven",
+  "places": [
+   "water",
+   "weg",
+   "kerk"
+  ],
+  "gist": "Op een vaste plek waart 's nachts een witte vrouw rond, zodat men die plaats in het donker mijdt."
+ },
+ "311": {
+  "nl": "Spookgedaante volgt nachtelijke wandelaar",
+  "en": "Phantom shape follows a night walker",
+  "being": "spookdier",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een nachtelijke wandelaar wordt gevolgd door een vreemd dier of gedaante dat plots spoorloos verdwijnt."
+ },
+ "331": {
+  "nl": "Onkwetsbaar spookdier",
+  "en": "Invulnerable phantom animal",
+  "being": "spookdier",
+  "places": [],
+  "gist": "Een dier blijkt met geen kogel te raken; pas met zilver of gewijde middelen lukt het."
+ },
+ "332": {
+  "nl": "Spookdier straft spotter",
+  "en": "Phantom animal punishes a scoffer",
+  "being": "spookdier",
+  "places": [
+   "weg",
+   "kerkhof"
+  ],
+  "gist": "Wie spot of naar een vreemd dier schopt, wordt door een spookhond, kat of schaap besprongen en toegetakeld."
+ },
+ "333": {
+  "nl": "Spookhond vergezelt nachtelijke wandelaar",
+  "en": "Phantom dog accompanies a night walker",
+  "being": "spookdier",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een vreemde hond met gloeiende ogen loopt 's nachts mee of zit iemand achterna tot aan zijn deur."
+ },
+ "334": {
+  "nl": "Spookdier in huis wordt verbannen",
+  "en": "Phantom animal in the house is banished",
+  "being": "spookdier",
+  "places": [
+   "huis",
+   "boerderij"
+  ],
+  "gist": "Een spookdier, vaak een zwarte hond, huist in een huis of boerderij tot een pater het overleest en verbant."
+ },
+ "341": {
+  "nl": "Gemiste haas roept honderden hazen op",
+  "en": "Missed hare summons hundreds of hares",
+  "being": "spookdier",
+  "places": [],
+  "gist": "Een stroper schiet mis op een grote haas en ziet zich ineens omringd door honderden hazen die hem verjagen."
+ },
+ "342": {
+  "nl": "Maria bevrijdt gevangenen",
+  "en": "Our Lady frees prisoners",
+  "being": "heilige",
+  "places": [
+   "kerk"
+  ],
+  "gist": "Gevangenen of slaven die tot Onze Lieve Vrouw bidden, worden bevrijd; hun boeien hangen in de kerk."
+ },
+ "345": {
+  "nl": "Opgeraapt dier verandert in steen",
+  "en": "Picked-up animal turns into stone",
+  "being": "spookdier",
+  "places": [
+   "weg",
+   "kerkhof"
+  ],
+  "gist": "Iemand neemt onderweg een katje of konijn mee; thuis is het een steen of doodshoofd geworden."
+ },
+ "352": {
+  "nl": "Spookpaard draagt ruiter weg",
+  "en": "Phantom horse carries its rider away",
+  "being": "spookdier",
+  "places": [
+   "water",
+   "brug",
+   "weg"
+  ],
+  "gist": "Wie op een vreemd paard klimt, wordt razendsnel weggevoerd tot hij Gods naam noemt en afgeworpen wordt."
+ },
+ "353": {
+  "nl": "Spookdier als onheilsbode",
+  "en": "Phantom animal as harbinger of doom",
+  "being": "spookdier",
+  "places": [],
+  "gist": "Een wit paard of ander dier verschijnt als voorbode van pest, sterfte of ongeluk."
+ },
+ "361": {
+  "nl": "Spookdier groeit steeds groter",
+  "en": "Phantom animal keeps growing",
+  "being": "spookdier",
+  "places": [
+   "weg",
+   "boerderij"
+  ],
+  "gist": "Een kat, hond of haas waar iemand naar slaat of schopt, wordt groter en groter tot hij vlucht."
+ },
+ "362": {
+  "nl": "Dode spookt in dierengedaante",
+  "en": "The dead haunt in animal shape",
+  "being": "spookdier",
+  "places": [
+   "kasteel",
+   "brug",
+   "huis"
+  ],
+  "gist": "Een overledene, vaak een heer of drossaard, keert terug als hond of paard en moet verbannen worden."
+ },
+ "401": {
+  "nl": "Dode keert terug om verborgen geld",
+  "en": "Dead return because of hidden money",
+  "being": "spook",
+  "places": [
+   "huis",
+   "kasteel"
+  ],
+  "gist": "Iemand die geld verborg moet na zijn dood spoken tot het gevonden en aan de kerk gegeven is."
+ },
+ "402": {
+  "nl": "Dode spookt om onvervulde belofte",
+  "en": "The dead haunt for an unkept vow",
+  "being": "spook",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een overledene verschijnt omdat een belofte, mis of bedevaart niet werd volbracht; daarna vindt hij rust."
+ },
+ "403": {
+  "nl": "Dode pastoor moet zijn mis lezen",
+  "en": "Dead priest must say his mass",
+  "being": "spook",
+  "places": [
+   "kerk"
+  ],
+  "gist": "De geest van een pastoor leest 's nachts verzuimde missen tot iemand hem antwoordt en hem verlost."
+ },
+ "404": {
+  "nl": "Grensverzetter spookt met grenspaal",
+  "en": "Boundary-mover haunts with his marker",
+  "being": "spook",
+  "places": [],
+  "gist": "Een man die een grenspaal verzette roept na zijn dood 'Waar moet ik hem zetten?' tot iemand antwoordt."
+ },
+ "410": {
+  "nl": "Verbannen spook komt jaarlijks dichterbij",
+  "en": "Banished ghost creeps closer each year",
+  "being": "spook",
+  "places": [
+   "boerderij",
+   "kerk"
+  ],
+  "gist": "Een spook wordt door een geestelijke of duivelbanner verbannen en mag elk jaar slechts een hanenstap terugkeren."
+ },
+ "411": {
+  "nl": "Schedel ten eten uitgenodigd",
+  "en": "Skull invited to dinner",
+  "being": "spook",
+  "places": [
+   "kerkhof"
+  ],
+  "gist": "Een spotter schopt op het kerkhof tegen een schedel en nodigt hem uit; de dode komt en het wordt zijn dood."
+ },
+ "413": {
+  "nl": "Oneerlijke handelaar moet spoken",
+  "en": "Dishonest trader must haunt",
+  "being": "spook",
+  "places": [],
+  "gist": "Wie melk aanlengde of vals woog, moet na zijn dood rondwaren en zijn bedrog uitroepen."
+ },
+ "414": {
+  "nl": "Hand groeit uit het graf",
+  "en": "Hand grows out of the grave",
+  "being": "spook",
+  "places": [
+   "kerkhof"
+  ],
+  "gist": "Een kind dat zijn moeder sloeg, krijgt na de dood een hand die steeds weer boven het graf uitgroeit."
+ },
+ "434": {
+  "nl": "Spook op plaats van onrecht",
+  "en": "Ghost at a place of wrongdoing",
+  "being": "spook",
+  "places": [],
+  "gist": "Op een plek waar iemand gedood of mishandeld werd, spookt nadien diens geest."
+ },
+ "435": {
+  "nl": "Zelfmoordenaar vindt geen rust",
+  "en": "The suicide finds no rest",
+  "being": "spook",
+  "places": [
+   "boerderij",
+   "kerkhof"
+  ],
+  "gist": "Waar iemand zich ophing of verdronk spookt het: hekken en deuren gaan vanzelf open en dicht."
+ },
+ "436": {
+  "nl": "Schim op de moordplaats",
+  "en": "Shade at the scene of a murder",
+  "being": "spook",
+  "places": [
+   "heide",
+   "water"
+  ],
+  "gist": "Op een plek waar een moord gebeurde of een soldaat begraven ligt, verschijnt 's nachts een schim."
+ },
+ "450": {
+  "nl": "Teruggekeerde doden",
+  "en": "The returning dead",
+  "being": "spook",
+  "places": [
+   "kerkhof",
+   "bos"
+  ],
+  "gist": "Overledenen die geen rust vinden, verschijnen aan de levenden op wegen, kerkhoven of in huis."
+ },
+ "453": {
+  "nl": "Dode moeder vraagt om doodshemd",
+  "en": "Dead mother wants her shroud",
+  "being": "spook",
+  "places": [
+   "kerkhof",
+   "kerk"
+  ],
+  "gist": "Een dode komt spoken omdat haar hemd of doodshemd ontbreekt, en blijft weg zodra ze het krijgt."
+ },
+ "454": {
+  "nl": "Spotter daagt geest uit",
+  "en": "Scoffer challenges a ghost",
+  "being": "spook",
+  "places": [
+   "kerkhof"
+  ],
+  "gist": "Iemand die niet in spoken gelooft daagt een geest uit, waarna die verschijnt en het hem fataal wordt."
+ },
+ "455": {
+  "nl": "Spokerij op de boerderij",
+  "en": "Haunting on the farm",
+  "being": "spook",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Op een boerderij wordt het vee losgemaakt en gaat alles mis, door ontevreden teruggekeerde doden."
+ },
+ "456": {
+  "nl": "Klopgeest in het spookhuis",
+  "en": "Poltergeist in the haunted house",
+  "being": "spook",
+  "places": [
+   "huis"
+  ],
+  "gist": "In een huis klinkt geklop en vliegen stenen of borden, tot een pater het huis overleest."
+ },
+ "471": {
+  "nl": "De Vliegende Hollander",
+  "en": "The Flying Dutchman",
+  "being": "spook",
+  "places": [
+   "zee"
+  ],
+  "gist": "Een vervloekte schipper moet eeuwig met zijn spookschip ronddolen en brengt onheil waar hij verschijnt."
+ },
+ "472": {
+  "nl": "Spookkoets met zwarte paarden",
+  "en": "Phantom coach with black horses",
+  "being": "spook",
+  "places": [
+   "kasteel",
+   "weg",
+   "heide"
+  ],
+  "gist": "'s Nachts rijdt een koets met zwarte of brandende paarden voorbij en verdwijnt, soms als voorteken van sterfte."
+ },
+ "473": {
+  "nl": "Dode heer rijdt in spookkoets",
+  "en": "Dead lord rides in a phantom coach",
+  "being": "spook",
+  "places": [
+   "kasteel",
+   "brug"
+  ],
+  "gist": "Een overleden graaf of rentmeester rijdt om middernacht met een gloeiende koets rond zijn kasteeldomein."
+ },
+ "475": {
+  "nl": "Naakte spookgedaante",
+  "en": "Naked ghostly figure",
+  "being": "spook",
+  "places": [
+   "kerkhof"
+  ],
+  "gist": "Op een spookplaats verschijnt 's nachts een naakt kind of een vrouw, vaak zonder doodshemd begraven."
+ },
+ "477": {
+  "nl": "Spookverschijning op vaste plek",
+  "en": "Apparition at a fixed spot",
+  "being": "spook",
+  "places": [
+   "water",
+   "huis",
+   "herberg"
+  ],
+  "gist": "Op een bepaalde plaats verschijnt een witte of zwarte gedaante die mensen volgt of verdwijnt."
+ },
+ "478": {
+  "nl": "Het spookt op die plek",
+  "en": "That place is haunted",
+  "being": "spook",
+  "places": [
+   "boerderij",
+   "kasteel"
+  ],
+  "gist": "Op een plek of in een gebouw spookt het: onverklaarbare geluiden, rammelende kettingen of verschijningen."
+ },
+ "481": {
+  "nl": "Lijkstoet voorzien",
+  "en": "Funeral procession foreseen",
+  "being": "voorgezicht",
+  "places": [
+   "weg"
+  ],
+  "gist": "Iemand ziet 's nachts een lijkstoet voorbijtrekken, waarna kort daarop werkelijk een begrafenis volgt."
+ },
+ "482": {
+  "nl": "Wit paard voor de lijkwagen voorzien",
+  "en": "White horse before the hearse foreseen",
+  "being": "voorgezicht",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een helderziende ziet een lijkwagen met een wit paard; bij de begrafenis moet tegen de gewoonte een wit paard worden ingespannen."
+ },
+ "483": {
+  "nl": "Doodskist voorzien",
+  "en": "Coffin foreseen",
+  "being": "voorgezicht",
+  "places": [
+   "huis"
+  ],
+  "gist": "Iemand ziet een doodskistje in huis staan, en kort daarna sterft er werkelijk een kind of huisgenoot."
+ },
+ "484": {
+  "nl": "Eigen lijk gezien",
+  "en": "Seeing one's own corpse",
+  "being": "voorgezicht",
+  "places": [
+   "huis",
+   "boerderij"
+  ],
+  "gist": "Een man knipt een lok van een voorziene dode en ontdekt dat die lok bij hemzelf ontbreekt; hij sterft spoedig."
+ },
+ "485": {
+  "nl": "Verschijning als doodsvoorteken",
+  "en": "Apparition as death omen",
+  "being": "voorgezicht",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een zwarte gedaante of een roepende vogel verschijnt bij een zieke als voorteken van zijn dood."
+ },
+ "486": {
+  "nl": "Voortekens van een sterfgeval",
+  "en": "Omens of a death",
+  "being": "voorgezicht",
+  "places": [
+   "huis"
+  ],
+  "gist": "Huilende honden, kloppen, naamroepen of een droom kondigen aan dat er iemand zal sterven."
+ },
+ "487": {
+  "nl": "Voorloop van komende gebeurtenissen",
+  "en": "Premonition of things to come",
+  "being": "voorgezicht",
+  "places": [
+   "huis",
+   "molen"
+  ],
+  "gist": "Men hoort getimmer of ziet iets dat er nog niet is, en later wordt daar werkelijk gebouwd of gebeurt het."
+ },
+ "488": {
+  "nl": "Hulpgeroep voorspelt verdrinking",
+  "en": "Cries for help foretell a drowning",
+  "being": "voorgezicht",
+  "places": [
+   "water"
+  ],
+  "gist": "Bij een poel hoort men hulpgeroep zonder iemand te zien; later verdrinkt daar werkelijk iemand."
+ },
+ "489": {
+  "nl": "Helmdrager voorziet de dood",
+  "en": "One born with a caul foresees death",
+  "being": "voorgezicht",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een helderziende of met de helm geboren persoon ziet sterfgevallen en lijkstoeten vooruit, en het komt uit."
+ },
+ "491": {
+  "nl": "Brand voorzien",
+  "en": "Fire foreseen",
+  "being": "voorgezicht",
+  "places": [
+   "huis",
+   "boerderij"
+  ],
+  "gist": "Iemand ziet een huis in brand staan terwijl er niets is; kort daarna brandt het werkelijk af."
+ },
+ "492": {
+  "nl": "Spoorlijn voorzien",
+  "en": "Railway foreseen",
+  "being": "voorgezicht",
+  "places": [
+   "weg"
+  ],
+  "gist": "Op een plek ziet of hoort men lichten en lawaai; later wordt daar een spoorlijn, tram of weg aangelegd."
+ },
+ "493": {
+  "nl": "Kanaal voorzien",
+  "en": "Canal foreseen",
+  "being": "voorgezicht",
+  "places": [
+   "heide",
+   "water"
+  ],
+  "gist": "Iemand ziet schepen met lantaarns over de heide varen; jaren later wordt daar een kanaal gegraven."
+ },
+ "501": {
+  "nl": "Heksen dansen in een kring",
+  "en": "Witches dancing in a ring",
+  "being": "heks",
+  "places": [
+   "heide"
+  ],
+  "gist": "Heksen, vaak als katten, houden 's nachts een dans; wie stoort of slaat, ziet hun aantal groeien."
+ },
+ "502": {
+  "nl": "Kattendans met zilveren beker",
+  "en": "Cats' dance with a silver cup",
+  "being": "heks",
+  "places": [
+   "weg",
+   "kerk"
+  ],
+  "gist": "Dansende katten dwingen een man mee te doen; bij Gods naam verdwijnen ze en laten een beker achter voor de kerk."
+ },
+ "503": {
+  "nl": "Heksensabbat met muziek verstoord",
+  "en": "Witches' sabbath disrupted",
+  "being": "heks",
+  "places": [
+   "bos"
+  ],
+  "gist": "Een man stuit op feestende heksen; na een kruisteken verdwijnt alles en zit hij in een struik of op een mesthoop."
+ },
+ "511": {
+  "nl": "Verkeerde vliegspreuk",
+  "en": "The misspoken flying charm",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Iemand bootst de heksenspreuk na maar zegt 'door' in plaats van 'over' en vliegt pijnlijk door alles heen."
+ },
+ "512": {
+  "nl": "Heks vliegt door de lucht",
+  "en": "Witch flies through the air",
+  "being": "heks",
+  "places": [],
+  "gist": "Een heks vliegt 's nachts door de lucht, soms met een meegenomen man, naar verre heksenbijeenkomsten."
+ },
+ "513": {
+  "nl": "Heks vaart 's nachts met schip",
+  "en": "Witch sails a ship by night",
+  "being": "heks",
+  "places": [
+   "zee"
+  ],
+  "gist": "De vrouw van een schipper vaart 's nachts in een oogwenk naar Indië; een knecht neemt sinaasappelen mee als bewijs."
+ },
+ "514": {
+  "nl": "Heks in den vreemde herkent danslinde",
+  "en": "Witch abroad recalls the dancing tree",
+  "being": "heks",
+  "places": [
+   "herberg"
+  ],
+  "gist": "Een oude vrouw in een verre herberg vraagt een reiziger naar een boom bij zijn dorp waar zij vroeger 's nachts danste."
+ },
+ "515": {
+  "nl": "Heks vliegt op bezemsteel",
+  "en": "Witch flies on a broomstick",
+  "being": "heks",
+  "places": [],
+  "gist": "Heksen en tovenaars vliegen 's nachts op een bezemsteel door de lucht of veranderen in katten."
+ },
+ "531": {
+  "nl": "Heks legt spelden in de wieg",
+  "en": "Witch puts pins in the cradle",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een heks betovert een kind door spelden in de wieg of kussen te leggen, zodat het onophoudelijk huilt."
+ },
+ "532": {
+  "nl": "Heks moet iets doden en betovert bomen",
+  "en": "Witch must kill and blights trees",
+  "being": "heks",
+  "places": [
+   "bos"
+  ],
+  "gist": "Een heks moet haar toverkracht kwijt en laat daarom bomen en struiken verdorren."
+ },
+ "533": {
+  "nl": "Betoverde karn geeft geen boter",
+  "en": "Bewitched churn yields no butter",
+  "being": "heks",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Een heks betovert karn of koe, zodat er geen boter of melk komt tot men een tegenmiddel gebruikt."
+ },
+ "534": {
+  "nl": "Dertiende spaak in het wiel",
+  "en": "The thirteenth spoke in the wheel",
+  "being": "heks",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een wagen zit vast tot de voerman een dertiende spaak uitslaat; de volgende dag loopt een vrouw gewond rond."
+ },
+ "535": {
+  "nl": "Heksenkind leert toveren",
+  "en": "Witch's child learns magic",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een heks leert haar dochter muizen maken of andere kunsten, en kan pas sterven als ze haar kennis heeft doorgegeven."
+ },
+ "536": {
+  "nl": "Heksenleerling weigert God af te zweren",
+  "en": "Witch's apprentice refuses to renounce God",
+  "being": "heks",
+  "places": [],
+  "gist": "Een heks wil iemand leren toveren, maar wanneer God afgezworen moet worden, weigert de leerling en vlucht."
+ },
+ "538": {
+  "nl": "Heks betovert geweer van de jager",
+  "en": "Witch jinxes the hunter's gun",
+  "being": "heks",
+  "places": [],
+  "gist": "Een heks laat het geweer weigeren; pas met wijwater of paaskaarswas kan de jager de haas raken."
+ },
+ "539": {
+  "nl": "Heks zet paard en wagen vast",
+  "en": "Witch halts horse and cart",
+  "being": "heks",
+  "places": [
+   "weg"
+  ],
+  "gist": "Paard en wagen kunnen bij het huis van een heks niet verder, alsof ze aan de grond genageld staan."
+ },
+ "540": {
+  "nl": "Door heks doen verdwalen",
+  "en": "Led astray by a witch",
+  "being": "heks",
+  "places": [
+   "weg",
+   "heide"
+  ],
+  "gist": "Iemand raakt op een bekende weg verdwaald of ziet water waar geen is, omdat een heks hem betoverd heeft."
+ },
+ "541": {
+  "nl": "Heks laat wagen van de dijk rijden",
+  "en": "Witch sends the cart off the dike",
+  "being": "heks",
+  "places": [
+   "weg",
+   "water"
+  ],
+  "gist": "Na een dreigende opmerking van een heks kantelt een kar of rijdt die van de dijk."
+ },
+ "542": {
+  "nl": "Door onzichtbare kracht opzij gezet",
+  "en": "Thrown aside by an invisible force",
+  "being": "heks",
+  "places": [
+   "weg",
+   "water"
+  ],
+  "gist": "Een nachtelijke voorbijganger wordt door een onzichtbare heks of kracht opzij geduwd, van de dijk gezet of in het water gegooid."
+ },
+ "543": {
+  "nl": "Onzichtbare heks slaat en plaagt",
+  "en": "Invisible witch beats and torments",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Mensen worden 's nachts geslagen of geplaagd door een heks die alleen zij, of niemand, kan zien."
+ },
+ "544": {
+  "nl": "Heks maakt zich klein",
+  "en": "Witch makes herself tiny",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een heks of een door haar onderwezen kind maakt zich zo klein dat het in een stoof of achter de borden past."
+ },
+ "545": {
+  "nl": "Over het water lopen",
+  "en": "Walking on water",
+  "being": "heks",
+  "places": [
+   "water"
+  ],
+  "gist": "Een heks of tovenaar kan zonder brug over beken en meren lopen of zweven."
+ },
+ "547": {
+  "nl": "Heks verspert de weg",
+  "en": "Witch blocks the road",
+  "being": "heks",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een heks verspert de weg met massa's katten, hazen, padden of getoverd water, zodat men niet verder kan."
+ },
+ "580": {
+  "nl": "Betovering door heksen",
+  "en": "Bewitchment by witches",
+  "being": "heks",
+  "places": [
+   "huis",
+   "boerderij"
+  ],
+  "gist": "Een heks brengt ongeluk, ziekte of plagen over mensen en vee, tot een geestelijke de betovering opheft."
+ },
+ "581": {
+  "nl": "Kind kan witte muizen maken",
+  "en": "Child can make white mice",
+  "being": "heks",
+  "places": [
+   "kerk"
+  ],
+  "gist": "Een kind maakt muizen uit aarde of een boekje, tot de pastoor het opnieuw doopt of overleest."
+ },
+ "582": {
+  "nl": "Heks zet luizen",
+  "en": "Witch sends lice",
+  "being": "heks",
+  "places": [
+   "huis",
+   "boerderij"
+  ],
+  "gist": "Wie een heks beledigt of wegjaagt, zit kort daarop vol luizen, vlooien of ratten."
+ },
+ "586": {
+  "nl": "Heksenappel verandert in pad",
+  "en": "Witch's apple turns into a toad",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een appel of snoep die men van een heks krijgt, verandert na een tijd in een pad, kikker of spin."
+ },
+ "587": {
+  "nl": "Pad in het lichaam door heksenvoedsel",
+  "en": "Toad in the body from witch's food",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Wie iets eet dat een heks gaf, krijgt een pad in het lijf, die pas na onttovering wordt uitgeplast."
+ },
+ "588": {
+  "nl": "Betoverd kind braakt dieren uit",
+  "en": "Bewitched child vomits creatures",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een behekst kind braakt na het eten van heksenvoedsel spelden, slangenhuiden of een beest uit."
+ },
+ "591": {
+  "nl": "Heksenziel verlaat het lichaam",
+  "en": "Witch's soul leaves her body",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Als een heks gaat toveren, ligt haar lichaam als dood terwijl haar ziel, soms als muis, uitgaat."
+ },
+ "592": {
+  "nl": "Onraakbaar dier is een heks",
+  "en": "Unhittable animal is a witch",
+  "being": "heks",
+  "places": [
+   "weg",
+   "bos"
+  ],
+  "gist": "Een haas, kat of geit kan niet geraakt worden, het geweer ketst of de hagel vliegt weg: het is een heks."
+ },
+ "593": {
+  "nl": "Heks in kattengedaante herkend",
+  "en": "Witch recognised in cat form",
+  "being": "heks",
+  "places": [],
+  "gist": "Een kat of bunzing die men achtervolgt, blijkt later een oude vrouw uit de buurt te zijn."
+ },
+ "594": {
+  "nl": "Kat verandert in heks",
+  "en": "Cat turns into a witch",
+  "being": "heks",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een kat of haas die men schopt of beschiet, verandert plots in een vrouw die dreigt: het is een heks."
+ },
+ "601": {
+  "nl": "Geslagen kat spreekt terug",
+  "en": "Struck cat answers back",
+  "being": "heks",
+  "places": [
+   "weg"
+  ],
+  "gist": "Iemand slaat of schopt een kat, die groeit of spreekt: 'Doe het nog eens als je durft'."
+ },
+ "602": {
+  "nl": "Kat herhaalt de aanspreking",
+  "en": "Cat repeats the greeting",
+  "being": "heks",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een man spreekt een volgende kat aan, en het dier herhaalt zijn woorden en noemt hem bij naam."
+ },
+ "603": {
+  "nl": "Vriendelijk aangesproken kat spaart je",
+  "en": "Kindly addressed cat spares you",
+  "being": "heks",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een kat zegt: 'Als je me niet zo vriendelijk had aangesproken, had ik je de nek gebroken'."
+ },
+ "604": {
+  "nl": "Slaan naar kat roept vele katten op",
+  "en": "Striking a cat summons many cats",
+  "being": "heks",
+  "places": [
+   "weg",
+   "heide"
+  ],
+  "gist": "Wie 's nachts naar een kat slaat of schopt, wordt plots omringd en aangevallen door tientallen katten."
+ },
+ "605": {
+  "nl": "Heks behekst vee in de stal",
+  "en": "Witch bewitches livestock in the stable",
+  "being": "heks",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Katten zitten op het vee of paarden staan bezweet met gevlochten manen; een geestelijke breekt de hekserij."
+ },
+ "606": {
+  "nl": "Heks als ekster of vogel",
+  "en": "Witch as magpie or bird",
+  "being": "heks",
+  "places": [
+   "bos"
+  ],
+  "gist": "Een heks verschijnt als ekster of kraai; wordt de vogel verwond, dan heeft een vrouw hetzelfde letsel."
+ },
+ "608": {
+  "nl": "Heks in diergedaante",
+  "en": "Witch in animal shape",
+  "being": "heks",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Heksen veranderen in katten, hazen of padden om melk te stelen of mensen te plagen."
+ },
+ "621": {
+  "nl": "Kat bij het pannenkoeken bakken",
+  "en": "Cat at the pancake-baking",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een kat zegt dat het meel niet betaald is; men gooit heet vet over haar en de buurvrouw blijkt verbrand."
+ },
+ "622": {
+  "nl": "Molenaar hakt kattenpoot af",
+  "en": "Miller chops off a cat's paw",
+  "being": "heks",
+  "places": [
+   "molen"
+  ],
+  "gist": "Een molenaar of brouwersknecht verwondt 's nachts een kat; 's morgens mist een vrouw een hand."
+ },
+ "623": {
+  "nl": "Gewonde haas is gewonde vrouw",
+  "en": "Wounded hare is a wounded woman",
+  "being": "heks",
+  "places": [],
+  "gist": "Een onraakbare haas wordt met zilver of gewijd middel geschoten; daarna loopt een vrouw met dezelfde wond rond."
+ },
+ "624": {
+  "nl": "Gloeiend ijzer in de karn",
+  "en": "Red-hot iron in the churn",
+  "being": "heks",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Een gloeiend hoefijzer of heet water in de betoverde karn verbrandt de heks, die zo ontmaskerd wordt."
+ },
+ "626": {
+  "nl": "Heksenkrans uit kussen verbrand",
+  "en": "Witch's wreath from the pillow burnt",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Men verbrandt of kookt de veren krans uit een betoverd kussen; de heks verschijnt of krijgt brandwonden."
+ },
+ "627": {
+  "nl": "Spelden koken pijnigt de heks",
+  "en": "Boiling pins tortures the witch",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Men kookt naalden of verbrandt een pop, waarna de heks van pijn komt smeken en zich verraadt."
+ },
+ "640": {
+  "nl": "Verwonde kat, gewonde vrouw",
+  "en": "Wounded cat, wounded woman",
+  "being": "heks",
+  "places": [
+   "huis",
+   "weg"
+  ],
+  "gist": "Iemand slaat of brandt een kat, en de volgende dag heeft een vrouw uit de buurt hetzelfde letsel."
+ },
+ "641": {
+  "nl": "Voeten kruisen in heksenspoor",
+  "en": "Crossing feet in the witch's track",
+  "being": "heks",
+  "places": [
+   "weg",
+   "kerk"
+  ],
+  "gist": "Wie zijn voeten kruiselings in het spoor van een vrouw zet, ziet haar omkijken als zij een heks is."
+ },
+ "642": {
+  "nl": "Heks kan niet over bezem stappen",
+  "en": "Witch cannot step over a broom",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een heks kan niet over een bezem of dwarsliggende stok voor de deur stappen en wordt zo ontmaskerd."
+ },
+ "643": {
+  "nl": "Open kerkboek houdt heksen in de kerk",
+  "en": "Open missal keeps witches in church",
+  "being": "heks",
+  "places": [
+   "kerk"
+  ],
+  "gist": "Zolang de pastoor zijn kerkboek open laat liggen, kunnen de heksen de kerk niet verlaten."
+ },
+ "644": {
+  "nl": "Paaskaars houdt heksen in de kerk",
+  "en": "Easter candle traps witches in church",
+  "being": "heks",
+  "places": [
+   "kerk"
+  ],
+  "gist": "Een stukje gewijde paaskaars of paasnagel onder de drempel belet heksen de kerk te verlaten."
+ },
+ "646": {
+  "nl": "Paasnagel onder drempel of stoel",
+  "en": "Easter nail under threshold or chair",
+  "being": "heks",
+  "places": [
+   "huis",
+   "kerk"
+  ],
+  "gist": "Een gewijde paasnagel onder drempel of stoel maakt een heks machteloos of houdt haar vast."
+ },
+ "647": {
+  "nl": "Kruis onder de drempel weert heks",
+  "en": "Cross under the threshold wards off a witch",
+  "being": "heks",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een kruis of heiligenprentje onder de drempel belet de heks het huis binnen te komen."
+ },
+ "664": {
+  "nl": "Tovenaar temt een valse hond",
+  "en": "Wizard tames a vicious dog",
+  "being": "tovenaar",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Een man met toverkracht maakt de felste waakhond mak, zodat geen hond hem ooit aanvalt."
+ },
+ "666": {
+  "nl": "Mensen vastzetten",
+  "en": "Fixing people to the spot",
+  "being": "tovenaar",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een tovenaar of pater kan met een formule dieven of belagers laten stilstaan tot hij ze vrijlaat."
+ },
+ "667": {
+  "nl": "Door tovenaar laten rondlopen",
+  "en": "Made to wander by a wizard",
+  "being": "tovenaar",
+  "places": [
+   "weg",
+   "kruisweg",
+   "heide"
+  ],
+  "gist": "Iemand doolt na een raadselachtige opmerking de hele nacht rond en komt pas bij het ochtendgloren thuis."
+ },
+ "668": {
+  "nl": "Tovenaar verspert de weg",
+  "en": "Wizard bars the way",
+  "being": "tovenaar",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een tovenaar laat iemand verdwalen of tovert water, katten of padden op de weg."
+ },
+ "669": {
+  "nl": "Tovenaar verlaat stad door alle poorten",
+  "en": "Wizard leaves town through every gate",
+  "being": "tovenaar",
+  "places": [],
+  "gist": "Een verbannen tovenaar of heks wordt tegelijk op meerdere plaatsen gezien, bijvoorbeeld bij alle stadspoorten."
+ },
+ "670": {
+  "nl": "Tovenaar maakt zich onzichtbaar",
+  "en": "Wizard makes himself invisible",
+  "being": "tovenaar",
+  "places": [],
+  "gist": "Een tovenaar kan zich onzichtbaar maken of in een spook veranderen en zo ongemerkt rondgaan."
+ },
+ "671": {
+  "nl": "Wonderdokter ziet op afstand",
+  "en": "Cunning doctor sees from afar",
+  "being": "tovenaar",
+  "places": [],
+  "gist": "Een magnetiseur of wonderdokter geneest en ziet in trance of urine wat elders gebeurt."
+ },
+ "672": {
+  "nl": "Tovenaar door gesloten deur",
+  "en": "Wizard passes through a locked door",
+  "being": "tovenaar",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een tovenaar komt door het sleutelgat of gesloten deuren binnen en ontsnapt zelfs uit de gevangenis."
+ },
+ "675": {
+  "nl": "Stenenregen en onzichtbare slagen",
+  "en": "Stone-throwing and invisible blows",
+  "being": "tovenaar",
+  "places": [
+   "huis"
+  ],
+  "gist": "Op een huis regent het stenen of iemand krijgt klappen zonder zichtbare dader; zwarte kunst wordt vermoed."
+ },
+ "677": {
+  "nl": "Tovenaar betovert vee en kinderen",
+  "en": "Wizard bewitches cattle and children",
+  "being": "tovenaar",
+  "places": [
+   "boerderij",
+   "huis"
+  ],
+  "gist": "Een tovenaar betovert dieren en kinderen door aanraking of gift, waarna ze ziek worden of sterven."
+ },
+ "679": {
+  "nl": "Kruipen door een balk",
+  "en": "Crawling through a beam",
+  "being": "tovenaar",
+  "places": [],
+  "gist": "Een tovenaar lijkt op de markt door een balk te kruipen, maar iemand ziet dat hij erlangs kruipt."
+ },
+ "681": {
+  "nl": "Tovenaar laat het donderen",
+  "en": "Wizard makes it thunder",
+  "being": "tovenaar",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een tovenaar met een toverboek laat het bij helder weer donderen en bliksemen."
+ },
+ "682": {
+  "nl": "Tovergeld verandert in wortelschijf",
+  "en": "Magic money turns to a carrot slice",
+  "being": "tovenaar",
+  "places": [
+   "herberg"
+  ],
+  "gist": "Een tovenaar betaalt met getoverd geld dat later in een wortelschijfje of zaad verandert."
+ },
+ "685": {
+  "nl": "Kaart haalt een fles jenever",
+  "en": "Playing card fetches a bottle of gin",
+  "being": "tovenaar",
+  "places": [
+   "herberg"
+  ],
+  "gist": "In de herberg stuurt een tovenaar een speelkaart weg, die even later een fles jenever laat aanvliegen."
+ },
+ "686": {
+  "nl": "Werk gedaan door toverij",
+  "en": "Work done by magic",
+  "being": "tovenaar",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Een knecht of boer laat met een spreuk het hele veld in een oogwenk maaien of bemesten."
+ },
+ "687": {
+  "nl": "Bier tappen uit een staf",
+  "en": "Tapping beer from a staff",
+  "being": "tovenaar",
+  "places": [
+   "herberg"
+  ],
+  "gist": "Een Duitse schaper tapt bier of wijn uit zijn staf, dat uit andermans kelder blijkt te komen."
+ },
+ "688": {
+  "nl": "Zwarte spiegel toont het verborgene",
+  "en": "The black mirror reveals hidden things",
+  "being": "tovenaar",
+  "places": [],
+  "gist": "In de zwarte spiegel van een helderziende ziet men de dief, de toekomstige partner of de dood."
+ },
+ "689": {
+  "nl": "Ratten wegtoveren",
+  "en": "Charming away rats",
+  "being": "tovenaar",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Een rattenbezweerder of pater verdrijft met een spreuk of gebed alle ratten naar een andere plaats."
+ },
+ "690": {
+  "nl": "Luchtreis stoot tegen kerktoren",
+  "en": "Air journey bumps a church spire",
+  "being": "tovenaar",
+  "places": [
+   "kerk"
+  ],
+  "gist": "Een tovenaar neemt iemand mee door de lucht, en onderweg stoten ze met een voet tegen een kerktoren."
+ },
+ "693": {
+  "nl": "Soldaatjes uit de haardkuil",
+  "en": "Little soldiers from the hearth",
+  "being": "tovenaar",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een tovenaar leest uit een boek en laat soldaatjes uit de haard marcheren, die terugkeren als hij achterstevoren leest."
+ },
+ "695": {
+  "nl": "Tovenaar laat dier groeien",
+  "en": "Wizard makes an animal grow",
+  "being": "tovenaar",
+  "places": [],
+  "gist": "Een tovenaar laat een haas of hondje steeds groter worden om iemand te plagen of te verschrikken."
+ },
+ "697": {
+  "nl": "Tovenaar verandert in dier",
+  "en": "Wizard turns into an animal",
+  "being": "tovenaar",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een man verandert zich in een kat of paard; wordt het dier verwond, dan draagt hij de wond."
+ },
+ "750": {
+  "nl": "Tovenaar verbonden met de duivel",
+  "en": "Wizard in league with the devil",
+  "being": "tovenaar",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Een man kan met hulp van de duivel toveren, bijvoorbeeld het veld bemesten, tot een geestelijke ingrijpt."
+ },
+ "752": {
+  "nl": "Het onverliesbare toverboek",
+  "en": "The unlosable magic book",
+  "being": "tovenaar",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Wie een toverboek bezit, kan er wonderen mee doen maar raakt het niet kwijt en valt in de macht van de duivel."
+ },
+ "753": {
+  "nl": "Toverboek verbrand, bezitter verlost",
+  "en": "Magic book burnt, owner saved",
+  "being": "tovenaar",
+  "places": [],
+  "gist": "Een man die uit een toverboek tovert, wordt verlost wanneer een pastoor of kapelaan het boek verbrandt."
+ },
+ "780": {
+  "nl": "Tovenaar ontmaskert de heks",
+  "en": "Wizard unmasks the witch",
+  "being": "tovenaar",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Een tovenaar of geestelijke dwingt de heks die het kwaad veroorzaakte te verschijnen en haar betovering op te heffen."
+ },
+ "791": {
+  "nl": "Mare berijdt paarden",
+  "en": "The mare rides the horses",
+  "being": "mare",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Paarden staan 's morgens bezweet met gevlochten manen; wie waakt, ziet een vrouw op het dier zitten."
+ },
+ "800": {
+  "nl": "Afweer tegen de nachtmerrie",
+  "en": "Warding off the nightmare",
+  "being": "mare",
+  "places": [
+   "huis"
+  ],
+  "gist": "Omgekeerde pantoffels, gekruiste kousen of een spreuk houden de nachtmerrie bij het bed weg."
+ },
+ "801": {
+  "nl": "Weerwolf laat zich dragen",
+  "en": "Werewolf makes itself carried",
+  "being": "weerwolf",
+  "places": [
+   "weg",
+   "brug"
+  ],
+  "gist": "Een weerwolf springt 's nachts een voorbijganger op de rug en laat zich een eind dragen."
+ },
+ "803": {
+  "nl": "Weerwolf verscheurt vee",
+  "en": "Werewolf savages livestock",
+  "being": "weerwolf",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Een weerwolf, een mens in dierengedaante, verscheurt schapen, geiten of veulens."
+ },
+ "804": {
+  "nl": "Gedaanten van de weerwolf",
+  "en": "Shapes of the werewolf",
+  "being": "weerwolf",
+  "places": [],
+  "gist": "Weerwolven verschijnen 's nachts in wisselende gedaanten, als zwarte hond of in een wit laken."
+ },
+ "805": {
+  "nl": "Weerwolf als zwarte hond",
+  "en": "Werewolf as a black dog",
+  "being": "weerwolf",
+  "places": [
+   "weg",
+   "brug"
+  ],
+  "gist": "Een man die weerwolf is, verschijnt als grote zwarte hond die voorbijgangers volgt of de weg verspert."
+ },
+ "822": {
+  "nl": "Weerwolf verwond en herkend",
+  "en": "Werewolf wounded and recognised",
+  "being": "weerwolf",
+  "places": [
+   "weg"
+  ],
+  "gist": "Wie een weerwolf slaat of laat bloeden, ziet hem in een mens veranderen die hij herkent."
+ },
+ "823": {
+  "nl": "Zakdoek naar de weerwolf geworpen",
+  "en": "Handkerchief thrown at the werewolf",
+  "being": "weerwolf",
+  "places": [
+   "weg"
+  ],
+  "gist": "Een meisje werpt een zakdoek naar de weerwolf en ziet later de draden tussen de tanden van haar vrijer."
+ },
+ "824": {
+  "nl": "Weerwolfvel verbrand",
+  "en": "The werewolf's skin is burnt",
+  "being": "weerwolf",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Een knecht is weerwolf door een vel of gordel; als iemand het vel verbrandt, is hij verlost."
+ },
+ "851": {
+  "nl": "Duivel vult de bodemloze laars",
+  "en": "Devil fills the bottomless boot",
+  "being": "duivel",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "Een man met een duivelspact laat de duivel een laars of zak vol geld gooien, maar heeft de bodem eruit gesneden."
+ },
+ "852": {
+  "nl": "Duivel bij de kerkbouw bedrogen",
+  "en": "Devil cheated at the church building",
+  "being": "duivel",
+  "places": [
+   "kerk"
+  ],
+  "gist": "De duivel helpt een kerk bouwen in ruil voor een ziel, wordt bedrogen en laat sporen van woede na."
+ },
+ "853": {
+  "nl": "Duivel bouwt schuur voor hanengekraai",
+  "en": "Devil builds a barn before cockcrow",
+  "being": "duivel",
+  "places": [
+   "boerderij"
+  ],
+  "gist": "De duivel bouwt een schuur in ruil voor een ziel, maar de haan kraait te vroeg en er blijft een gat."
+ },
+ "863": {
+  "nl": "Maria redt de kaartspeler van de duivel",
+  "en": "Our Lady saves the gambler from the devil",
+  "being": "duivel",
+  "places": [
+   "brug",
+   "herberg"
+  ],
+  "gist": "Een kaartspeler verkoopt zijn ziel, maar als de duivel hem komt halen, zit Onze Lieve Vrouw achter hem op het paard."
+ },
+ "865": {
+  "nl": "Gebed verdrijft de duivel",
+  "en": "Prayer drives off the devil",
+  "being": "duivel",
+  "places": [],
+  "gist": "Met een krachtig gebed, kruisteken of rozenkrans verjaagt men de duivel of verbreekt men zijn macht."
+ },
+ "881": {
+  "nl": "Ziel aan de duivel verkocht",
+  "en": "Soul sold to the devil",
+  "being": "duivel",
+  "places": [],
+  "gist": "Iemand die zijn ziel aan de duivel verkocht, kan wonderlijke dingen en wordt uiteindelijk door hem gehaald."
+ },
+ "882": {
+  "nl": "De wisseldaalder van de duivel",
+  "en": "The devil's ever-returning coin",
+  "being": "duivel",
+  "places": [],
+  "gist": "Een wisseldaalder van de duivel keert altijd terug, maar wie hem bezit, behoort na zijn dood de duivel toe."
+ },
+ "883": {
+  "nl": "Duivel als zwarte hond",
+  "en": "Devil as a black dog",
+  "being": "duivel",
+  "places": [
+   "kerk",
+   "weg"
+  ],
+  "gist": "De duivel verschijnt als grote zwarte hond die zondaars schrik aanjaagt of de weg verspert."
+ },
+ "891": {
+  "nl": "Onuitwisbare bloedvlekken",
+  "en": "Indelible bloodstains",
+  "being": "duivel",
+  "places": [
+   "kasteel"
+  ],
+  "gist": "Waar de duivel Faust of een zondaar door het venster sleurde, blijven de bloedvlekken eeuwig zichtbaar."
+ },
+ "892": {
+  "nl": "Gat waar de duivel uitvloog",
+  "en": "The hole the devil flew out of",
+  "being": "duivel",
+  "places": [
+   "herberg",
+   "huis",
+   "kasteel"
+  ],
+  "gist": "Een ruit of opening waardoor de duivel vluchtte, laat zich niet dichtmaken tot een pater het overleest."
+ },
+ "893": {
+  "nl": "Afdruk van de duivel in een steen",
+  "en": "Devil's imprint in a stone",
+  "being": "duivel",
+  "places": [
+   "water"
+  ],
+  "gist": "Na een sprong of worp van de duivel blijft een afdruk van zijn poot of klauw in een steen zichtbaar."
+ },
+ "901": {
+  "nl": "Liever de duivel dan geen man",
+  "en": "The devil rather than no husband",
+  "being": "duivel",
+  "places": [
+   "huis"
+  ],
+  "gist": "Een vrouw wil een man, al is het de duivel, en krijgt een heer met paardenpoten."
+ },
+ "902": {
+  "nl": "Dansen met de duivel",
+  "en": "Dancing with the devil",
+  "being": "duivel",
+  "places": [
+   "herberg"
+  ],
+  "gist": "Een meisje wil dansen, al is het met de duivel, en ontdekt dat haar partner paardenpoten heeft."
+ },
+ "903": {
+  "nl": "Duivel in de spiegel",
+  "en": "The devil in the mirror",
+  "being": "duivel",
+  "places": [
+   "huis"
+  ],
+  "gist": "Wie te lang of op het verkeerde uur in de spiegel kijkt, ziet de duivel erachter verschijnen."
+ },
+ "904": {
+  "nl": "Duivel als kaartspeler in de herberg",
+  "en": "Devil as card player at the inn",
+  "being": "duivel",
+  "places": [
+   "herberg"
+  ],
+  "gist": "Een vreemde die altijd wint bij het kaarten blijkt bij het oprapen van een kaart paardenpoten te hebben."
+ },
+ "906": {
+  "nl": "Voor twaalf uur thuis of de duivel",
+  "en": "Home by midnight or the devil takes you",
+  "being": "duivel",
+  "places": [
+   "water"
+  ],
+  "gist": "Een kaartspeler zweert voor middernacht thuis te zijn en schaatst achtervolgd door de duivel net op tijd naar binnen."
+ },
+ "907": {
+  "nl": "Duivelsgeld niet aannemen",
+  "en": "Refusing the devil's money",
+  "being": "duivel",
+  "places": [
+   "kruisweg",
+   "weg"
+  ],
+  "gist": "Geld dat de duivel aanbiedt of op de weg legt, brengt vals geld of verdoemenis, dus raakt men het niet aan."
+ },
+ "916": {
+  "nl": "Gevecht met de duivel",
+  "en": "Struggle with the devil",
+  "being": "duivel",
+  "places": [
+   "huis"
+  ],
+  "gist": "Iemand wordt 's nachts door de duivel aangevallen, geslagen of gehinderd en ontsnapt ternauwernood."
+ },
+ "917": {
+  "nl": "Spotter door de duivel gestraft",
+  "en": "Scoffer punished by the devil",
+  "being": "duivel",
+  "places": [
+   "herberg",
+   "weg"
+  ],
+  "gist": "Wie vloekt of spot dat hij niet bang is voor de duivel, wordt door hem gevolgd, gegrepen of weggeslingerd."
+ },
+ "918": {
+  "nl": "Duivel haalt de goddeloze",
+  "en": "Devil fetches the godless",
+  "being": "duivel",
+  "places": [
+   "kerkhof",
+   "herberg"
+  ],
+  "gist": "De duivel haalt een vloeker of ongelovige weg, soms uit de doodkist, die met stenen gevuld blijkt."
+ },
+ "919": {
+  "nl": "Duivel als hond bij het lijk",
+  "en": "Devil as a dog by the corpse",
+  "being": "duivel",
+  "places": [
+   "huis"
+  ],
+  "gist": "Bij het lijk van een vrijmetselaar of ongelovige verschijnt een zwarte hond die zijn ziel komt halen."
+ },
+ "922": {
+  "nl": "Duivel draait de nek om",
+  "en": "Devil wrings the neck",
+  "being": "duivel",
+  "places": [
+   "herberg",
+   "water"
+  ],
+  "gist": "Een vloeker of kaartlegster wordt gevonden met het hoofd achterstevoren op de romp: de duivel deed het."
+ },
+ "931": {
+  "nl": "Duivelskoets met vurige paarden",
+  "en": "Devil's coach with fiery horses",
+  "being": "duivel",
+  "places": [
+   "weg",
+   "kapel"
+  ],
+  "gist": "'s Nachts rijdt een zwarte of brandende koets met de duivel op de bok voorbij."
+ },
+ "933": {
+  "nl": "Duivel met de paardenpoot",
+  "en": "The devil with the horse's hoof",
+  "being": "duivel",
+  "places": [
+   "kruisweg",
+   "herberg"
+  ],
+  "gist": "Een voorname vreemdeling wordt aan zijn paarden- of bokkenpoot als de duivel herkend."
+ },
+ "934": {
+  "nl": "Duivel laat zich dragen",
+  "en": "Devil makes itself carried",
+  "being": "duivel",
+  "places": [
+   "weg"
+  ],
+  "gist": "De duivel springt als kat, hond of veulen een vloeker op de rug en laat zich dragen."
+ },
+ "945": {
+  "nl": "Verhalen over de duivel",
+  "en": "Tales of the devil",
+  "being": "duivel",
+  "places": [],
+  "gist": "De duivel verschijnt in allerlei gedaanten om mensen te verleiden, te straffen of te verschrikken."
+ },
+ "949": {
+  "nl": "Schat bewaakt en zinkt weg",
+  "en": "Guarded treasure sinks away",
+  "being": "schat",
+  "places": [
+   "kerkhof",
+   "molen"
+  ],
+  "gist": "Een verborgen schat wordt bewaakt door de duivel of geesten en zakt weg zodra men hem probeert op te graven."
+ },
+ "980": {
+  "nl": "Verzonken klokken luiden",
+  "en": "Sunken bells ringing",
+  "being": "spook",
+  "places": [
+   "water",
+   "kerk"
+  ],
+  "gist": "Een klok die in een poel of ven is verzonken, luidt op bepaalde nachten nog onder water."
+ },
+ "982": {
+  "nl": "Gemetseld met roggemeel",
+  "en": "Mortared with rye flour",
+  "being": "mens",
+  "places": [
+   "kerk",
+   "brug"
+  ],
+  "gist": "Oude gebouwen en bruggen zouden zo sterk zijn omdat de specie met rogge- of boekweitmeel is gemengd."
+ },
+ "984": {
+  "nl": "Kerk gebouwd op ossenhuiden",
+  "en": "Church built on ox hides",
+  "being": "mens",
+  "places": [
+   "kerk"
+  ],
+  "gist": "Een kerk op zachte grond zou gebouwd zijn op een fundament van ossen- of koeienhuiden."
+ },
+ "1141": {
+  "nl": "Verzonken kasteel",
+  "en": "The sunken castle",
+  "being": "heilige",
+  "places": [
+   "kasteel",
+   "water"
+  ],
+  "gist": "Een kasteel van een slechte heer verzinkt als straf in een poel, waar in de kerstnacht klokken luiden."
+ },
+ "1320": {
+  "nl": "Bokkenrijders en rovers",
+  "en": "Goat-riders and robbers",
+  "being": "mens",
+  "places": [
+   "bos",
+   "heide"
+  ],
+  "gist": "Rovers en bokkenrijders schuilen in bossen en heide; hun geesten en schrikverhalen leven voort."
+ }
+}

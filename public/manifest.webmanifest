@@ -1,0 +1,11 @@
+{
+  "name": "Sagenland",
+  "short_name": "Sagenland",
+  "description": "Twaalf dagen als verzamelaar van sagen in een oude streek.",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#3b3026",
+  "theme_color": "#3b3026",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
