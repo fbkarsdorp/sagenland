@@ -22,6 +22,8 @@ type Events = {
   dawnskip: void;
   /** the side panel was folded away or opened */
   panel: void;
+  /** the miniature look switched on or off */
+  diorama: boolean;
   /** the time of day as seen on the road (it passes as the journey goes) */
   clock: { day: number; part: number; slot?: number } | null;
   /** the collector put down somewhere else, from the admin panel */

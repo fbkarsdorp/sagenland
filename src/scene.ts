@@ -10,6 +10,25 @@ import { ANIMALS, BOX, IDLE_FRAMES, RIDE_FRAMES, drawAnimal, drawRider, drawVehi
 import { Night, Spirits, WeatherScene, makeAtmosphereTextures, splash } from './atmosphere';
 import { TILE, W, idx, placeRoadTile, roadPath } from './world';
 import { Rng } from './rng';
+import { Miniatuur } from './miniatuur';
+
+/** Whether the miniature look is on: ?diorama=1 or 0 in the address, otherwise what this browser remembers. */
+export function diorama(): boolean {
+  const asked = new URLSearchParams(location.search).get('diorama');
+  try {
+    if (asked !== null) localStorage.setItem('sagenland.diorama', asked === '1' ? '1' : '0');
+    return localStorage.getItem('sagenland.diorama') === '1';
+  } catch {
+    return asked === '1';
+  }
+}
+export function setDioramaPref(on: boolean) {
+  try {
+    localStorage.setItem('sagenland.diorama', on ? '1' : '0');
+  } catch {
+    // not remembered
+  }
+}
 import { SINT_FRAMES, drawBat, drawPumpkin, drawSint, drawStar, feest } from './feest';
 import { sfx } from './sound';
 
@@ -78,6 +97,18 @@ export class MapScene extends Phaser.Scene {
   /** the vehicle left at the end of the road while the collector is on foot */
   private parked: Phaser.GameObjects.Image | null = null;
   private dawnCall: Phaser.Time.TimerEvent | null = null;
+  private mini: Miniatuur | null = null;
+
+  private setDiorama(on: boolean) {
+    const cam = this.cameras.main;
+    if (!(this.game.renderer instanceof Phaser.Renderer.WebGL.WebGLRenderer)) return; // only with WebGL
+    cam.resetPostPipeline();
+    this.mini = null;
+    if (on) {
+      cam.setPostPipeline(Miniatuur);
+      this.mini = cam.getPostPipeline(Miniatuur) as Miniatuur;
+    }
+  }
   /** feast days: lights by the doors and over the churches, and the saint on his horse */
   private feastLights: { img: Phaser.GameObjects.Image; glow: Phaser.GameObjects.Image; r: number }[] = [];
   private sint: Phaser.GameObjects.Image | null = null;
@@ -131,6 +162,10 @@ export class MapScene extends Phaser.Scene {
     this.redraw();
     G.on('changed', () => this.redraw());
     G.on('walk', (tiles) => this.walk(tiles));
+    // the miniature look: sharp in the middle, blurred towards top and bottom, as a photo of a model landscape.
+    // Try it with ?diorama=1, or in the admin panel; it is remembered in this browser.
+    this.setDiorama(diorama());
+    G.on('diorama', (on) => this.setDiorama(on));
     G.on('teleport', () => {
       this.journey = null;
       this.parked?.destroy();
@@ -914,6 +949,7 @@ export class MapScene extends Phaser.Scene {
     this.lamp.setPosition(this.rider.x + facing * 14, this.rider.y - 16).setAlpha(this.night.isDark && f.persona.travel !== 'voet' && !this.onFoot ? 0.75 : 0);
     if (this.rival && this.rivalLabel) this.rivalLabel.setPosition(this.rival.x, this.rival.y - 44);
     if (!this.camTween && !this.journey) this.clampCamera();
+    if (this.mini) this.mini.focus = this.freeCentre().y / Math.max(1, this.scale.height);
   }
 
   // ------------------------------------------------------------------ camera
@@ -1183,6 +1219,7 @@ export function startGame(parent: HTMLElement): Phaser.Game {
     backgroundColor: '#3b3026',
     scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
     render: { antialias: true, roundPixels: false },
+    pipeline: { Miniatuur } as unknown as Phaser.Types.Core.PipelineConfig,
     scene: [MapScene, WeatherScene],
   });
 }

@@ -157,3 +157,7 @@ The intro and the second morning mention the feast in one line.
 
 Evening and night: the evening (19.00) brings dusk and the lamplight; the night (21.00) brings what is seen in the
 dark and the night music. "Wacht tot de nacht" stays up for it. In winter the whole evening is night.
+
+Miniature look (experimental, off by default): `?diorama=1` turns on a tilt-shift post-effect (`src/miniatuur.ts`):
+sharp in a band across the free middle of the screen, blurred above and below, a little more saturated, like a
+photo of a model landscape. `?diorama=0` turns it off again; the admin panel has a switch and an fps meter. WebGL only.
