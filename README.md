@@ -62,7 +62,7 @@ know more, and tales differ from village to village and change along the roads.
 Sources for the collectors' side: A.J. Dekker, '150 jaar Nederlands volksverhaalonderzoek',
 *Volkskundig Bulletin* 4 (1978); T. Dekker, 'Zonder verzamelaars geen sprookjes', *Volkskundig Bulletin*
 24 (1998); T. Meder & E. Venbrux, 'Authenticity as an analytic concept in folkloristics', *Etnofoor* 17
-(2005). PDFs in `literature/`.
+(2005). The PDFs are kept locally in `literature/` (not in the repo).
 
 ## Run
 
@@ -104,7 +104,7 @@ Sources for the collectors' side: A.J. Dekker, '150 jaar Nederlands volksverhaal
     npx tsx scripts/simtest.ts friesland volhouder 7        # the underlying simulation over 25 years
     npx tsx scripts/divtest.ts friesland                     # its diversity under population and connectivity
 
-The previous village-builder version is archived in `backup/builder-2026-10-24.tgz`.
+The previous village-builder version is archived locally in `backup/` (not in the repo).
 
 ## Code
 
