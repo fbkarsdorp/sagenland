@@ -12,19 +12,25 @@ import { TILE, W, idx, placeRoadTile, roadPath } from './world';
 import { Rng } from './rng';
 import { Miniatuur } from './miniatuur';
 
-/** Whether the miniature look is on: ?diorama=1 or 0 in the address, otherwise what this browser remembers. */
-export function diorama(): boolean {
+/**
+ * The miniature look: off, our own band blur ('1'), or Phaser's own tilt-shift ('phaser'). Set by ?diorama=… in the
+ * address, otherwise what this browser remembers.
+ */
+export type Diorama = '0' | '1' | 'phaser';
+export function diorama(): Diorama {
   const asked = new URLSearchParams(location.search).get('diorama');
+  const ok = (v: string | null): v is Diorama => v === '0' || v === '1' || v === 'phaser';
   try {
-    if (asked !== null) localStorage.setItem('sagenland.diorama', asked === '1' ? '1' : '0');
-    return localStorage.getItem('sagenland.diorama') === '1';
+    if (ok(asked)) localStorage.setItem('sagenland.diorama', asked);
+    const v = localStorage.getItem('sagenland.diorama');
+    return ok(v) ? v : '0';
   } catch {
-    return asked === '1';
+    return ok(asked) ? asked : '0';
   }
 }
-export function setDioramaPref(on: boolean) {
+export function setDioramaPref(v: Diorama) {
   try {
-    localStorage.setItem('sagenland.diorama', on ? '1' : '0');
+    localStorage.setItem('sagenland.diorama', v);
   } catch {
     // not remembered
   }
@@ -98,15 +104,23 @@ export class MapScene extends Phaser.Scene {
   private parked: Phaser.GameObjects.Image | null = null;
   private dawnCall: Phaser.Time.TimerEvent | null = null;
   private mini: Miniatuur | null = null;
+  private tilt: Phaser.FX.Controller | null = null;
 
-  private setDiorama(on: boolean) {
+  private setDiorama(v: Diorama) {
     const cam = this.cameras.main;
     if (!(this.game.renderer instanceof Phaser.Renderer.WebGL.WebGLRenderer)) return; // only with WebGL
     cam.resetPostPipeline();
     this.mini = null;
-    if (on) {
+    if (this.tilt) {
+      cam.postFX.remove(this.tilt);
+      this.tilt = null;
+    }
+    if (v === '1') {
       cam.setPostPipeline(Miniatuur);
       this.mini = cam.getPostPipeline(Miniatuur) as Miniatuur;
+    } else if (v === 'phaser') {
+      // Phaser's own, with its default settings: radius, amount, contrast, blur x and y, strength
+      this.tilt = cam.postFX.addTiltShift(0.5, 1, 0.2, 1, 1, 1);
     }
   }
   /** feast days: lights by the doors and over the churches, and the saint on his horse */

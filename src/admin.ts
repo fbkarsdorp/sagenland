@@ -8,7 +8,7 @@ import { esc } from './text';
 import { loadMeta } from './data';
 import { nightTrack, setNightTrack, type NightTrack } from './sound';
 import { feest } from './feest';
-import { diorama, setDioramaPref } from './scene';
+import { diorama, setDioramaPref, type Diorama } from './scene';
 
 const REGIONS: [string, string][] = [['friesland', 'Friesland'], ['oosten', 'Het Oosten'], ['limburg', 'Limburg'], ['antwerpen', 'Antwerpse Kempen'],
   ['brabant', 'Brabant'], ['oostvl', 'Oost-Vlaanderen'], ['westvl', 'West-Vlaanderen']];
@@ -48,7 +48,7 @@ export function mountAdmin(season: { region: string; arch: string; seed: number;
       <div class="adm-row"><label>Feest</label>${[['geen', 'geen'], ['halloween', 'halloween'], ['sinterklaas', 'sint'], ['kerst', 'kerst']].map(([k, n]) => `<button data-a="feest" data-f="${k}" class="${(feest() ?? 'geen') === k ? 'on' : ''}" title="Het feest van de dag (normaal volgens de echte datum)">${n}</button>`).join('')}</div>
       <div class="adm-row"><label>Weer</label>${(['helder', 'bewolkt', 'regen', 'mist', ...(f.season === 'winter' ? ['sneeuw'] : [])] as Weather[]).map((w) => `<button data-a="wx" data-w="${w}" class="${f.weather === w ? 'on' : ''}">${WEATHER[w].nl}</button>`).join('')}</div>
       <div class="adm-row"><label>Muziek</label>${([['lucht', 'N.91music'], ['nacht', 'Suno']] as [NightTrack, string][]).map(([k, n]) => `<button data-a="music" data-m="${k}" class="${nightTrack() === k ? 'on' : ''}" title="De muziek bij nacht">${n}</button>`).join('')}</div>
-      <div class="adm-row"><label>Beeld</label><button data-a="diorama" class="${diorama() ? 'on' : ''}" title="Scherp in het midden, wazig naar boven en onder, als een maquette">miniatuur</button><span class="adm-note" id="adm-fps"></span></div>
+      <div class="adm-row"><label>Beeld</label>${([['0', 'gewoon'], ['1', 'band'], ['phaser', 'phaser']] as [Diorama, string][]).map(([k, n]) => `<button data-a="diorama" data-d="${k}" class="${diorama() === k ? 'on' : ''}" title="Het miniatuureffect">${n}</button>`).join('')}<span class="adm-note" id="adm-fps"></span></div>
       <div class="adm-row"><label>Kaart</label><button data-a="reveal">alles onthullen</button><button data-a="overview">overzicht</button></div>
       <div class="adm-row"><label>Nacht</label><button data-a="spirits" class="${allSpirits ? 'on' : ''}">alle verschijningen</button><button data-a="unsee">opnieuw zien</button></div>
       <div class="adm-row"><label>Naar</label><select data-a="go">
@@ -169,9 +169,9 @@ export function mountAdmin(season: { region: string; arch: string; seed: number;
       f.changed();
       G.emit('arrived', undefined);
     } else if (a === 'diorama') {
-      const on = !diorama();
-      setDioramaPref(on);
-      G.emit('diorama', on);
+      const v = b.dataset.d as Diorama;
+      setDioramaPref(v);
+      G.emit('diorama', v);
     } else if (a === 'feest') {
       location.search = link({ ...season, feest: b.dataset.f });
       return;

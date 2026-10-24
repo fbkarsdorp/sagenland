@@ -160,4 +160,4 @@ dark and the night music. "Wacht tot de nacht" stays up for it. In winter the wh
 
 Miniature look (experimental, off by default): `?diorama=1` turns on a tilt-shift post-effect (`src/miniatuur.ts`):
 sharp in a band across the free middle of the screen, blurred above and below, a little more saturated, like a
-photo of a model landscape. `?diorama=0` turns it off again; the admin panel has a switch and an fps meter. WebGL only.
+photo of a model landscape. `?diorama=phaser` shows Phaser's own tilt-shift for comparison; `?diorama=0` turns it off again; the admin panel has a switch and an fps meter. WebGL only.
