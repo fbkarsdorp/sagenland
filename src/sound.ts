@@ -169,8 +169,8 @@ export function setMuted(m: boolean): void {
 /** The night music: N.91music's loop of air (free, with credit), or the longer Suno piece, played through and rested. */
 export type NightTrack = 'lucht' | 'nacht';
 const TRACKS: Record<NightTrack, { level: number; loop: boolean }> = {
-  lucht: { level: 1.0, loop: true },
-  nacht: { level: 1.4, loop: false },
+  lucht: { level: 0.8, loop: true },
+  nacht: { level: 1.1, loop: false },
 };
 let track: NightTrack = 'lucht';
 const MUSIC_LEVEL = 1;
