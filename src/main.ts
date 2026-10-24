@@ -12,6 +12,7 @@ import { Rng } from './rng';
 import { PERSONA, newField, type Season } from './field';
 import { BOX, IDLE_FRAMES, RIDE_FRAMES, drawRider } from './rider';
 import { mountHero } from './hero';
+import { openColofon } from './colofon';
 import { placeNames, esc, personName } from './text';
 import { mountLocator, regionProfile } from './region';
 import { initSound } from './sound';
@@ -122,7 +123,7 @@ function renderSetup(meta: Meta, setup: HTMLElement) {
           <p><b>De tijd.</b> Elke dag heeft een ochtend, een middag, een avond en een nacht. Reizen en bezoeken kosten tijd. ’s Avonds hebben mensen meer tijd voor u; ’s nachts ziet u soms dingen die er overdag niet zijn.</p>
         </div>
       </details>
-      <p class="colophon">Gebaseerd op de Nederlandse Volksverhalenbank (Meertens Instituut). Typenummers volgen de SINSAG-catalogus.<br/>Verzamelaars in het spel werken naar patronen die uit de metadata van het archief zijn afgeleid.<br/>Muziek bij nacht: N.91music (n91music.itch.io).</p>
+      <p class="colophon">Gebaseerd op de Nederlandse Volksverhalenbank (Meertens Instituut). Typenummers volgen de SINSAG-catalogus.<br/>Verzamelaars in het spel werken naar patronen die uit de metadata van het archief zijn afgeleid.<br/>Muziek bij nacht: N.91music (n91music.itch.io).<br/>Gemaakt door Folgert Karsdorp en Claude. <button class="linkbtn" id="colofon-link">Colofon</button></p>
     </div>`;
 
   const input = setup.querySelector<HTMLInputElement>('#village')!;
@@ -209,6 +210,7 @@ function renderSetup(meta: Meta, setup: HTMLElement) {
       setTimeout(() => h.classList.add('lit'), 700 + i * 350);
     });
   });
+  setup.querySelector('#colofon-link')!.addEventListener('click', openColofon);
   setup.querySelector('#quick')!.addEventListener('click', () => setup.querySelector<HTMLButtonElement>('#begin')!.click());
   setup.querySelector('#begin')!.addEventListener('click', () => {
     cancelAnimationFrame(raf);

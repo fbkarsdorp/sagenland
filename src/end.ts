@@ -1,6 +1,7 @@
 // The end of the season: your notebook set against the story world it was taken from,
 // and against the real archive of the region.
 import { G } from './game';
+import { openColofon } from './colofon';
 import { MISC_ICONS, beingIcon, svg } from './icons';
 import { DAYS, SEASON_NL, themeNl } from './field';
 import { RED } from './sheet';
@@ -164,9 +165,10 @@ export function openEnd(show: (html: string) => void, openTale: (num: number) =>
         <button class="btn primary" id="end-again">${svg(MISC_ICONS.kaart, 16)} Een nieuw seizoen, een andere streek</button>
         <button class="btn" id="end-map">Bekijk de kaart</button></p>
       <p class="colophon">Over verzamelaars en hun vertellers: A.J. Dekker, ‘150 jaar Nederlands volksverhaalonderzoek’, <i>Volkskundig Bulletin</i> 4 (1978);
-        T. Dekker, ‘Zonder verzamelaars geen sprookjes’, <i>Volkskundig Bulletin</i> 24 (1998); T. Meder en E. Venbrux, ‘Authenticity as an analytic concept in folkloristics’, <i>Etnofoor</i> 17 (2005).<br/>Muziek bij nacht: N.91music (n91music.itch.io).</p>
+        T. Dekker, ‘Zonder verzamelaars geen sprookjes’, <i>Volkskundig Bulletin</i> 24 (1998); E. Venbrux en T. Meder, ‘Authenticity as an analytic concept in folkloristics’, <i>Etnofoor</i> 17 (2004).<br/>Muziek bij nacht: N.91music (n91music.itch.io). <button class="linkbtn" data-colofon>Colofon</button></p>
     </div>`);
   const m = document.querySelector('#modal')!;
+  m.querySelector('[data-colofon]')?.addEventListener('click', openColofon);
   m.querySelectorAll<HTMLElement>('[data-num]').forEach((el) => el.addEventListener('click', () => openTale(+el.dataset.num!)));
   m.querySelector('#end-again')!.addEventListener('click', () => location.reload());
   m.querySelector('#end-map')!.addEventListener('click', () => {

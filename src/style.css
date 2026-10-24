@@ -1041,3 +1041,15 @@ body.night .visit-head .portrait { filter: sepia(0.2) drop-shadow(0 0 10px rgba(
 #setup.choosing .choice-sum { display: block; margin-bottom: -6px; }
 #setup.choosing .choice-sum::before { content: 'Uw keuze: '; color: var(--ink-3); }
 .begin-row .field label { white-space: nowrap; }
+
+/* the colophon, over everything */
+#colofon { position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-start; justify-content: center; padding: 48px 16px 24px; background: rgba(30, 22, 14, 0.55); overflow-y: auto; }
+.colofon-leaf { width: min(680px, 100%); }
+.colofon-leaf h1 { margin-bottom: 4px; }
+.colofon-leaf h2 { font-family: var(--fell-sc); font-weight: normal; font-size: 15px; letter-spacing: 0.12em; margin: 20px 0 6px; border-bottom: 1px solid var(--rule); padding-bottom: 3px; }
+.colofon-leaf p, .colofon-leaf li { font-size: 15.5px; line-height: 1.5; }
+.colofon-leaf ul { padding-left: 18px; margin: 4px 0; }
+.colofon-leaf li { margin: 4px 0; }
+.colofon-leaf a { color: var(--red); }
+.colofon-btn { margin-left: 14px; }
+@media (max-width: 700px) { #colofon { padding: 10px 6px; } }

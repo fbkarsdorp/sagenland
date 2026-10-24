@@ -10,6 +10,7 @@ import { RED, RES, knownAt, px, sheets } from './sheet';
 import { esc, plural } from './text';
 import { isMuted, setAmbience, setMuted, setNightMusic, sfx } from './sound';
 import { FEEST_LINE, feest } from './feest';
+import { openColofon } from './colofon';
 import { markRead } from './catalogue';
 import { openEnd } from './end';
 import { drawPortrait } from './portrait';
@@ -845,9 +846,11 @@ function openIntro(first: boolean) {
       </div></details>
       <p class="persona">${esc(f.persona.perk)}</p>
       ${first && feest() ? `<p class="feest-line">${esc(FEEST_LINE[feest()!])}</p>` : ''}
-      <p style="margin-top:16px"><button class="btn primary" id="intro-ok">${first ? 'Aan de slag' : 'Verder'}</button></p>
+      <p style="margin-top:16px"><button class="btn primary" id="intro-ok">${first ? 'Aan de slag' : 'Verder'}</button>
+        ${first ? '' : '<button class="linkbtn colofon-btn" id="intro-colofon">Colofon</button>'}</p>
     </div>`);
   $('#intro-ok').addEventListener('click', closeModal);
+  document.querySelector('#intro-colofon')?.addEventListener('click', openColofon);
 }
 
 // ------------------------------------------------------------------ leaves and notices
