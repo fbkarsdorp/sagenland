@@ -78,9 +78,15 @@ function paintBackdrop(bg: HTMLCanvasElement, sheet: HTMLCanvasElement) {
   // cover the window, keeping the sheet's shape
   const k = Math.max(w / sheet.width, h / sheet.height);
   const dw = sheet.width * k, dh = sheet.height * k;
-  ctx.filter = 'grayscale(0.85) sepia(0.25) brightness(0.42) contrast(1.05) blur(0.6px)';
+  // greyed and dimmed with blend modes rather than ctx.filter, which Safari does not draw
   ctx.drawImage(sheet, (w - dw) / 2, (h - dh) / 2, dw, dh);
-  ctx.filter = 'none';
+  ctx.globalCompositeOperation = 'saturation';
+  ctx.fillStyle = 'rgba(128,128,128,0.85)';
+  ctx.fillRect(0, 0, w, h);
+  ctx.globalCompositeOperation = 'multiply';
+  ctx.fillStyle = '#6f6253';
+  ctx.fillRect(0, 0, w, h);
+  ctx.globalCompositeOperation = 'source-over';
   // darker towards the edges, so the page stands out
   const g = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.75);
   g.addColorStop(0, 'rgba(20,15,10,0)');
