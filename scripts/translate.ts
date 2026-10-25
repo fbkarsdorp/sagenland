@@ -5,6 +5,7 @@
 //   npx tsx scripts/translate.ts submit oosten [opus,haiku]   send a batch (prints its id)
 //   npx tsx scripts/translate.ts collect oosten               wait for the batch, store the translations, show the cost
 //   npx tsx scripts/translate.ts compare oosten [20]          side-by-side sample of the original and each model
+//   npx tsx scripts/translate.ts publish oosten [opus]        write public/data/oosten-en.json for the game
 //
 // The API key is read from ANTHROPIC_API_KEY or from a line ANTHROPIC_API_KEY=... in .env.local.
 
@@ -168,10 +169,19 @@ function compare(region: string, count: number) {
   console.log(`wrote ${file}`);
 }
 
+function publish(region: string, model: string) {
+  const results = readJson(resultFile(region, model), {});
+  const out = Object.fromEntries(variants(region).filter((v) => v.n in results).map((v) => [v.n, results[v.n]]));
+  const missing = variants(region).length - Object.keys(out).length;
+  fs.writeFileSync(`public/data/${region}-en.json`, JSON.stringify(out));
+  console.log(`public/data/${region}-en.json: ${Object.keys(out).length} summaries${missing ? `, ${missing} still in Dutch` : ''}`);
+}
+
 const [cmd, region, arg] = process.argv.slice(2);
 if (!region) throw new Error('usage: translate.ts submit|collect|compare <region> [models|count]');
 loadKey();
 if (cmd === 'compare') compare(region, Number(arg) || 20);
+else if (cmd === 'publish') publish(region, arg ?? 'opus');
 else {
   const client = new Anthropic();
   if (cmd === 'submit') await submit(client, region, (arg ?? 'opus,haiku').split(','));
