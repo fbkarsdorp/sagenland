@@ -9,3 +9,6 @@ node_modules
 # source recordings and earlier attempts; the game's own music is in public/music
 /music/
 /backup/
+
+# local secrets (API key for scripts/translate.ts)
+.env*
