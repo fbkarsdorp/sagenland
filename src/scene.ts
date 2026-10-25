@@ -2,7 +2,7 @@
 // the life of the land (mills, smoke, birds, cattle, a dog), the light of the day, and the camera.
 import Phaser from 'phaser';
 import { G } from './game';
-import { durationNl, type Where } from './field';
+import { durationText, type Where } from './field';
 import {
   RES, SH, SW, addKnown, compose, composeRect, knownAt, knownMask, px, renderNotes, renderSheet, sheets, type Features,
 } from './sheet';
@@ -95,7 +95,7 @@ export class MapScene extends Phaser.Scene {
 
   create() {
     const f = G.field;
-    const title = { region: f.sim.corpus.meta.regions[f.region].nl, year: f.year, season: f.season };
+    const title = { region: f.sim.corpus.meta.regions[f.region].name, year: f.year, season: f.season };
     this.sepia = renderSheet(f.land, f.sim.seed, 0, title);
     this.colour = renderSheet(f.land, f.sim.seed, 1, title, this.features);
     sheets.sepia = this.sepia;
@@ -1156,7 +1156,7 @@ export class MapScene extends Phaser.Scene {
       if (!w) return G.emit('hover', null);
       const here = f.same(w, f.at);
       const r = here ? null : f.route(w);
-      const how = here ? 'u bent hier' : r ? `${durationNl(r.parts)} ${r.foot > 3 && f.persona.travel !== 'voet' ? `${f.persona.verb} en lopen` : f.persona.verb}` : 'onbereikbaar';
+      const how = here ? 'u bent hier' : r ? `${durationText(r.parts)} ${r.foot > 3 && f.persona.travel !== 'voet' ? `${f.persona.verb} en lopen` : f.persona.verb}` : 'onbereikbaar';
       G.emit('hover', { text: `${f.whereName(w)} · ${how}`, ...screen(ptr) });
     });
 

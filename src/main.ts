@@ -134,7 +134,7 @@ function renderSetup(meta: Meta, setup: HTMLElement) {
     draw();
   };
   const loc = mountLocator(setup.querySelector<HTMLCanvasElement>('#locator')!, meta, region, { all: true, onPick: pick });
-  const hero = mountHero(setup.querySelector<HTMLCanvasElement>('#hero')!, region, meta.regions[region].nl, PERSONA[arch]?.travel ?? 'fiets',
+  const hero = mountHero(setup.querySelector<HTMLCanvasElement>('#hero')!, region, meta.regions[region].name, PERSONA[arch]?.travel ?? 'fiets',
     setup.querySelector<HTMLCanvasElement>('#setup-bg')!);
   let heroRegion = region;
 
@@ -143,28 +143,28 @@ function renderSetup(meta: Meta, setup: HTMLElement) {
     hero.setTravel(PERSONA[arch]?.travel ?? 'fiets');
     if (heroRegion !== region) {
       heroRegion = region;
-      hero.setRegion(region, meta.regions[region].nl);
+      hero.setRegion(region, meta.regions[region].name);
     }
-    setup.querySelector('#hero-region')!.textContent = `${meta.regions[region].nl}, najaar ${PERSONA[arch]?.year ?? ''}`;
+    setup.querySelector('#hero-region')!.textContent = `${meta.regions[region].name}, najaar ${PERSONA[arch]?.year ?? ''}`;
     const archs = archetypesFor(meta, region);
     if (!archs.includes(arch)) arch = archs[0];
     setup.querySelector('#region-list')!.innerHTML = ORDER.filter((r) => meta.regions[r]).map((r) => {
       const known = Object.keys(catalogue(r).types).length;
-      return `<button class="rchip ${r === region ? 'on' : ''}" data-region="${r}">${esc(meta.regions[r].nl)}${known ? `<small>${known}/${meta.regions[r].types}</small>` : ''}</button>`;
+      return `<button class="rchip ${r === region ? 'on' : ''}" data-region="${r}">${esc(meta.regions[r].name)}${known ? `<small>${known}/${meta.regions[r].types}</small>` : ''}</button>`;
     }).join('');
-    setup.querySelector('#region-profile')!.innerHTML = `<h3>${esc(meta.regions[region].nl)}</h3>${regionProfile(meta, region)}`;
+    setup.querySelector('#region-profile')!.innerHTML = `<h3>${esc(meta.regions[region].name)}</h3>${regionProfile(meta, region)}`;
     setup.querySelector('#arch-list')!.innerHTML = archs.map((k) => {
       const a = meta.archetypes[k];
-      return `<button class="choice ${k === arch ? 'on' : ''}" data-arch="${k}"><canvas class="rider-pic" data-travel="${PERSONA[k]?.travel ?? 'fiets'}" width="${BOX * 2}" height="${BOX * 2}"></canvas><b>${esc(a.nl)}</b>
+      return `<button class="choice ${k === arch ? 'on' : ''}" data-arch="${k}"><canvas class="rider-pic" data-travel="${PERSONA[k]?.travel ?? 'fiets'}" width="${BOX * 2}" height="${BOX * 2}"></canvas><b>${esc(a.name)}</b>
         <span>${blurb[k]}</span>
         <span class="muted" style="margin-top:4px;font-size:12.5px">${PERSONA[k]?.year ?? ''} · naar het patroon van ${esc(personName(a.real.name))}, ${a.real.years[0]}–${a.real.years[1]}</span></button>`;
     }).join('');
     input.value = name;
     setup.querySelector('#loc-note')!.textContent = meta.regions[region].pts.length < 30
       ? 'Bij de Vlaamse verhalen noteerde het archief zelden een plaats; daarom is de streek alleen gearceerd.' : '';
-    setup.querySelector('#begin-region')!.textContent = meta.regions[region].nl;
-    setup.querySelector('#quick-region')!.textContent = meta.regions[region].nl;
-    setup.querySelector('#choice-sum')!.innerHTML = `<span>${esc(meta.regions[region].nl)}</span> · <span>${esc(meta.archetypes[arch].nl.toLowerCase())}</span>`;
+    setup.querySelector('#begin-region')!.textContent = meta.regions[region].name;
+    setup.querySelector('#quick-region')!.textContent = meta.regions[region].name;
+    setup.querySelector('#choice-sum')!.innerHTML = `<span>${esc(meta.regions[region].name)}</span> · <span>${esc(meta.archetypes[arch].name.toLowerCase())}</span>`;
     setup.querySelectorAll<HTMLElement>('[data-region]').forEach((b) => b.addEventListener('click', () => pick(b.dataset.region!)));
     setup.querySelectorAll<HTMLElement>('[data-arch]').forEach((b) => b.addEventListener('click', () => {
       arch = b.dataset.arch!;

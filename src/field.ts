@@ -21,7 +21,7 @@ export function clockTime(part: number, slot: number): string {
   return `${HOURS[part][Math.min(1, slot)]}.00 uur`;
 }
 /** A duration in stretches of two hours, in words. */
-export function durationNl(halves: number): string {
+export function durationText(halves: number): string {
   return halves === 1 ? 'twee uur' : halves === 2 ? 'vier uur' : halves === 3 ? 'zes uur' : `${halves * 2} uur`;
 }
 export const DAYS = 12;
@@ -42,11 +42,11 @@ const SHY = new Set(['heks', 'mare', 'voorgezicht', 'tovenaar']);
 
 /** How a teller takes to the collector. */
 export type Temper = 'schuchter' | 'verteller' | 'gelovig' | 'spotter';
-export const TEMPER: Record<Temper, { nl: string; hint: string }> = {
-  schuchter: { nl: 'schuchter, maar weet veel', hint: 'Vertelt niet zomaar. Noem een verhaal dat u kent: dan komt er vaak iets boven.' },
-  verteller: { nl: 'een rasverteller', hint: 'Vertelt graag en goed, liefst iets om om te lachen. Gelooft er zelf niet zo in.' },
-  gelovig: { nl: 'gelooft wat er verteld wordt', hint: 'Vertelt het als iets wat echt gebeurd is, maar is bang om uitgelachen te worden.' },
-  spotter: { nl: 'lacht om oudewijvenpraat', hint: 'Weet zelf niet veel, maar weet wel wie er wat weet.' },
+export const TEMPER: Record<Temper, { name: string; hint: string }> = {
+  schuchter: { name: 'schuchter, maar weet veel', hint: 'Vertelt niet zomaar. Noem een verhaal dat u kent: dan komt er vaak iets boven.' },
+  verteller: { name: 'een rasverteller', hint: 'Vertelt graag en goed, liefst iets om om te lachen. Gelooft er zelf niet zo in.' },
+  gelovig: { name: 'gelooft wat er verteld wordt', hint: 'Vertelt het als iets wat echt gebeurd is, maar is bang om uitgelachen te worden.' },
+  spotter: { name: 'lacht om oudewijvenpraat', hint: 'Weet zelf niet veel, maar weet wel wie er wat weet.' },
 };
 
 export type Via = 'bezoek' | 'avond' | 'buurten' | 'onderweg' | 'brief';
@@ -206,18 +206,18 @@ export interface VisitResult {
 
 /** The time of year of the twelve days. Most collecting was done in autumn and winter, when the work on the land was done. */
 export type Season = 'lente' | 'zomer' | 'herfst' | 'winter';
-export const SEASON_NL: Record<Season, string> = { lente: 'voorjaar', zomer: 'zomer', herfst: 'najaar', winter: 'winter' };
+export const SEASON_NAME: Record<Season, string> = { lente: 'voorjaar', zomer: 'zomer', herfst: 'najaar', winter: 'winter' };
 /** the week of the year the twelve days begin, for the world's own calendar */
 const SEASON_WEEK: Record<Season, number> = { lente: 4, zomer: 17, herfst: 30, winter: 43 };
 
 /** The weather of a day in the field: in autumn as often wet as dry, with mist over the low ground some mornings. */
 export type Weather = 'helder' | 'bewolkt' | 'regen' | 'mist' | 'sneeuw';
-export const WEATHER: Record<Weather, { nl: string; line: string }> = {
-  helder: { nl: 'helder', line: 'Een heldere herfstdag. Wie kan, is op het land.' },
-  bewolkt: { nl: 'bewolkt', line: 'Grijs en stil. Het blad valt.' },
-  regen: { nl: 'regen', line: 'Het regent. Op de wegen is het modder, maar de mensen zitten binnen bij de kachel.' },
-  mist: { nl: 'mist', line: 'Mist over het veen en de heide. Buiten de wegen verdwaal je zo.' },
-  sneeuw: { nl: 'sneeuw', line: 'Er is sneeuw gevallen. Niemand is op het land; de wegen zijn glad en stil.' },
+export const WEATHER: Record<Weather, { name: string; line: string }> = {
+  helder: { name: 'helder', line: 'Een heldere herfstdag. Wie kan, is op het land.' },
+  bewolkt: { name: 'bewolkt', line: 'Grijs en stil. Het blad valt.' },
+  regen: { name: 'regen', line: 'Het regent. Op de wegen is het modder, maar de mensen zitten binnen bij de kachel.' },
+  mist: { name: 'mist', line: 'Mist over het veen en de heide. Buiten de wegen verdwaal je zo.' },
+  sneeuw: { name: 'sneeuw', line: 'Er is sneeuw gevallen. Niemand is op het land; de wegen zijn glad en stil.' },
 };
 /** What a day's weather is like in each season, for the morning's card. */
 const WEATHER_LINE: Record<Season, Partial<Record<Weather, string>>> = {
@@ -545,7 +545,7 @@ export class Field {
     const met = this.met.has(n.id);
     if (this.ill.has(n.id)) out.push('ziek');
     if (met) {
-      out.push(TEMPER[this.temper(n)].nl);
+      out.push(TEMPER[this.temper(n)].name);
       const left = [...n.know.keys()].filter((t) => !this.toldUs.get(n.id)?.has(t)).length;
       out.push(left === 0 ? 'heeft u alles verteld' : left > 4 ? 'weet nog veel' : 'weet nog wat');
       const frags = this.notebook.filter((e) => e.narrator === n.id && e.frag).length;
@@ -639,7 +639,7 @@ export class Field {
     if (to.kind === 'place') this.visitedPlaces.add(to.id);
     else this.visitedSites.add(to.id);
     for (const l of this.leads) if ((l.kind === 'site' || l.kind === 'place') && this.same(l.at, to)) l.done = true;
-    const dur = durationNl(r.parts);
+    const dur = durationText(r.parts);
     this.write('travel', `Van ${from} naar ${this.whereName(to)} (${dur}).${first ? ' ' + this.arrivalLine(to) : ''}`);
     this.encounter = this.meetOnRoad(r.tiles, fromWhere, to, evening);
     // when the journey began, so the day can pass by on the way rather than all at once
@@ -865,11 +865,11 @@ export class Field {
     } else if (m.kind === 'theme') {
       const being = m.being;
       this.asked.set(being, (this.asked.get(being) ?? 0) + 1);
-      say('u', `U vraagt naar ${themeNl(being)}.`);
+      say('u', `U vraagt naar ${themeName(being)}.`);
       const cands = untold.filter(([t]) => sim.type(t)?.being === being);
       if (tm === 'spotter' && !ok()) {
         shift(-0.04);
-        say('zij', `${name} schiet in de lach. „${cap(themeNl(being))}? Daar geloven alleen oude wijven in.”`);
+        say('zij', `${name} schiet in de lach. „${cap(themeName(being))}? Daar geloven alleen oude wijven in.”`);
         if (talk.open >= 0.25) {
           const lead = this.leadFor(being, n);
           if (lead) out.push({ who: 'zij', text: `„Vraag het ${this.leadName(lead)} maar. Die gelooft het allemaal.”`, lead });
@@ -894,7 +894,7 @@ export class Field {
     } else if (m.kind === 'prompt') {
       // telling a tale yourself jogs the memory: 'no, I don't know that one, but I do know…' (Jaarsma and Mrs Kobus)
       const ty = sim.type(m.t);
-      say('u', `U vertelt zelf het verhaal van ${ty.nl.toLowerCase()}, zoals u het hoorde.`);
+      say('u', `U vertelt zelf het verhaal van ${ty.name.toLowerCase()}, zoals u het hoorde.`);
       const same = untold.find(([t]) => t === m.t);
       const v = sim.variant(this.notebook.find((e) => e.t === m.t)?.n ?? 0);
       const tags = new Set(v?.g ?? []);
@@ -915,7 +915,7 @@ export class Field {
         say('zij', `${name} grinnikt. „En dat gelooft u allemaal?”`);
       } else {
         shift(0.1);
-        say('zij', related.length || same ? `${name} luistert aandachtig. Er komt nog niets, maar het ijs is gebroken.` : `„${ty.nl}? Nee, daar zegt het me niets. Maar mooi verteld.”`);
+        say('zij', related.length || same ? `${name} luistert aandachtig. Er komt nog niets, maar het ijs is gebroken.` : `„${ty.name}? Nee, daar zegt het me niets. Maar mooi verteld.”`);
       }
     } else if (m.kind === 'again') {
       const e = this.notebook[m.num - 1];
@@ -1080,7 +1080,7 @@ export class Field {
     this.introduced.add(best.id);
     const w = this.whereIs(best);
     const own = [...best.know.keys()].filter((t) => this.knowers(t) <= 1).length;
-    const about = being ? `weet van ${themeNl(being)}` : own >= 2 ? 'weet dingen die je nergens anders hoort' : 'kan vertellen';
+    const about = being ? `weet van ${themeName(being)}` : own >= 2 ? 'weet dingen die je nergens anders hoort' : 'kan vertellen';
     const by = source ?? from?.first ?? 'iemand';
     const lines = [`${sim.name(best)} (${this.age(best)})`, `in ${this.whereName(w)} ${about}.`, `— zegt ${by}`];
     return this.addLead('person', lines, w, best.id, source ?? (from ? sim.name(from) : 'iemand'));
@@ -1264,10 +1264,10 @@ export class Field {
     const lines = [a.seen];
     const near = this.sim.alive(s.place)[0] ?? this.sim.alive()[0];
     const lead = this.leadFor(a.being, null, "men");
-    if (lead) lines.push(`Wie weet er meer van ${themeNl(a.being)}? In ${this.whereName(lead.at)} zou ${this.sim.name(this.sim.narrators[lead.narrator!])} het weten.`);
+    if (lead) lines.push(`Wie weet er meer van ${themeName(a.being)}? In ${this.whereName(lead.at)} zou ${this.sim.name(this.sim.narrators[lead.narrator!])} het weten.`);
     else lines.push(`Niemand die u kent, weet hier iets van. Maar vraag er eens naar.`);
     void near;
-    this.write('day', `Bij ${s.name} iets gezien: ${themeNl(a.being)}?`);
+    this.write('day', `Bij ${s.name} iets gezien: ${themeName(a.being)}?`);
     this.changed();
     return { lines, lead, being: a.being };
   }
@@ -1488,7 +1488,7 @@ export function cap(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-export function themeNl(being: string): string {
+export function themeName(being: string): string {
   return ({
     duivel: 'de duivel', heks: 'heksen', spook: 'spoken', witte_wieven: 'witte wieven', kabouter: 'kabouters', weerwolf: 'weerwolven',
     mare: 'de nachtmerrie', dwaallicht: 'dwaallichten', watergeest: 'watergeesten', spookdier: 'spookdieren', voorgezicht: 'voorgezichten',

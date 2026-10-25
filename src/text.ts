@@ -1,6 +1,7 @@
 // Names, dates and the little sentences that describe how a story changed.
 import type { Meta, Variant } from './data';
 import { Rng } from './rng';
+import { L } from './i18n';
 
 // Village names in the toponymic style of each region (partly invented, partly borrowed from small hamlets)
 const PLACE_NAMES: Record<string, string[]> = {
@@ -132,7 +133,8 @@ export function personName(s: string): string {
   return m ? `${m[2]} ${m[1]}` : s;
 }
 
-export function listNl(items: string[]): string {
+/** "a, b en c" */
+export function listOf(items: string[]): string {
   if (items.length < 2) return items.join('');
-  return `${items.slice(0, -1).join(', ')} en ${items[items.length - 1]}`;
+  return `${items.slice(0, -1).join(', ')} ${L('en', 'and')} ${items[items.length - 1]}`;
 }

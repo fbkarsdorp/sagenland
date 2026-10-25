@@ -796,7 +796,7 @@ export function renderNotes(ctx: CanvasRenderingContext2D, f: Field, trailUpTo =
     const k = knownAt(f.known, s.x, s.y);
     const x = px(s.x), y = px(s.y) + 22;
     label(s.name, x, y, { italic: true, size: 14, alpha: 0.6 + 0.4 * k });
-    if (s.legend) label(`„${sim.type(s.legend).nl}”`, x, y + 16, { italic: true, size: 13, color: RED });
+    if (s.legend) label(`„${sim.type(s.legend).name}”`, x, y + 16, { italic: true, size: 13, color: RED });
   }
 
   // red dots: what was written down where

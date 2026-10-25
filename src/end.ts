@@ -3,7 +3,7 @@
 import { G } from './game';
 import { openColofon } from './colofon';
 import { MISC_ICONS, beingIcon, svg } from './icons';
-import { DAYS, SEASON_NL, themeNl } from './field';
+import { DAYS, SEASON_NAME, themeName } from './field';
 import { RED } from './sheet';
 import { esc, personName, plural } from './text';
 
@@ -67,7 +67,7 @@ export function openEnd(show: (html: string) => void, openTale: (num: number) =>
 
   show(`
     <div class="leaf sheet wide end">
-      <div class="kicker">${DAYS} dagen in ${esc(R.nl)}, ${SEASON_NL[f.season]} ${f.year}</div>
+      <div class="kicker">${DAYS} dagen in ${esc(R.name)}, ${SEASON_NAME[f.season]} ${f.year}</div>
       <h1>${plural(nb.length, 'verhaal', 'verhalen')} in uw schrift</h1>
       <p class="rank">${esc(rank)} · ${sc.total} punten${f.rival ? ` · de ander: ${rs}` : ''}</p>
       <p class="verdict">${esc(verdict)}${f.rival ? (sc.total > rs ? ' Uw schrift is rijker dan dat van de ander.' : sc.total === rs ? ' U en de ander hielden elkaar in evenwicht.' : ' De ander bracht meer mee naar huis.') : ''}</p>
@@ -98,8 +98,8 @@ export function openEnd(show: (html: string) => void, openTale: (num: number) =>
         const where = f.land.places[q.village].name;
         return `<h2>Het verloren verhaal</h2>
           ${q.stage === 4
-            ? `<p>U volgde het spoor van ${esc(q.grand)}: van het begin dat in ${esc(f.land.places[0].name)} nog werd onthouden, langs het graf in ${esc(f.land.places[q.church].name)} en ${esc(f.land.sites[q.site].name)} in het donker, naar ${esc(sim.name(n))} in ${esc(where)}. „${esc(sim.type(q.t).nl)}” staat nu in uw schrift: ${f.archiveCount(q.t)}× opgetekend in de hele Verhalenbank.</p>`
-            : `<p>Het spoor van ${esc(q.grand)} liep dood${q.stage > 0 ? ` bij ${['', 'het begin', 'het graf', 'het oord waar de familie vandaan kwam'][q.stage]}` : ''}. ${esc(sim.name(n))} in ${esc(where)} kende het verhaal nog: „${esc(sim.type(q.t).nl)}”, ${f.archiveCount(q.t)}× opgetekend in de hele Verhalenbank. Niemand heeft het opgeschreven.</p>`}`;
+            ? `<p>U volgde het spoor van ${esc(q.grand)}: van het begin dat in ${esc(f.land.places[0].name)} nog werd onthouden, langs het graf in ${esc(f.land.places[q.church].name)} en ${esc(f.land.sites[q.site].name)} in het donker, naar ${esc(sim.name(n))} in ${esc(where)}. „${esc(sim.type(q.t).name)}” staat nu in uw schrift: ${f.archiveCount(q.t)}× opgetekend in de hele Verhalenbank.</p>`
+            : `<p>Het spoor van ${esc(q.grand)} liep dood${q.stage > 0 ? ` bij ${['', 'het begin', 'het graf', 'het oord waar de familie vandaan kwam'][q.stage]}` : ''}. ${esc(sim.name(n))} in ${esc(where)} kende het verhaal nog: „${esc(sim.type(q.t).name)}”, ${f.archiveCount(q.t)}× opgetekend in de hele Verhalenbank. Niemand heeft het opgeschreven.</p>`}`;
       })()}
 
       <h2>Uw vondsten</h2>
@@ -107,7 +107,7 @@ export function openEnd(show: (html: string) => void, openTale: (num: number) =>
         <ul class="findlist">${finds.slice(0, 8).map((e) => {
           const n = sim.narrators[e.narrator];
           const bits = [e.holders <= 1 ? 'alleen bij deze verteller' : '', f.tier(e.t) === 'zeldzaam' ? `${f.archiveCount(e.t)}× in de hele Verhalenbank` : ''].filter(Boolean).join(', ');
-          return `<li><button class="linkish" data-num="${e.num}">„${esc(sim.type(e.t).nl)}”</button> <span class="muted">van ${esc(sim.name(n))}, ${esc(f.land.places[n.place].name)} · ${esc(bits)}${n.died !== null ? ' · <span class="red">inmiddels overleden</span>' : ''}</span></li>`;
+          return `<li><button class="linkish" data-num="${e.num}">„${esc(sim.type(e.t).name)}”</button> <span class="muted">van ${esc(sim.name(n))}, ${esc(f.land.places[n.place].name)} · ${esc(bits)}${n.died !== null ? ' · <span class="red">inmiddels overleden</span>' : ''}</span></li>`;
         }).join('')}</ul>` : `<p>Geen vondsten: alles in uw schrift wordt ook door anderen verteld, of staat al vaak in het archief.${rv && rivalFinds ? ` De ander had er ${rivalFinds}.` : ''}</p>`}
 
       <h2>Wat er verteld werd, en wat uw schrift ervan weet</h2>
@@ -131,7 +131,7 @@ export function openEnd(show: (html: string) => void, openTale: (num: number) =>
       <ul class="ways">${ways || '<li>Nergens.</li>'}</ul>
       <p>${viaLead ? `${plural(viaLead, 'verteller', 'vertellers')} vond u doordat iemand anders u de naam gaf. ` : ''}${exhausted ? `${plural(exhausted, 'verteller heeft', 'vertellers hebben')} u alles verteld wat ${exhausted === 1 ? 'die wist' : 'ze wisten'}; van de anderen kent u maar een deel.` : 'Van niemand kent u het hele repertoire.'}
         ${frags.length ? `${plural(frags.length, 'verhaal kwam', 'verhalen kwamen')} maar half boven, en ${frags.length === 1 ? 'is' : 'zijn'} nooit afgemaakt.` : ''}
-        ${asked.length ? `U vroeg het vaakst naar ${asked.slice(0, 2).map(([b]) => esc(themeNl(b))).join(' en ')}.` : ''}</p>
+        ${asked.length ? `U vroeg het vaakst naar ${asked.slice(0, 2).map(([b]) => esc(themeName(b))).join(' en ')}.` : ''}</p>
       <p class="sub">Ook echte verzamelaars vonden hun vertellers via anderen, kwamen terug om af te maken wat de vorige keer niet bovenkwam, en vroegen vooral naar wat ze zelf zochten.</p>
 
       ${rv ? `<h2>De andere verzamelaar</h2>
@@ -149,7 +149,7 @@ export function openEnd(show: (html: string) => void, openTale: (num: number) =>
         zegt minstens zoveel over wie er verzamelde als over wat er verteld werd.</p>
 
       <h2>In het echte archief</h2>
-      <p>In de Verhalenbank komen de sagen uit ${esc(R.nl)} vooral van ${R.collectors.slice(0, 3).map(([c, n]) => `${esc(personName(c))} (${n.toLocaleString('nl-NL')})`).join(', ')}.
+      <p>In de Verhalenbank komen de sagen uit ${esc(R.name)} vooral van ${R.collectors.slice(0, 3).map(([c, n]) => `${esc(personName(c))} (${n.toLocaleString('nl-NL')})`).join(', ')}.
         U werkte naar het patroon van ${esc(real.name)}: ${real.sage.toLocaleString('nl-NL')} sagen van ${real.tellers.toLocaleString('nl-NL')} vertellers,
         ${Math.round(real.top5 * 100)}% daarvan van de vijf meest bevraagde. Ook hun schriften zijn een keuze.</p>
 
@@ -157,7 +157,7 @@ export function openEnd(show: (html: string) => void, openTale: (num: number) =>
       ${nb.length ? `<div class="cards">${nb.map((e) => {
         const n = sim.narrators[e.narrator];
         return `<button class="card ${e.kind}" data-num="${e.num}"><div class="no"><span>nr. ${e.num}</span><span>dag ${e.day}</span></div>
-          <div class="ti">${svg(beingIcon(sim.type(e.t).being), 16, RED)} ${esc(sim.type(e.t).nl)}</div>
+          <div class="ti">${svg(beingIcon(sim.type(e.t).being), 16, RED)} ${esc(sim.type(e.t).name)}</div>
           <div class="who">${esc(sim.name(n))}, ${esc(f.land.places[e.place].name)}</div></button>`;
       }).join('')}</div>` : '<p class="sub">Leeg.</p>'}
 

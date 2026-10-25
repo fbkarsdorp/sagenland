@@ -1,8 +1,8 @@
 // The region in context: a clickable index map and a short profile drawn from the archive's metadata.
 import type { Meta } from './data';
-import { BEING_NL, beingIcon, svg } from './icons';
+import { BEING_NAME, beingIcon, svg } from './icons';
 import { LOCATOR_ASPECT, drawLocator, regionAt, unproject } from './locator';
-import { REGION_LAND, esc, listNl, personName } from './text';
+import { REGION_LAND, esc, listOf, personName } from './text';
 
 export interface LocatorHandle {
   set(region: string | null): void;
@@ -92,15 +92,15 @@ export function regionProfile(meta: Meta, region: string, opts: { short?: boolea
   const fmt = (x: number) => x.toLocaleString('nl-NL');
   const langs = R.langs.filter(([l, n]) => l !== 'Standaardnederlands' && n > R.count * 0.08).slice(0, 2).map(([l]) => l);
   const cols = R.collectors.slice(0, 3).map(([c, n]) => `${esc(personName(c))} <span class="muted">(${fmt(n)})</span>`);
-  const typical = R.typical.map((b) => `<span class="chip">${svg(beingIcon(b), 16)}${esc(BEING_NL[b] ?? b)}</span>`).join('');
+  const typical = R.typical.map((b) => `<span class="chip">${svg(beingIcon(b), 16)}${esc(BEING_NAME[b] ?? b)}</span>`).join('');
   const top = R.top.slice(0, opts.short ? 3 : 5).map(([t, n]) =>
-    `<li><span>${esc(meta.types[t]?.nl ?? t)}</span><span class="muted">${fmt(n)}</span></li>`).join('');
+    `<li><span>${esc(meta.types[t]?.name ?? t)}</span><span class="muted">${fmt(n)}</span></li>`).join('');
   return `
-    <p class="rp-lead">${fmt(R.count)} opgetekende sagen van ${R.types} typen${langs.length ? `, vooral in het ${esc(listNl(langs))}` : ''}.
+    <p class="rp-lead">${fmt(R.count)} opgetekende sagen van ${R.types} typen${langs.length ? `, vooral in het ${esc(listOf(langs))}` : ''}.
       ${R.years ? `De meeste zijn opgeschreven tussen ${R.years[0]} en ${R.years[1]}.` : ''}</p>
     ${decadeChart(R.decades, R.years)}
     <p class="rp-land">${esc(REGION_LAND[region] ?? '')}</p>
     <div class="rp-row"><span class="rp-k">Meer dan elders</span><div class="chips">${typical}</div></div>
     <div class="rp-row"><span class="rp-k">Het vaakst verteld</span><ol class="rp-top">${top}</ol></div>
-    ${opts.short ? '' : `<div class="rp-row"><span class="rp-k">Opgetekend door</span><span>${listNl(cols)}</span></div>`}`;
+    ${opts.short ? '' : `<div class="rp-row"><span class="rp-k">Opgetekend door</span><span>${listOf(cols)}</span></div>`}`;
 }

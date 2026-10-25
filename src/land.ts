@@ -8,13 +8,13 @@ import {
 
 export type VillageKind = 'kerkdorp' | 'esdorp' | 'gehucht' | 'molendorp' | 'veendorp' | 'heidedorp';
 
-export const VILLAGE: Record<VillageKind, { nl: string; desc: string }> = {
-  kerkdorp: { nl: 'kerkdorp', desc: 'Een dorp rond de kerk, met een herberg, een smidse en een school.' },
-  esdorp: { nl: 'boerendorp', desc: 'Grote boerderijen rond de akkers. Hier wonen families al eeuwen op dezelfde grond.' },
-  gehucht: { nl: 'gehucht', desc: 'Een paar boerderijen bij elkaar, ver van alles.' },
-  molendorp: { nl: 'molendorp', desc: 'Een dorp onder de molen, waar boeren van heinde en ver hun koren brengen.' },
-  veendorp: { nl: 'veendorp', desc: 'Huizen in een lange rij langs de weg door het veen. Arm, en vol verhalen over het water.' },
-  heidedorp: { nl: 'heidedorp', desc: 'Een handvol huizen aan de rand van de heide, bij de schaapskooien.' },
+export const VILLAGE: Record<VillageKind, { name: string; desc: string }> = {
+  kerkdorp: { name: 'kerkdorp', desc: 'Een dorp rond de kerk, met een herberg, een smidse en een school.' },
+  esdorp: { name: 'boerendorp', desc: 'Grote boerderijen rond de akkers. Hier wonen families al eeuwen op dezelfde grond.' },
+  gehucht: { name: 'gehucht', desc: 'Een paar boerderijen bij elkaar, ver van alles.' },
+  molendorp: { name: 'molendorp', desc: 'Een dorp onder de molen, waar boeren van heinde en ver hun koren brengen.' },
+  veendorp: { name: 'veendorp', desc: 'Huizen in een lange rij langs de weg door het veen. Arm, en vol verhalen over het water.' },
+  heidedorp: { name: 'heidedorp', desc: 'Een handvol huizen aan de rand van de heide, bij de schaapskooien.' },
 };
 
 export type SiteKind = 'galg' | 'kruisweg' | 'linde' | 'veen' | 'heide' | 'bos' | 'water';

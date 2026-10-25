@@ -132,13 +132,15 @@ async function collect(client: Anthropic, region: string) {
     }
     for (const t of JSON.parse(text.text).translations) results[key][t.id] = t.en.trim();
   }
-  const total = variants(region).length;
+  const all = variants(region);
   for (const key of models) {
-    fs.writeFileSync(resultFile(region, key), JSON.stringify(results[key], null, 1));
+    // keep only answers for summaries that exist: the model now and then garbles an id
+    const kept = Object.fromEntries(all.filter((v) => v.n in results[key]).map((v) => [v.n, results[key][v.n]]));
+    fs.writeFileSync(resultFile(region, key), JSON.stringify(kept, null, 1));
     const m = MODELS[key];
     const cost = (usage[key].input * m.input + usage[key].output * m.output) / 1e6;
     console.log(
-      `${key}: ${Object.keys(results[key]).length} of ${total} translated; ` +
+      `${key}: ${Object.keys(kept).length} of ${all.length} translated; ` +
         `${usage[key].input} in, ${usage[key].output} out, $${cost.toFixed(2)}`,
     );
   }

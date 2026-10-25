@@ -1,9 +1,10 @@
-// Data bundles produced by scripts/build_data.py
+// Data bundles produced by scripts/build_data.py, and the English summaries from scripts/translate.ts
+import { ARCHETYPE_EN, EN, L, REGION_EN, TAG_EN } from './i18n';
 
 export interface Variant {
   n: number;            // Verhalenbank item number
   t: string;            // SINSAG type code
-  d: string;            // Standard Dutch summary
+  d: string;            // summary: Standard Dutch, or English in the English edition
   y: number | null;     // year recorded
   c: number;            // collector index into meta.collectors
   r: string;            // archive record identifier
@@ -15,6 +16,7 @@ export interface Variant {
 export interface TypeInfo {
   nl: string;
   en: string;
+  name: string;         // the name to show: nl or en
   being: string;
   places: string[];
   gist: string;
@@ -38,6 +40,7 @@ export interface RealStats {
 
 export interface Archetype {
   nl: string;
+  name: string;
   real: RealStats;
   alt?: RealStats[];
   regions: Record<string, number>;
@@ -56,6 +59,7 @@ export interface Archetype {
 
 export interface RegionMeta {
   nl: string;
+  name: string;
   count: number;
   types: number;
   firsts: string[];
@@ -95,13 +99,19 @@ const base = import.meta.env?.BASE_URL ?? './';
 
 async function getJSON<T>(path: string): Promise<T> {
   const res = await fetch(`${base}data/${path}`);
-  if (!res.ok) throw new Error(`Kon ${path} niet laden (${res.status})`);
+  if (!res.ok) throw new Error(L(`Kon ${path} niet laden (${res.status})`, `Could not load ${path} (${res.status})`));
   return res.json() as Promise<T>;
 }
 
 let metaPromise: Promise<Meta> | null = null;
 export function loadMeta(): Promise<Meta> {
-  metaPromise ??= getJSON<Meta>('meta.json');
+  metaPromise ??= getJSON<Meta>('meta.json').then((meta) => {
+    for (const t of Object.values(meta.types)) t.name = EN ? t.en : t.nl;
+    for (const [k, r] of Object.entries(meta.regions)) r.name = EN ? (REGION_EN[k] ?? r.nl) : r.nl;
+    for (const [k, a] of Object.entries(meta.archetypes)) a.name = EN ? (ARCHETYPE_EN[k] ?? a.nl) : a.nl;
+    if (EN) for (const t of meta.tags) t.label = TAG_EN[t.id] ?? t.label;
+    return meta;
+  });
   return metaPromise;
 }
 
@@ -120,7 +130,11 @@ export function buildCorpus(region: string, meta: Meta, variants: Variant[]): Co
 
 export async function loadCorpus(region: string): Promise<Corpus> {
   const meta = await loadMeta();
-  const data = await getJSON<{ variants: Variant[] }>(`${region}.json`);
+  const [data, en] = await Promise.all([
+    getJSON<{ variants: Variant[] }>(`${region}.json`),
+    EN ? getJSON<Record<string, string>>(`${region}-en.json`) : null,
+  ]);
+  if (en) for (const v of data.variants) v.d = en[v.n] ?? v.d;
   return buildCorpus(region, meta, data.variants);
 }
 

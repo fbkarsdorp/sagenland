@@ -74,7 +74,7 @@ export function beingIcon(being: string | undefined): string {
   return BEING_ICONS[being ?? ''] ?? BEING_ICONS.spook;
 }
 
-export const BEING_NL: Record<string, string> = {
+export const BEING_NAME: Record<string, string> = {
   duivel: 'Duivel', heks: 'Heksen', spook: 'Spoken en doden', witte_wieven: 'Witte wieven', kabouter: 'Kabouters',
   weerwolf: 'Weerwolven', mare: 'Nachtmerrie', dwaallicht: 'Dwaallichten', watergeest: 'Watergeesten',
   spookdier: 'Spookdieren', voorgezicht: 'Voorgezicht', tovenaar: 'Tovenaars en bezweerders', reus: 'Reuzen',

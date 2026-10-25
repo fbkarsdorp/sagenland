@@ -3,7 +3,7 @@
 // step, jump to the end, or start another season by its seed. What it changes is for looking, not for playing:
 // skipping days does not let the region's year go on.
 import { G } from './game';
-import { APPARITION, DAYS, PERSONA, partName, SEASON_NL, WEATHER, clockTime, type Season, type Weather, type Where } from './field';
+import { APPARITION, DAYS, PERSONA, partName, SEASON_NAME, WEATHER, clockTime, type Season, type Weather, type Where } from './field';
 import { esc } from './text';
 import { loadMeta } from './data';
 import { nightTrack, setNightTrack, type NightTrack } from './sound';
@@ -43,9 +43,9 @@ export function mountAdmin(season: { region: string; arch: string; seed: number;
         <button data-a="day-">‹</button><b class="adm-val">${f.day}</b><button data-a="day+">›</button>
         <span class="adm-note">van ${DAYS}</span></div>
       <div class="adm-row adm-times">${[0, 1, 2, 3, 4, 5].map((k) => `<button data-a="time" data-k="${k}" class="${k === slotNow ? 'on' : ''}" title="${partName(k >> 1, k & 1)}">${clockTime(k >> 1, k & 1).replace(' uur', '')}</button>`).join('')}</div>
-      <div class="adm-row"><label>Seizoen</label>${(['lente', 'zomer', 'herfst', 'winter'] as Season[]).map((x) => `<button data-a="year" data-s="${x}" class="${f.season === x ? 'on' : ''}" title="Hetzelfde land en dezelfde mensen, in het ${SEASON_NL[x]}">${x}</button>`).join('')}</div>
+      <div class="adm-row"><label>Seizoen</label>${(['lente', 'zomer', 'herfst', 'winter'] as Season[]).map((x) => `<button data-a="year" data-s="${x}" class="${f.season === x ? 'on' : ''}" title="Hetzelfde land en dezelfde mensen, in het ${SEASON_NAME[x]}">${x}</button>`).join('')}</div>
       <div class="adm-row"><label>Feest</label>${[['geen', 'geen'], ['halloween', 'halloween'], ['sinterklaas', 'sint'], ['kerst', 'kerst']].map(([k, n]) => `<button data-a="feest" data-f="${k}" class="${(feest() ?? 'geen') === k ? 'on' : ''}" title="Het feest van de dag (normaal volgens de echte datum)">${n}</button>`).join('')}</div>
-      <div class="adm-row"><label>Weer</label>${(['helder', 'bewolkt', 'regen', 'mist', ...(f.season === 'winter' ? ['sneeuw'] : [])] as Weather[]).map((w) => `<button data-a="wx" data-w="${w}" class="${f.weather === w ? 'on' : ''}">${WEATHER[w].nl}</button>`).join('')}</div>
+      <div class="adm-row"><label>Weer</label>${(['helder', 'bewolkt', 'regen', 'mist', ...(f.season === 'winter' ? ['sneeuw'] : [])] as Weather[]).map((w) => `<button data-a="wx" data-w="${w}" class="${f.weather === w ? 'on' : ''}">${WEATHER[w].name}</button>`).join('')}</div>
       <div class="adm-row"><label>Muziek</label>${([['lucht', 'N.91music'], ['nacht', 'Suno']] as [NightTrack, string][]).map(([k, n]) => `<button data-a="music" data-m="${k}" class="${nightTrack() === k ? 'on' : ''}" title="De muziek bij nacht">${n}</button>`).join('')}</div>
       <div class="adm-row"><label>Kaart</label><button data-a="reveal">alles onthullen</button><button data-a="overview">overzicht</button></div>
       <div class="adm-row"><label>Nacht</label><button data-a="spirits" class="${allSpirits ? 'on' : ''}">alle verschijningen</button><button data-a="unsee">opnieuw zien</button></div>
@@ -98,7 +98,7 @@ export function mountAdmin(season: { region: string; arch: string; seed: number;
   let names: Record<string, string> = {};
   loadMeta().then((m) => {
     regionsOf = Object.fromEntries(Object.entries(m.archetypes).map(([k, a]) => [k, Object.keys(a.regions)]));
-    names = Object.fromEntries(Object.entries(m.archetypes).map(([k, a]) => [k, a.nl]));
+    names = Object.fromEntries(Object.entries(m.archetypes).map(([k, a]) => [k, a.name]));
     draw();
   });
   const archOptions = (region: string, chosen: string) => Object.keys(PERSONA)

@@ -2,8 +2,8 @@
 // on the left, and the conversations, tales, notebook, diary and end as leaves of paper.
 import { loadText, verhalenbankUrl } from './data';
 import { G } from './game';
-import { BEING_NL, MISC_ICONS, beingIcon, svg } from './icons';
-import { CHAPTER_NEED, DAYS, PARTS, SEASON_NL, partName, clockTime, durationNl, weatherLine, TEMPER, WEATHER, cap, openWord, themeNl, type Entry, type Weather, type Letter, type Move, type Talk, type TalkLine, type VisitResult, type Where } from './field';
+import { BEING_NAME, MISC_ICONS, beingIcon, svg } from './icons';
+import { CHAPTER_NEED, DAYS, PARTS, SEASON_NAME, partName, clockTime, durationText, weatherLine, TEMPER, WEATHER, cap, openWord, themeName, type Entry, type Weather, type Letter, type Move, type Talk, type TalkLine, type VisitResult, type Where } from './field';
 import { VILLAGE, SITE } from './land';
 import type { Narrator } from './sim';
 import { RED, RES, knownAt, px, sheets } from './sheet';
@@ -189,7 +189,7 @@ function renderSound() {
 function render() {
   const f = G.field;
   renderClock();
-  $('#season').textContent = `${SEASON_NL[f.season]} ${f.year}`;
+  $('#season').textContent = `${SEASON_NAME[f.season]} ${f.year}`;
 
   // a new day: a moment to take in where you are
   if (f.day > lastDay && !modalOpen && !G.walking && !f.over) {
@@ -218,7 +218,7 @@ function render() {
     });
     if (fresh.length) {
       sfx('era');
-      notice(`${svg(beingIcon(fresh[0]), 22, RED)} <b>Hoofdstuk af: ${esc(BEING_NL[fresh[0]] ?? fresh[0])}</b> · drie verhalen bij elkaar, +5 punten voor uw sagenboek.`);
+      notice(`${svg(beingIcon(fresh[0]), 22, RED)} <b>Hoofdstuk af: ${esc(BEING_NAME[fresh[0]] ?? fresh[0])}</b> · drie verhalen bij elkaar, +5 punten voor uw sagenboek.`);
     }
   }
   chaptersDone = sc.done;
@@ -250,8 +250,8 @@ function renderBook() {
   const finds = f.finds();
   $('#book').innerHTML = `<h3>Uw sagenboek <span class="count">${sc.done}/${f.chapters.length} hoofdstukken</span></h3>
     <div class="finds${finds.length ? '' : ' zero'}" title="Verhalen die alleen uw verteller nog kende, of die in het hele archief zeldzaam zijn">${svg(MISC_ICONS.catalogus, 16, RED)}<span>Vondsten</span><b>${finds.length}</b></div>
-    ${f.chapterProgress().map((c) => ` <div class="chapter ${c.have >= CHAPTER_NEED ? 'done' : ''}${justDone.has(c.being) ? ' just' : ''}" title="${esc(BEING_NL[c.being] ?? c.being)}: ${c.have} van ${CHAPTER_NEED} verhalen">
-      ${svg(beingIcon(c.being), 16, c.have >= CHAPTER_NEED ? RED : undefined)}<span>${esc(BEING_NL[c.being] ?? c.being)}</span>
+    ${f.chapterProgress().map((c) => ` <div class="chapter ${c.have >= CHAPTER_NEED ? 'done' : ''}${justDone.has(c.being) ? ' just' : ''}" title="${esc(BEING_NAME[c.being] ?? c.being)}: ${c.have} van ${CHAPTER_NEED} verhalen">
+      ${svg(beingIcon(c.being), 16, c.have >= CHAPTER_NEED ? RED : undefined)}<span>${esc(BEING_NAME[c.being] ?? c.being)}</span>
       <i>${Array.from({ length: CHAPTER_NEED }, (_, k) => `<b class="${k < c.have ? 'on' : ''}"></b>`).join('')}</i></div>`).join('')}
     ${questBox()}`;
 }
@@ -379,7 +379,7 @@ function renderHereBody(f: typeof G.field, el: HTMLElement) {
   const name = f.whereName(w);
   const s = w.kind === 'site' ? f.land.sites[w.id] : null;
   const sub = w.kind === 'place'
-    ? `${cap(VILLAGE[f.land.kinds[w.id]].nl)} · ${plural(people.length, 'bewoner', 'bewoners')}`
+    ? `${cap(VILLAGE[f.land.kinds[w.id]].name)} · ${plural(people.length, 'bewoner', 'bewoners')}`
     : s!.hut !== null ? `Buiten ${f.land.places[s!.place].name}. Iemand ${SITE[s!.kind].loner}.` : `Buiten ${f.land.places[s!.place].name}.`;
   let evening = '';
   const occ = f.attendable();
@@ -436,9 +436,9 @@ function destView(w: Where): string {
   const name = f.whereName(w);
   const been = w.kind === 'place' ? f.visitedPlaces.has(w.id) : f.visitedSites.has(w.id);
   const leads = f.leads.filter((l) => !l.done && f.same(l.at, w));
-  const desc = been ? f.arrivalLine(w) : w.kind === 'place' ? `Een ${VILLAGE[f.land.kinds[w.id]].nl}. U bent er nog niet geweest.` : 'U bent er nog niet geweest.';
+  const desc = been ? f.arrivalLine(w) : w.kind === 'place' ? `Een ${VILLAGE[f.land.kinds[w.id]].name}. U bent er nog niet geweest.` : 'U bent er nog niet geweest.';
   const recs = f.notebook.filter((e) => (w.kind === 'place' ? e.place === w.id && e.site === null : e.site === w.id)).length;
-  const how = r ? `${durationNl(r.parts)} ${r.foot > 3 && f.persona.travel !== 'voet' ? `${f.persona.verb}, het laatste stuk te voet` : f.persona.verb}` : '';
+  const how = r ? `${durationText(r.parts)} ${r.foot > 3 && f.persona.travel !== 'voet' ? `${f.persona.verb}, het laatste stuk te voet` : f.persona.verb}` : '';
   const arrive = r ? f.part * 2 + f.slot + r.parts : 0;
   const late = (r && arrive > 5 ? ' U komt er pas morgen aan.' : r && Math.floor(arrive / 2) > f.part ? ` U komt aan in de ${PARTS[Math.floor(arrive / 2)]}.` : '')
     + (r && f.weather === 'regen' ? ' Door de regen gaat het langzaam.' : '')
@@ -593,7 +593,7 @@ function renderTalk() {
         <span class="mood-k">Sfeer</span><span class="mood-bar"><i style="width:${Math.round(t.open * 100)}%"></i></span><span class="mood-w">${openWord(t.open)}</span>
         <span class="moves" title="Wat u nog kunt zeggen voor het tijd is om te gaan">${Array.from({ length: f.part === 2 ? 4 : 3 }, (_, k) => `<b class="${k < t.moves ? 'on' : ''}"></b>`).join('')}</span>
       </div>
-      ${known ? `<p class="temper"><b>${esc(cap(TEMPER[tm].nl))}.</b> ${esc(TEMPER[tm].hint)}</p>` : ''}
+      ${known ? `<p class="temper"><b>${esc(cap(TEMPER[tm].name))}.</b> ${esc(TEMPER[tm].hint)}</p>` : ''}
       <div class="talk-log" id="talk-log">${t.lines.map((l, i) => `<div class="tl" data-i="${i}">${lineHtml(l)}</div>`).join('')}</div>
       ${live ? `
         <h3 class="ask-h">Op gang komen</h3>
@@ -602,13 +602,13 @@ function renderTalk() {
           ${mv('leven', `<span><b>Vraag naar vroeger</b><br/><small>Over de ouders, het werk, het dorp zoals het was.</small></span>`)}
         </div>
         ${prompts.length ? `<h3 class="ask-h">Vertel zelf een verhaal</h3>
-          <div class="asks prompts">${prompts.map((ty) => mv('prompt', `${svg(beingIcon(f.sim.type(ty).being), 16, RED)}<span>${esc(f.sim.type(ty).nl)}</span>`, `data-t="${ty}"`)).join('')}</div>` : ''}
+          <div class="asks prompts">${prompts.map((ty) => mv('prompt', `${svg(beingIcon(f.sim.type(ty).being), 16, RED)}<span>${esc(f.sim.type(ty).name)}</span>`, `data-t="${ty}"`)).join('')}</div>` : ''}
         <h3 class="ask-h">Vragen</h3>
-        ${frags.length ? `<div class="asks wide">${frags.map((e) => mv('again', `<span><b>Het verhaal van laatst</b><br/><small>„${esc(f.sim.type(e.t).nl)}”, dat maar half bovenkwam.</small></span>`, `data-num="${e.num}"`)).join('')}</div>` : ''}
+        ${frags.length ? `<div class="asks wide">${frags.map((e) => mv('again', `<span><b>Het verhaal van laatst</b><br/><small>„${esc(f.sim.type(e.t).name)}”, dat maar half bovenkwam.</small></span>`, `data-num="${e.num}"`)).join('')}</div>` : ''}
         <div class="asks">
           ${themes.map((b) => {
             const have = new Set(f.notebook.filter((e) => f.sim.type(e.t).being === b).map((e) => e.t)).size;
-            return mv('theme', `${svg(beingIcon(b), 20, RED)}<span>${esc(BEING_NL[b] ?? b)}</span>${have ? `<em title="Al in uw schrift">${have}</em>` : ''}`, `data-being="${b}"`);
+            return mv('theme', `${svg(beingIcon(b), 20, RED)}<span>${esc(BEING_NAME[b] ?? b)}</span>${have ? `<em title="Al in uw schrift">${have}</em>` : ''}`, `data-being="${b}"`);
           }).join('')}
         </div>
         <div class="asks wide">
@@ -699,8 +699,8 @@ function taleCard(e: Entry): string {
     const words = v.d.split(' ');
     const part = words.slice(0, Math.max(6, Math.floor(words.length * 0.35))).join(' ');
     return `<article class="tale-card frag">
-      <div class="kicker">${svg(beingIcon(ty.being), 20, RED)} <span>nr. ${e.num} · ${esc(BEING_NL[ty.being] ?? ty.being)}</span> <span class="stamp grey">fragment</span></div>
-      <h2>${esc(ty.nl)}?</h2>
+      <div class="kicker">${svg(beingIcon(ty.being), 20, RED)} <span>nr. ${e.num} · ${esc(BEING_NAME[ty.being] ?? ty.being)}</span> <span class="stamp grey">fragment</span></div>
+      <h2>${esc(ty.name)}?</h2>
       <p class="summary">${esc(part)} …</p>
       <p class="sub">Verder wil het niet boven komen. Misschien op een andere dag.</p>
     </article>`;
@@ -723,8 +723,8 @@ function taleCard(e: Entry): string {
     : esc(v.d);
   return `<article class="tale-card${fresh ? ' fresh' : ''}${find ? ' find' : ''}">
     ${find ? '<div class="find-ribbon">Vondst</div>' : ''}
-    <div class="kicker">${svg(beingIcon(ty.being), 20, RED)} <span>nr. ${e.num} · ${esc(BEING_NL[ty.being] ?? ty.being)}${via}</span> ${entryBadge(e)}</div>
-    <h2>${esc(ty.nl)} <span class="pts" title="punten voor uw schrift">+${pts}${why ? ` <small>${esc(why)}</small>` : ''}</span></h2>
+    <div class="kicker">${svg(beingIcon(ty.being), 20, RED)} <span>nr. ${e.num} · ${esc(BEING_NAME[ty.being] ?? ty.being)}${via}</span> ${entryBadge(e)}</div>
+    <h2>${esc(ty.name)} <span class="pts" title="punten voor uw schrift">+${pts}${why ? ` <small>${esc(why)}</small>` : ''}</span></h2>
     ${rarity}
     <p class="summary">${summary}</p>
     <div class="orig-wrap"><button class="btn small" data-orig="${e.n}">Lees de opgetekende tekst</button>
@@ -777,7 +777,7 @@ function openNotebook() {
           const n = f.sim.narrators[e.narrator];
           const where = e.site !== null ? f.land.sites[e.site].name : f.land.places[e.place].name;
           return `<button class="card ${e.kind}${finds.includes(e) ? ' find' : ''}" data-num="${e.num}"><div class="no"><span>nr. ${e.num}</span><span>+${f.points(e)} · dag ${e.day}</span></div>
-            <div class="ti">${svg(beingIcon(f.sim.type(e.t).being), 16, RED)} ${esc(f.sim.type(e.t).nl)}</div>
+            <div class="ti">${svg(beingIcon(f.sim.type(e.t).being), 16, RED)} ${esc(f.sim.type(e.t).name)}</div>
             <div class="who">${esc(f.sim.name(n))}, ${esc(where)}${e.frag ? ' · <i>fragment</i>' : e.kind === 'same' ? ' · <i>al gehoord</i>' : e.kind === 'version' ? ' · <i>andere versie</i>' : ''}</div></button>`;
         };
         // by chapter: the kinds of tale in your sagenboek first, then the rest
@@ -791,7 +791,7 @@ function openNotebook() {
         return (finds.length ? `<h2 class="nb-h">Vondsten</h2><div class="cards">${finds.map(card).join('')}</div>` : '')
           + order.map((b) => {
             const have = f.chapterProgress().find((c) => c.being === b)?.have ?? 0;
-            return `<h2 class="nb-h">${b === 'overig' ? 'Overige verhalen' : `${svg(beingIcon(b), 18, RED)} ${esc(BEING_NL[b] ?? b)}`}${b !== 'overig' ? ` <span class="${have >= CHAPTER_NEED ? 'red' : 'muted'}">${have >= CHAPTER_NEED ? 'hoofdstuk af' : `${have} van ${CHAPTER_NEED}`}</span>` : ''}</h2>
+            return `<h2 class="nb-h">${b === 'overig' ? 'Overige verhalen' : `${svg(beingIcon(b), 18, RED)} ${esc(BEING_NAME[b] ?? b)}`}${b !== 'overig' ? ` <span class="${have >= CHAPTER_NEED ? 'red' : 'muted'}">${have >= CHAPTER_NEED ? 'hoofdstuk af' : `${have} van ${CHAPTER_NEED}`}</span>` : ''}</h2>
               <div class="cards">${groups.get(b)!.map(card).join('')}</div>`;
           }).join('');
       })() : '<p class="sub">Nog leeg. Zoek iemand op en luister.</p>'}
@@ -803,14 +803,14 @@ function openDiary() {
   const f = G.field;
   let day = 0;
   const body = f.diary.map((d) => {
-    const head = d.day !== day ? `<h3 class="chron-year">Dag ${(day = d.day)} <span class="wx">${WX_ICON[f.weathers[d.day] ?? 'bewolkt']} ${WEATHER[f.weathers[d.day] ?? 'bewolkt'].nl}</span></h3>` : '';
+    const head = d.day !== day ? `<h3 class="chron-year">Dag ${(day = d.day)} <span class="wx">${WX_ICON[f.weathers[d.day] ?? 'bewolkt']} ${WEATHER[f.weathers[d.day] ?? 'bewolkt'].name}</span></h3>` : '';
     return `${head}<div class="entry d-${d.kind}"><span class="d">${PARTS[d.part]}</span>${esc(d.text)}</div>`;
   }).join('');
   showModal(`
     <div class="leaf sheet">
       ${closeBtn()}
       <div class="kicker">${svg(MISC_ICONS.kroniek, 22)} Dagboek</div>
-      <h1>${esc(f.sim.corpus.meta.regions[f.region].nl)}, ${SEASON_NL[f.season]} ${f.year}</h1>
+      <h1>${esc(f.sim.corpus.meta.regions[f.region].name)}, ${SEASON_NAME[f.season]} ${f.year}</h1>
       <div id="chron">${body}</div>
     </div>`);
 }
@@ -823,7 +823,7 @@ function openIntro(first: boolean) {
   showModal(`
     <div class="leaf sheet intro-leaf">
       ${closeBtn()}
-      <div class="kicker">${cap(SEASON_NL[f.season])} ${f.year} · ${esc(f.sim.corpus.meta.regions[f.region].nl)}</div>
+      <div class="kicker">${cap(SEASON_NAME[f.season])} ${f.year} · ${esc(f.sim.corpus.meta.regions[f.region].name)}</div>
       <h1>${first ? `Aangekomen in ${esc(home)}` : 'Hoe het werkt'}</h1>
       <p class="lead-in">U hebt ${DAYS} dagen om in deze streek sagen op te tekenen. Wat u niet opschrijft, verdwijnt vroeg of laat.</p>
       <ol class="steps">
@@ -1009,7 +1009,7 @@ function showApparition(site: number) {
       <h1>Wat was dat?</h1>
       ${r.lines.map((l) => `<p class="said-line">${esc(l)}</p>`).join('')}
       ${r.lead ? `<div class="pencil-card">${svg(MISC_ICONS.kaart, 18)} <span>In potlood: ${r.lead.lines.map(esc).join(' ')}</span></div>` : ''}
-      <p class="sub">Nu weet u waar u naar kunt vragen: ${esc(themeNl(r.being))}.</p>
+      <p class="sub">Nu weet u waar u naar kunt vragen: ${esc(themeName(r.being))}.</p>
       <p style="margin-top:16px"><button class="btn primary" id="res-ok">Verder</button></p>
     </div>`);
   $('#res-ok').addEventListener('click', closeModal);
@@ -1067,7 +1067,7 @@ function renderClock() {
   const shown: Weather = misty ? 'mist' : w === 'mist' ? 'bewolkt' : w;
   // a clear evening has stars, not sun
   const clearNight = shown === 'helder' && f.isDark(c);
-  $('#wx').innerHTML = `${clearNight ? MOON_ICON : WX_ICON[shown]}<span>${clearNight ? 'sterrenhemel' : WEATHER[shown].nl}</span>`;
+  $('#wx').innerHTML = `${clearNight ? MOON_ICON : WX_ICON[shown]}<span>${clearNight ? 'sterrenhemel' : WEATHER[shown].name}</span>`;
   $('#wx').title = weatherLine(f.season, w);
 }
 
