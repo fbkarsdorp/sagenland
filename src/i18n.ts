@@ -6,6 +6,8 @@ export type Lang = 'nl' | 'en';
 const KEY = 'sagenland-lang';
 
 function detect(): Lang {
+  // headless scripts (scripts/fieldtest.ts) choose with SAGENLAND_LANG=en
+  if (typeof location === 'undefined') return (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env.SAGENLAND_LANG === 'en' ? 'en' : 'nl';
   const asked = new URLSearchParams(location.search).get('lang');
   if (asked === 'nl' || asked === 'en') return asked;
   try {

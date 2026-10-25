@@ -4,6 +4,7 @@
 import { Rng, makeNoise } from './rng';
 import { N4, TILE, W, H, idx, inb, type BKind } from './world';
 import { field, trace } from './contour';
+import { EN, L } from './i18n';
 import type { Land } from './land';
 import type { Field, Known, Season } from './field';
 
@@ -642,7 +643,9 @@ export function renderSheet(land: Land, seed: number, k: number, title: { region
   ctx.fillText(title.region, M - 8, M - 22);
   ctx.textAlign = 'right';
   ctx.font = 'italic 15px "IM Fell English"';
-  ctx.fillText(`Veldkaart, ${{ lente: 'voorjaar', zomer: 'zomer', herfst: 'najaar', winter: 'winter' }[SEASON]} ${title.year}`, M + W * TILE + 8, M - 22);
+  ctx.fillText(EN
+    ? `Field map, ${{ lente: 'spring', zomer: 'summer', herfst: 'autumn', winter: 'winter' }[SEASON]} ${title.year}`
+    : `Veldkaart, ${{ lente: 'voorjaar', zomer: 'zomer', herfst: 'najaar', winter: 'winter' }[SEASON]} ${title.year}`, M + W * TILE + 8, M - 22);
   return canvas;
 }
 
@@ -790,13 +793,13 @@ export function renderNotes(ctx: CanvasRenderingContext2D, f: Field, trailUpTo =
     label(p.name.toUpperCase(), x, y, { caps: true, size: p.home ? 19 : 16, alpha: 0.55 + 0.45 * k });
     const recs = f.notebook.filter((e) => e.place === p.id && e.site === null).length;
     const own = f.finds().filter((e) => e.place === p.id).length;
-    if (f.visitedPlaces.has(p.id)) label(recs ? `${recs} opgetekend${own ? ` · ${own} ${own === 1 ? 'vondst' : 'vondsten'}` : ''}` : 'bezocht', x, y + 17, { italic: true, size: 13, color: recs ? RED : '#5a4a3a' });
+    if (f.visitedPlaces.has(p.id)) label(recs ? `${recs} ${L('opgetekend', 'recorded')}${own ? ` · ${own} ${own === 1 ? L('vondst', 'find') : L('vondsten', 'finds')}` : ''}` : L('bezocht', 'visited'), x, y + 17, { italic: true, size: 13, color: recs ? RED : '#5a4a3a' });
   });
   for (const s of land.sites) {
     const k = knownAt(f.known, s.x, s.y);
     const x = px(s.x), y = px(s.y) + 22;
     label(s.name, x, y, { italic: true, size: 14, alpha: 0.6 + 0.4 * k });
-    if (s.legend) label(`„${sim.type(s.legend).name}”`, x, y + 16, { italic: true, size: 13, color: RED });
+    if (s.legend) label(`${L('„', '“')}${sim.type(s.legend).name}”`, x, y + 16, { italic: true, size: 13, color: RED });
   }
 
   // red dots: what was written down where
@@ -823,7 +826,7 @@ export function renderNotes(ctx: CanvasRenderingContext2D, f: Field, trailUpTo =
   // hearsay, pencilled near what it is about; and where the other collector goes tomorrow
   const notes = f.leads.filter((l) => !l.done).map((l) => ({ id: l.id, lines: l.lines, at: l.at, rival: false, quest: l.kind === 'quest' }));
   if (f.rival?.next !== null && f.rival?.next !== undefined && !f.over)
-    notes.push({ id: 999, lines: ['Morgen komt de ander hier.'], at: { kind: 'place', id: f.rival.next }, rival: true, quest: false });
+    notes.push({ id: 999, lines: [L('Morgen komt de ander hier.', 'The other collector comes here tomorrow.')], at: { kind: 'place', id: f.rival.next }, rival: true, quest: false });
   for (const l of notes) {
     const [tx, ty] = f.tileOf(l.at);
     const X = px(tx), Y = px(ty);

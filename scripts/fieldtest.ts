@@ -1,13 +1,13 @@
 // A headless season in the field with a simple bot, for balancing:
-//   npx tsx scripts/fieldtest.ts [region] [archetype] [seed] [-v]
+//   npx tsx scripts/fieldtest.ts [region] [archetype] [seed] [-v]      (SAGENLAND_LANG=en for the English edition)
 // The bot visits everyone it has not met, moves on when a village starts repeating itself,
 // and goes to every village and site in turn. A thoughtful player should do better.
 import { readFileSync } from 'node:fs';
-import { buildCorpus, type Meta } from '../src/data';
+import { buildCorpus, nameMeta, type Meta } from '../src/data';
 import { newField, type Where } from '../src/field';
 
 const [region = 'oosten', arch = 'volhouder', seedS = '3', verbose] = process.argv.slice(2);
-const meta: Meta = JSON.parse(readFileSync('public/data/meta.json', 'utf8'));
+const meta: Meta = nameMeta(JSON.parse(readFileSync('public/data/meta.json', 'utf8')));
 const corpus = buildCorpus(region, meta, JSON.parse(readFileSync(`public/data/${region}.json`, 'utf8')).variants);
 const f = newField(corpus, arch, +seedS);
 let guard = 0;

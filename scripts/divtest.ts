@@ -1,12 +1,12 @@
 // Does the story world behave like a cultural population? Diversity against population size,
 // effective population size (who tells) and connectivity:  npx tsx scripts/divtest.ts [region]
 import { readFileSync } from 'node:fs';
-import { buildCorpus, type Meta } from '../src/data';
+import { buildCorpus, nameMeta, type Meta } from '../src/data';
 import { Sim, type Culture } from '../src/sim';
 import { layRoad, idx } from '../src/world';
 
 const region = process.argv[2] ?? 'friesland';
-const meta: Meta = JSON.parse(readFileSync('public/data/meta.json', 'utf8'));
+const meta: Meta = nameMeta(JSON.parse(readFileSync('public/data/meta.json', 'utf8')));
 const corpus = buildCorpus(region, meta, JSON.parse(readFileSync(`public/data/${region}.json`, 'utf8')).variants);
 
 type Setup = (sim: Sim) => void;

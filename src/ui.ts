@@ -3,11 +3,12 @@
 import { loadText, verhalenbankUrl } from './data';
 import { G } from './game';
 import { BEING_NAME, MISC_ICONS, beingIcon, svg } from './icons';
-import { CHAPTER_NEED, DAYS, PARTS, SEASON_NAME, partName, clockTime, durationText, weatherLine, TEMPER, WEATHER, cap, openWord, themeName, type Entry, type Weather, type Letter, type Move, type Talk, type TalkLine, type VisitResult, type Where } from './field';
+import { CHAPTER_NEED, DARK_TITLE, DAYS, HOURS, PARTS, SEASON_NAME, partName, clockTime, durationText, weatherLine, TEMPER, WEATHER, cap, openWord, themeName, type Entry, type Weather, type Letter, type Move, type Talk, type TalkLine, type VisitResult, type Where } from './field';
 import { VILLAGE, SITE } from './land';
 import type { Narrator } from './sim';
 import { RED, RES, knownAt, px, sheets } from './sheet';
 import { esc, plural } from './text';
+import { EN, L } from './i18n';
 import { isMuted, setAmbience, setMuted, setNightMusic, sfx } from './sound';
 import { FEEST_LINE, feest } from './feest';
 import { openColofon } from './colofon';
@@ -31,24 +32,24 @@ export function mountUI() {
   root.innerHTML = `
     <header id="topbar" class="sheet">
       <div class="brand">Sagenland</div>
-      <button class="iconbtn" id="btn-overview" title="De hele kaart (0)">${svg(MISC_ICONS.kaart, 18)}</button>
+      <button class="iconbtn" id="btn-overview" title="${L('De hele kaart', 'The whole map')} (0)">${svg(MISC_ICONS.kaart, 18)}</button>
       <div class="sep"></div>
       <div class="stat date"><b id="day"></b><span id="season"></span></div>
       <span id="wx" class="wx"></span>
-      <div class="days" id="days" title="Dagen in het veld"></div>
+      <div class="days" id="days" title="${L('Dagen in het veld', 'Days in the field')}"></div>
       <div class="sep"></div>
-      <div class="stat score" title="Wat uw schrift waard is, en dat van de andere verzamelaar"><b id="score">0</b><span id="rivalscore">punten</span></div>
+      <div class="stat score" title="${L('Wat uw schrift waard is, en dat van de andere verzamelaar', 'What your notebook is worth, and the other collector’s')}"><b id="score">0</b><span id="rivalscore">${L('punten', 'points')}</span></div>
       <div class="sep"></div>
-      <button class="iconbtn labelled" id="btn-notebook" title="Uw schrift: alles wat u opschreef">${svg(MISC_ICONS.notitieboek, 18)}<span class="hide-narrow">schrift</span><span class="count" id="nrec">0</span></button>
-      <button class="iconbtn labelled" id="btn-diary" title="Dagboek">${svg(MISC_ICONS.kroniek, 18)}<span class="hide-narrow">dagboek</span></button>
-      <button class="iconbtn" id="btn-help" title="Hoe het werkt">?</button>
-      <button class="iconbtn" id="btn-sound" title="Geluid aan/uit (M)"></button>
-      ${document.fullscreenEnabled ? `<button class="iconbtn" id="btn-full" title="Volledig scherm">${FULL_ICON}</button>` : ''}
+      <button class="iconbtn labelled" id="btn-notebook" title="${L('Uw schrift: alles wat u opschreef', 'Your notebook: everything you wrote down')}">${svg(MISC_ICONS.notitieboek, 18)}<span class="hide-narrow">${L('schrift', 'notebook')}</span><span class="count" id="nrec">0</span></button>
+      <button class="iconbtn labelled" id="btn-diary" title="${L('Dagboek', 'Diary')}">${svg(MISC_ICONS.kroniek, 18)}<span class="hide-narrow">${L('dagboek', 'diary')}</span></button>
+      <button class="iconbtn" id="btn-help" title="${L('Hoe het werkt', 'How it works')}">?</button>
+      <button class="iconbtn" id="btn-sound" title="${L('Geluid aan/uit', 'Sound on/off')} (M)"></button>
+      ${document.fullscreenEnabled ? `<button class="iconbtn" id="btn-full" title="${L('Volledig scherm', 'Full screen')}">${FULL_ICON}</button>` : ''}
     </header>
     <aside id="leads" class="sheet">
       <button id="drawerbar" class="drawerbar"></button>
       <div id="book"></div>
-      <h3 class="gehoord">Gehoord</h3><div id="leadlist"></div></aside>
+      <h3 class="gehoord">${L('Gehoord', 'Heard')}</h3><div id="leadlist"></div></aside>
     <section id="here" class="sheet"></section>
     <div id="notice" class="sheet hidden"></div>
     <div id="dayveil" class="hidden"></div>
@@ -156,9 +157,8 @@ export function mountUI() {
         notice(`${svg(MISC_ICONS.kroniek, 20)} ${esc(d.text)}`);
       }
     }
-    for (const d of f.diary.slice(diaryLen)) {
-      if (d.kind === 'rival' && (d.text.startsWith('Er is nog iemand') || d.text.startsWith('Morgen gaat') || d.text.includes('was u voor'))) notice(`${svg(MISC_ICONS.verzamelaar, 20)} ${esc(d.text)}`);
-    }
+    // the rival's news, but not the routine line about where they were today
+    for (const d of f.diary.slice(diaryLen)) if (d.kind === 'rival' && d.notice) notice(`${svg(MISC_ICONS.verzamelaar, 20)} ${esc(d.text)}`);
     diaryLen = f.diary.length;
     G.emit('changed', undefined);
     if (!G.walking && !modalOpen) setTimeout(showPost, 400);
@@ -201,8 +201,8 @@ function render() {
     const cls = day < f.day ? 'past' : day === f.day ? 'now' : '';
     const occ = f.occasions.find((o) => o.known && o.day === day);
     const ev = occ ? ` ev${occ.kind === 'buurten' ? ' bu' : ''}` : '';
-    const label = occ ? (occ.kind === 'herberg' ? ': vertelavond' : ': buurten') : '';
-    return `<i class="${cls}${ev}" title="Dag ${day}${label}">${day === f.day ? `<b style="width:${((f.part * 2 + f.slot + 1) / 6) * 100}%"></b>` : ''}</i>`;
+    const label = occ ? (occ.kind === 'herberg' ? L(': vertelavond', ': storytelling evening') : L(': buurten', ': at the neighbours’')) : '';
+    return `<i class="${cls}${ev}" title="${L('Dag', 'Day')} ${day}${label}">${day === f.day ? `<b style="width:${((f.part * 2 + f.slot + 1) / 6) * 100}%"></b>` : ''}</i>`;
   }).join('');
   $('#nrec').textContent = String(f.notebook.length);
   const sc = f.score();
@@ -218,11 +218,12 @@ function render() {
     });
     if (fresh.length) {
       sfx('era');
-      notice(`${svg(beingIcon(fresh[0]), 22, RED)} <b>Hoofdstuk af: ${esc(BEING_NAME[fresh[0]] ?? fresh[0])}</b> · drie verhalen bij elkaar, +5 punten voor uw sagenboek.`);
+      notice(`${svg(beingIcon(fresh[0]), 22, RED)} ${L(`<b>Hoofdstuk af: ${esc(BEING_NAME[fresh[0]] ?? fresh[0])}</b> · drie verhalen bij elkaar, +5 punten voor uw sagenboek.`,
+        `<b>Chapter complete: ${esc(BEING_NAME[fresh[0]] ?? fresh[0])}</b> · three tales together, +5 points for your book of legends.`)}`);
     }
   }
   chaptersDone = sc.done;
-  $('#rivalscore').textContent = f.rival ? `punten · de ander ${f.rivalScore()}` : 'punten';
+  $('#rivalscore').textContent = f.rival ? L(`punten · de ander ${f.rivalScore()}`, `points · rival ${f.rivalScore()}`) : L('punten', 'points');
   renderBook();
   renderLeads();
   renderHere();
@@ -236,11 +237,11 @@ function renderLeads() {
   const f = G.field;
   const open = f.leads.filter((l) => !l.done);
   const done = f.leads.filter((l) => l.done).slice(-3);
-  $('#leadlist').innerHTML = [...open, ...done].map((l) => `<button class="lead ${l.done ? 'done' : ''}" data-lead="${l.id}" title="${l.done ? '' : 'Op de kaart'}">
-    ${l.lines.map((s) => esc(s)).join(' ')}</button>`).join('') || '<p class="sub">Nog niets.</p>';
-  $('#leads h3.gehoord').innerHTML = `Gehoord <span class="count">${open.length}</span>`;
+  $('#leadlist').innerHTML = [...open, ...done].map((l) => `<button class="lead ${l.done ? 'done' : ''}" data-lead="${l.id}" title="${l.done ? '' : L('Op de kaart', 'On the map')}">
+    ${l.lines.map((s) => esc(s)).join(' ')}</button>`).join('') || `<p class="sub">${L('Nog niets.', 'Nothing yet.')}</p>`;
+  $('#leads h3.gehoord').innerHTML = `${L('Gehoord', 'Heard')} <span class="count">${open.length}</span>`;
   const sc = f.score();
-  $('#drawerbar').innerHTML = `<span>Sagenboek <b>${sc.done}/${f.chapters.length}</b></span><span>Vondsten <b>${f.finds().length}</b></span><span>Gehoord <b>${open.length}</b></span><i>${$('#leads').classList.contains('open') ? '▾' : '▴'}</i>`;
+  $('#drawerbar').innerHTML = `<span>${L('Sagenboek', 'Book')} <b>${sc.done}/${f.chapters.length}</b></span><span>${L('Vondsten', 'Finds')} <b>${f.finds().length}</b></span><span>${L('Gehoord', 'Heard')} <b>${open.length}</b></span><i>${$('#leads').classList.contains('open') ? '▾' : '▴'}</i>`;
 }
 
 /** The chapters of the sagenboek you are filling: three tales of a kind make a chapter. */
@@ -248,9 +249,9 @@ function renderBook() {
   const f = G.field;
   const sc = f.score();
   const finds = f.finds();
-  $('#book').innerHTML = `<h3>Uw sagenboek <span class="count">${sc.done}/${f.chapters.length} hoofdstukken</span></h3>
-    <div class="finds${finds.length ? '' : ' zero'}" title="Verhalen die alleen uw verteller nog kende, of die in het hele archief zeldzaam zijn">${svg(MISC_ICONS.catalogus, 16, RED)}<span>Vondsten</span><b>${finds.length}</b></div>
-    ${f.chapterProgress().map((c) => ` <div class="chapter ${c.have >= CHAPTER_NEED ? 'done' : ''}${justDone.has(c.being) ? ' just' : ''}" title="${esc(BEING_NAME[c.being] ?? c.being)}: ${c.have} van ${CHAPTER_NEED} verhalen">
+  $('#book').innerHTML = `<h3>${L('Uw sagenboek', 'Your book of legends')} <span class="count">${sc.done}/${f.chapters.length} ${L('hoofdstukken', 'chapters')}</span></h3>
+    <div class="finds${finds.length ? '' : ' zero'}" title="${L('Verhalen die alleen uw verteller nog kende, of die in het hele archief zeldzaam zijn', 'Tales only your storyteller still knew, or that are rare in the whole archive')}">${svg(MISC_ICONS.catalogus, 16, RED)}<span>${L('Vondsten', 'Finds')}</span><b>${finds.length}</b></div>
+    ${f.chapterProgress().map((c) => ` <div class="chapter ${c.have >= CHAPTER_NEED ? 'done' : ''}${justDone.has(c.being) ? ' just' : ''}" title="${esc(BEING_NAME[c.being] ?? c.being)}: ${c.have} ${L('van', 'of')} ${CHAPTER_NEED} ${L('verhalen', 'tales')}">
       ${svg(beingIcon(c.being), 16, c.have >= CHAPTER_NEED ? RED : undefined)}<span>${esc(BEING_NAME[c.being] ?? c.being)}</span>
       <i>${Array.from({ length: CHAPTER_NEED }, (_, k) => `<b class="${k < c.have ? 'on' : ''}"></b>`).join('')}</i></div>`).join('')}
     ${questBox()}`;
@@ -261,16 +262,24 @@ function questBox(): string {
   const f = G.field;
   const q = f.quest;
   if (!q) return '';
-  const steps = ['Het begin', 'Het graf', 'Waar de familie bleef', 'Het verhaal'];
-  const next = [
-    `Vraag ${esc(f.sim.name(f.sim.narrators[q.starter]))} naar het verhaal dat niemand meer kan afmaken.`,
-    `Zoek het graf van ${esc(q.grand)} bij de kerk van ${esc(f.land.places[q.church].name)}.`,
-    `Ga ’s nachts naar ${esc(f.land.sites[q.site].name)}.`,
-    `Zoek in ${esc(f.land.places[q.village].name)} iemand van ${esc(f.questLook())}.`,
+  const steps = EN ? ['The beginning', 'The grave', 'Where the family went', 'The tale'] : ['Het begin', 'Het graf', 'Waar de familie bleef', 'Het verhaal'];
+  const starter = esc(f.sim.name(f.sim.narrators[q.starter]));
+  const church = esc(f.land.places[q.church].name), site = esc(f.land.sites[q.site].name), village = esc(f.land.places[q.village].name);
+  const next = (EN ? [
+    `Ask ${starter} about the tale nobody can finish any more.`,
+    `Find the grave of ${esc(q.grand)} at the church in ${church}.`,
+    `Go to ${site} at night.`,
+    `In ${village}, find someone ${esc(f.questLook(true))}.`,
+    `Found.`,
+  ] : [
+    `Vraag ${starter} naar het verhaal dat niemand meer kan afmaken.`,
+    `Zoek het graf van ${esc(q.grand)} bij de kerk van ${church}.`,
+    `Ga ’s nachts naar ${site}.`,
+    `Zoek in ${village} iemand van ${esc(f.questLook())}.`,
     `Gevonden.`,
-  ][q.stage];
+  ])[q.stage];
   return `<div class="quest-box ${q.stage === 4 ? 'solved' : ''}">
-    <h3>Het verloren verhaal</h3>
+    <h3>${L('Het verloren verhaal', 'The lost tale')}</h3>
     <div class="q-steps">${steps.map((s, i) => `<span class="${i < q.stage ? 'on' : i === q.stage ? 'now' : ''}" title="${s}"></span>`).join('')}</div>
     <p class="q-next">${next}</p>
   </div>`;
@@ -282,14 +291,14 @@ function checkQuest(): boolean {
   if (modalOpen || G.walking) return false;
   const ev = f.questHere();
   if (!ev) return false;
-  sfx(ev.title === 'In het donker' ? 'sighting' : 'page');
+  sfx(ev.title === DARK_TITLE ? 'sighting' : 'page');
   showModal(`
     <div class="leaf sheet visit-leaf quest-leaf">
       ${closeBtn()}
-      <div class="kicker">${svg(MISC_ICONS.kroniek, 22)} Het verloren verhaal</div>
+      <div class="kicker">${svg(MISC_ICONS.kroniek, 22)} ${L('Het verloren verhaal', 'The lost tale')}</div>
       <h1>${esc(ev.title)}</h1>
       ${ev.lines.map((l) => `<p class="said-line">${esc(l)}</p>`).join('')}
-      <p style="margin-top:16px"><button class="btn primary" id="res-ok">Verder</button></p>
+      <p style="margin-top:16px"><button class="btn primary" id="res-ok">${L('Verder', 'Continue')}</button></p>
     </div>`);
   $('#res-ok').addEventListener('click', closeModal);
   render();
@@ -337,8 +346,9 @@ function renderHere() {
   const row = el.querySelector<HTMLElement>('.faces');
   const left = row?.scrollLeft ?? 0, rowTop = row?.scrollTop ?? 0, top = el.scrollTop;
   renderHereBody(f, el);
-  el.insertAdjacentHTML('afterbegin', '<button class="grip" data-act="grip" aria-label="Paneel in- of uitklappen"><i></i></button>'
-    + `<button class="fold" data-act="grip" title="${el.classList.contains('min') ? 'Paneel uitklappen' : 'Paneel inklappen, om de kaart te zien'} (H)" aria-label="Paneel in- of uitklappen">${el.classList.contains('min') ? '‹' : '›'}</button>`);
+  const fold = L('Paneel in- of uitklappen', 'Show or hide the panel');
+  el.insertAdjacentHTML('afterbegin', `<button class="grip" data-act="grip" aria-label="${fold}"><i></i></button>`
+    + `<button class="fold" data-act="grip" title="${el.classList.contains('min') ? L('Paneel uitklappen', 'Show the panel') : L('Paneel inklappen, om de kaart te zien', 'Hide the panel, to see the map')} (H)" aria-label="${fold}">${el.classList.contains('min') ? '‹' : '›'}</button>`);
   const now = el.querySelector<HTMLElement>('.faces');
   if (now) {
     now.scrollLeft = left;
@@ -362,11 +372,11 @@ function renderHereBody(f: typeof G.field, el: HTMLElement) {
     el.innerHTML = `
       ${vignette(f.at)}
       <div class="here-body">
-        <div class="kicker">Onderweg naar</div>
+        <div class="kicker">${L('Onderweg naar', 'On the way to')}</div>
         <h2>${esc(f.whereName(f.at))}</h2>
-        <p class="sub" id="road-time">${esc(cap(partName(G.clock?.part ?? f.part, G.clock?.slot ?? f.slot)))} van dag ${G.clock?.day ?? f.day}.</p>
-        <div class="here-foot"><button class="btn" data-act="hurry">Sneller</button>
-          <span class="muted">${touch ? 'Of tik op de kaart.' : 'Of klik op de kaart, of druk op de spatiebalk.'}</span></div>
+        <p class="sub" id="road-time">${esc(cap(partName(G.clock?.part ?? f.part, G.clock?.slot ?? f.slot)))} ${L('van dag', 'of day')} ${G.clock?.day ?? f.day}.</p>
+        <div class="here-foot"><button class="btn" data-act="hurry">${L('Sneller', 'Faster')}</button>
+          <span class="muted">${touch ? L('Of tik op de kaart.', 'Or tap the map.') : L('Of klik op de kaart, of druk op de spatiebalk.', 'Or click the map, or press the space bar.')}</span></div>
       </div>`;
     return;
   }
@@ -379,28 +389,29 @@ function renderHereBody(f: typeof G.field, el: HTMLElement) {
   const name = f.whereName(w);
   const s = w.kind === 'site' ? f.land.sites[w.id] : null;
   const sub = w.kind === 'place'
-    ? `${cap(VILLAGE[f.land.kinds[w.id]].name)} · ${plural(people.length, 'bewoner', 'bewoners')}`
-    : s!.hut !== null ? `Buiten ${f.land.places[s!.place].name}. Iemand ${SITE[s!.kind].loner}.` : `Buiten ${f.land.places[s!.place].name}.`;
+    ? `${cap(VILLAGE[f.land.kinds[w.id]].name)} · ${plural(people.length, L('bewoner', 'inhabitant'), L('bewoners', 'inhabitants'))}`
+    : s!.hut !== null ? L(`Buiten ${f.land.places[s!.place].name}. Iemand ${SITE[s!.kind].loner}.`, `Outside ${f.land.places[s!.place].name}. Someone ${SITE[s!.kind].loner}.`)
+    : L(`Buiten ${f.land.places[s!.place].name}.`, `Outside ${f.land.places[s!.place].name}.`);
   let evening = '';
   const occ = f.attendable();
-  if (occ) evening = `<button class="btn primary big" data-act="evening">${occ.kind === 'herberg' ? 'Ga naar de vertelavond in de herberg' : 'Ga ’s avonds buurten'}</button>`;
+  if (occ) evening = `<button class="btn primary big" data-act="evening">${occ.kind === 'herberg' ? L('Ga naar de vertelavond in de herberg', 'Go to the storytelling evening at the inn') : L('Ga ’s avonds buurten', 'Spend the evening at the neighbours’')}</button>`;
   else {
     const today = f.occasions.find((o) => o.known && !o.attended && w.kind === 'place' && o.place === w.id && o.day === f.day);
-    if (today) evening = `<p class="hint">${today.kind === 'herberg' ? 'Vanavond is er vertelavond in de herberg.' : 'Vanavond komen de buren bij elkaar.'} Blijf tot de avond.</p>`;
+    if (today) evening = `<p class="hint">${today.kind === 'herberg' ? L('Vanavond is er vertelavond in de herberg.', 'Tonight there is a storytelling evening at the inn.') : L('Vanavond komen de buren bij elkaar.', 'Tonight the neighbours get together.')} ${L('Blijf tot de avond.', 'Stay until evening.')}</p>`;
   }
-  const appeal = f.canAppeal() ? `<button class="linkbtn" data-act="appeal" title="Kost twee uur. Misschien schrijft iemand terug, misschien niet.">${svg(MISC_ICONS.notitieboek, 14)} oproep in het weekblad</button>` : '';
+  const appeal = f.canAppeal() ? `<button class="linkbtn" data-act="appeal" title="${L('Kost twee uur. Misschien schrijft iemand terug, misschien niet.', 'Takes two hours. Someone may write back, or not.')}">${svg(MISC_ICONS.notitieboek, 14)} ${L('oproep in het weekblad', 'appeal in the local paper')}</button>` : '';
   if (chosen !== null && !people.some((n) => n.id === chosen)) chosen = null;
   const card = chosen !== null ? personCard(f.sim.narrators[chosen]) : '';
   el.innerHTML = `
     ${vignette(w)}
     <div class="here-body">
-      <div class="kicker">${f.part === 2 ? `${LAMP}Avond ${w.kind === 'place' ? 'in' : 'bij'}` : `U bent ${w.kind === 'place' ? 'in' : 'bij'}`}</div>
+      <div class="kicker">${f.part === 2 ? `${LAMP}${L('Avond', 'Evening')} ${w.kind === 'place' ? 'in' : L('bij', 'at')}` : `${L('U bent', 'You are')} ${w.kind === 'place' ? 'in' : L('bij', 'at')}`}</div>
       <h2>${esc(name)}</h2>
       <p class="sub">${esc(sub)}</p>
       ${evening}
-      ${people.length ? `<div class="faces">${people.map(faceChip).join('')}</div>` : `<p class="sub">${s && s.hut === null ? 'Er is hier vandaag niemand. Misschien morgen.' : 'Er is hier niemand meer.'}</p>`}
-      ${card || (people.length ? `<p class="sub small pick-hint">${touch ? 'Tik' : 'Klik'} op iemand om te zien wie het is.</p>` : '')}
-      <div class="here-foot"><button class="btn" data-act="wait">${f.part === 2 && (f.slot === 1 || f.season === 'winter') ? 'Ga slapen' : f.part === 2 ? 'Wacht tot de nacht' : `Wacht tot de ${PARTS[f.part + 1]}`}</button>${appeal}</div>
+      ${people.length ? `<div class="faces">${people.map(faceChip).join('')}</div>` : `<p class="sub">${s && s.hut === null ? L('Er is hier vandaag niemand. Misschien morgen.', 'Nobody here today. Maybe tomorrow.') : L('Er is hier niemand meer.', 'There is nobody here any more.')}</p>`}
+      ${card || (people.length ? `<p class="sub small pick-hint">${EN ? `${touch ? 'Tap' : 'Click'} someone to see who they are.` : `${touch ? 'Tik' : 'Klik'} op iemand om te zien wie het is.`}</p>` : '')}
+      <div class="here-foot"><button class="btn" data-act="wait">${f.part === 2 && (f.slot === 1 || f.season === 'winter') ? L('Ga slapen', 'Go to sleep') : f.part === 2 ? L('Wacht tot de nacht', 'Wait for the night') : L(`Wacht tot de ${PARTS[f.part + 1]}`, `Wait for the ${PARTS[f.part + 1]}`)}</button>${appeal}</div>
     </div>`;
 }
 
@@ -411,8 +422,8 @@ function faceChip(n: Narrator): string {
   const lead = f.leads.some((l) => l.narrator === n.id && !l.done);
   const pips = [0.3, 0.55, 0.8].map((v) => `<i class="${t >= v ? 'on' : ''}"></i>`).join('');
   return `<button class="face ${chosen === n.id ? 'on' : ''} ${f.away(n) ? 'is-away' : ''} ${f.met.has(n.id) ? 'met' : ''}" data-act="choose" data-n="${n.id}" title="${esc(f.sim.name(n))}, ${f.age(n)}">
-    ${portrait(n, 52)}${lead ? '<em class="flag" title="Iemand heeft u over deze persoon verteld">✎</em>' : ''}${f.ill.has(n.id) ? '<em class="flag ill" title="ziek">+</em>' : ''}
-    <span class="fname">${esc(n.first)}</span><span class="fage">${f.away(n) ? 'op het land' : f.age(n)}</span>
+    ${portrait(n, 52)}${lead ? `<em class="flag" title="${L('Iemand heeft u over deze persoon verteld', 'Someone told you about this person')}">✎</em>` : ''}${f.ill.has(n.id) ? `<em class="flag ill" title="${L('ziek', 'ill')}">+</em>` : ''}
+    <span class="fname">${esc(n.first)}</span><span class="fage">${f.away(n) ? L('op het land', 'in the fields') : f.age(n)}</span>
     <span class="trust">${pips}</span></button>`;
 }
 
@@ -421,12 +432,12 @@ function personCard(n: Narrator): string {
   const f = G.field;
   const traits = f.traits(n);
   const lead = f.leads.find((l) => l.narrator === n.id);
-  const said = lead && !f.met.has(n.id) ? `<span class="said">${esc(`${lead.source}: „${lead.lines.slice(1).join(' ')}”`)}</span>` : '';
+  const said = lead && !f.met.has(n.id) ? `<span class="said">${esc(L(`${lead.source}: „${lead.lines.slice(1).join(' ')}”`, `${cap(lead.source)}: “${lead.lines.slice(1).join(' ')}”`))}</span>` : '';
   return `<div class="person-card">
     <div class="pinfo"><span class="pname"><b>${esc(f.sim.name(n))}</b> <span class="age">${f.age(n)}</span></span>
-      <span class="role">${esc(f.role(n))}${traits.length ? ' · ' + traits.map((x) => (x === 'ziek' ? `<span class="red">${x}</span>` : esc(x))).join(' · ') : ''}</span>
+      <span class="role">${esc(f.role(n))}${traits.length ? ' · ' + traits.map((x, i) => (i === 0 && f.ill.has(n.id) ? `<span class="red">${esc(x)}</span>` : esc(x))).join(' · ') : ''}</span>
       ${said}</div>
-    ${f.away(n) ? '<span class="away">op het land, kom ’s avonds terug</span>' : `<button class="btn primary" data-act="visit" data-n="${n.id}">Bezoek</button>`}
+    ${f.away(n) ? `<span class="away">${L('op het land, kom ’s avonds terug', 'in the fields, come back in the evening')}</span>` : `<button class="btn primary" data-act="visit" data-n="${n.id}">${L('Bezoek', 'Visit')}</button>`}
   </div>`;
 }
 
@@ -436,23 +447,26 @@ function destView(w: Where): string {
   const name = f.whereName(w);
   const been = w.kind === 'place' ? f.visitedPlaces.has(w.id) : f.visitedSites.has(w.id);
   const leads = f.leads.filter((l) => !l.done && f.same(l.at, w));
-  const desc = been ? f.arrivalLine(w) : w.kind === 'place' ? `Een ${VILLAGE[f.land.kinds[w.id]].name}. U bent er nog niet geweest.` : 'U bent er nog niet geweest.';
+  const kind = w.kind === 'place' ? VILLAGE[f.land.kinds[w.id]].name : '';
+  const notYet = L('U bent er nog niet geweest.', 'You haven’t been there yet.');
+  const desc = been ? f.arrivalLine(w) : kind ? `${L('Een', /^[aeiou]/i.test(kind) ? 'An' : 'A')} ${kind}. ${notYet}` : notYet;
   const recs = f.notebook.filter((e) => (w.kind === 'place' ? e.place === w.id && e.site === null : e.site === w.id)).length;
-  const how = r ? `${durationText(r.parts)} ${r.foot > 3 && f.persona.travel !== 'voet' ? `${f.persona.verb}, het laatste stuk te voet` : f.persona.verb}` : '';
+  const how = r ? `${durationText(r.parts)} ${r.foot > 3 && f.persona.travel !== 'voet' ? `${f.persona.verb}${L(', het laatste stuk te voet', ', the last stretch on foot')}` : f.persona.verb}` : '';
   const arrive = r ? f.part * 2 + f.slot + r.parts : 0;
-  const late = (r && arrive > 5 ? ' U komt er pas morgen aan.' : r && Math.floor(arrive / 2) > f.part ? ` U komt aan in de ${PARTS[Math.floor(arrive / 2)]}.` : '')
-    + (r && f.weather === 'regen' ? ' Door de regen gaat het langzaam.' : '')
-    + (r && f.misty && r.foot > 3 ? ' In de mist is het pad buiten de weg moeilijk te vinden.' : '');
+  const late = (r && arrive > 5 ? L(' U komt er pas morgen aan.', ' You won’t get there until tomorrow.')
+    : r && Math.floor(arrive / 2) > f.part ? L(` U komt aan in de ${PARTS[Math.floor(arrive / 2)]}.`, ` You arrive in the ${PARTS[Math.floor(arrive / 2)]}.`) : '')
+    + (r && f.weather === 'regen' ? L(' Door de regen gaat het langzaam.', ' The rain slows you down.') : '')
+    + (r && f.misty && r.foot > 3 ? L(' In de mist is het pad buiten de weg moeilijk te vinden.', ' In the mist the path off the road is hard to find.') : '');
   return `
     ${vignette(w)}
     <div class="here-body">
-      <div class="kicker">Erheen?</div>
+      <div class="kicker">${L('Erheen?', 'Go there?')}</div>
       <h2>${esc(name)}</h2>
-      <p>${esc(desc)}${recs ? ` <span class="red">${recs} opgetekend.</span>` : ''}</p>
+      <p>${esc(desc)}${recs ? ` <span class="red">${recs} ${L('opgetekend', 'recorded')}.</span>` : ''}</p>
       ${leads.map((l) => `<p class="pencil">${l.lines.map(esc).join(' ')}</p>`).join('')}
       ${r ? `<p class="sub">${esc(cap(how))}.${late}</p>
-        <div class="here-foot"><button class="btn primary" data-act="go">Ga erheen</button><button class="btn" data-act="stay">Blijf hier</button></div>`
-        : `<p class="sub">Daar komt u vanaf hier niet.</p><div class="here-foot"><button class="btn" data-act="stay">Terug</button></div>`}
+        <div class="here-foot"><button class="btn primary" data-act="go">${L('Ga erheen', 'Go')}</button><button class="btn" data-act="stay">${L('Blijf hier', 'Stay here')}</button></div>`
+        : `<p class="sub">${L('Daar komt u vanaf hier niet.', 'You can’t get there from here.')}</p><div class="here-foot"><button class="btn" data-act="stay">${L('Terug', 'Back')}</button></div>`}
     </div>`;
 }
 
@@ -551,10 +565,10 @@ function onHereClick(e: Event) {
     openVisit(+b.dataset.n!);
   } else if (act === 'evening') {
     const kind = f.attendable()?.kind;
-    showResult(null, f.attendEvening(), kind === 'buurten' ? 'Buurten' : 'De vertelavond');
+    showResult(null, f.attendEvening(), kind === 'buurten' ? L('Buurten', 'At the neighbours’') : L('De vertelavond', 'The storytelling evening'));
   } else if (act === 'appeal') {
     f.appeal();
-    notice(`${svg(MISC_ICONS.notitieboek, 20)} Uw oproep staat volgende week in het weekblad. Wie weet schrijft er iemand terug.`);
+    notice(`${svg(MISC_ICONS.notitieboek, 20)} ${L('Uw oproep staat volgende week in het weekblad. Wie weet schrijft er iemand terug.', 'Your appeal will be in the local paper next week. Perhaps someone will write back.')}`);
   }
 }
 
@@ -588,42 +602,50 @@ function renderTalk() {
       <div class="visit-head">${portrait(n, 64)}<div>
         <div class="kicker">${cap(partName(f.part, f.slot))}, ${clockTime(f.part, f.slot)} · ${esc(f.whereName(f.at))}</div>
         <h1>${esc(f.sim.name(n))}</h1>
-        <p class="sub">${f.age(n)} jaar · ${esc(f.role(n))}${f.ill.has(t.nid) ? ' · <span class="red">ziek</span>' : ''}</p></div></div>
+        <p class="sub">${f.age(n)} ${L('jaar', 'years old')} · ${esc(f.role(n))}${f.ill.has(t.nid) ? ` · <span class="red">${L('ziek', 'ill')}</span>` : ''}</p></div></div>
       <div class="mood">
-        <span class="mood-k">Sfeer</span><span class="mood-bar"><i style="width:${Math.round(t.open * 100)}%"></i></span><span class="mood-w">${openWord(t.open)}</span>
-        <span class="moves" title="Wat u nog kunt zeggen voor het tijd is om te gaan">${Array.from({ length: f.part === 2 ? 4 : 3 }, (_, k) => `<b class="${k < t.moves ? 'on' : ''}"></b>`).join('')}</span>
+        <span class="mood-k">${L('Sfeer', 'Mood')}</span><span class="mood-bar"><i style="width:${Math.round(t.open * 100)}%"></i></span><span class="mood-w">${openWord(t.open)}</span>
+        <span class="moves" title="${L('Wat u nog kunt zeggen voor het tijd is om te gaan', 'What you can still say before it is time to go')}">${Array.from({ length: f.part === 2 ? 4 : 3 }, (_, k) => `<b class="${k < t.moves ? 'on' : ''}"></b>`).join('')}</span>
       </div>
       ${known ? `<p class="temper"><b>${esc(cap(TEMPER[tm].name))}.</b> ${esc(TEMPER[tm].hint)}</p>` : ''}
       <div class="talk-log" id="talk-log">${t.lines.map((l, i) => `<div class="tl" data-i="${i}">${lineHtml(l)}</div>`).join('')}</div>
       ${live ? `
-        <h3 class="ask-h">Op gang komen</h3>
+        <h3 class="ask-h">${L('Op gang komen', 'Getting started')}</h3>
         <div class="asks wide">
-          ${mv('praat', '<span><b>Praat over koetjes en kalfjes</b><br/><small>Het weer, de oogst, de buren.</small></span>')}
-          ${mv('leven', `<span><b>Vraag naar vroeger</b><br/><small>Over de ouders, het werk, het dorp zoals het was.</small></span>`)}
+          ${mv('praat', L('<span><b>Praat over koetjes en kalfjes</b><br/><small>Het weer, de oogst, de buren.</small></span>',
+            '<span><b>Make small talk</b><br/><small>The weather, the harvest, the neighbours.</small></span>'))}
+          ${mv('leven', L(`<span><b>Vraag naar vroeger</b><br/><small>Over de ouders, het werk, het dorp zoals het was.</small></span>`,
+            `<span><b>Ask about the old days</b><br/><small>Their parents, their work, the village as it was.</small></span>`))}
         </div>
-        ${prompts.length ? `<h3 class="ask-h">Vertel zelf een verhaal</h3>
+        ${prompts.length ? `<h3 class="ask-h">${L('Vertel zelf een verhaal', 'Tell a tale yourself')}</h3>
           <div class="asks prompts">${prompts.map((ty) => mv('prompt', `${svg(beingIcon(f.sim.type(ty).being), 16, RED)}<span>${esc(f.sim.type(ty).name)}</span>`, `data-t="${ty}"`)).join('')}</div>` : ''}
-        <h3 class="ask-h">Vragen</h3>
-        ${frags.length ? `<div class="asks wide">${frags.map((e) => mv('again', `<span><b>Het verhaal van laatst</b><br/><small>„${esc(f.sim.type(e.t).name)}”, dat maar half bovenkwam.</small></span>`, `data-num="${e.num}"`)).join('')}</div>` : ''}
+        <h3 class="ask-h">${L('Vragen', 'Ask')}</h3>
+        ${frags.length ? `<div class="asks wide">${frags.map((e) => mv('again', L(`<span><b>Het verhaal van laatst</b><br/><small>„${esc(f.sim.type(e.t).name)}”, dat maar half bovenkwam.</small></span>`,
+          `<span><b>The tale from last time</b><br/><small>“${esc(f.sim.type(e.t).name)}”, which only half came back.</small></span>`), `data-num="${e.num}"`)).join('')}</div>` : ''}
         <div class="asks">
           ${themes.map((b) => {
             const have = new Set(f.notebook.filter((e) => f.sim.type(e.t).being === b).map((e) => e.t)).size;
-            return mv('theme', `${svg(beingIcon(b), 20, RED)}<span>${esc(BEING_NAME[b] ?? b)}</span>${have ? `<em title="Al in uw schrift">${have}</em>` : ''}`, `data-being="${b}"`);
+            return mv('theme', `${svg(beingIcon(b), 20, RED)}<span>${esc(BEING_NAME[b] ?? b)}</span>${have ? `<em title="${L('Al in uw schrift', 'Already in your notebook')}">${have}</em>` : ''}`, `data-being="${b}"`);
           }).join('')}
         </div>
         <div class="asks wide">
-          ${mv('free', `<span><b>Kent u nog oude verhalen?</b><br/><small>Laat ${esc(n.first)} zelf kiezen.</small></span>`)}
-          ${mv('others', `<span><b>Wie kan er nog meer vertellen?</b><br/><small>Geen verhaal, wel een naam.</small></span>`)}
+          ${mv('free', L(`<span><b>Kent u nog oude verhalen?</b><br/><small>Laat ${esc(n.first)} zelf kiezen.</small></span>`,
+            `<span><b>Do you know any old tales?</b><br/><small>Let ${esc(n.first)} choose.</small></span>`))}
+          ${mv('others', L(`<span><b>Wie kan er nog meer vertellen?</b><br/><small>Geen verhaal, wel een naam.</small></span>`,
+            `<span><b>Who else could tell me something?</b><br/><small>Not a tale, but a name.</small></span>`))}
         </div>
         <div class="asks wide">
-          ${mv('eigen', `<span><b>Vertelt men hier iets wat ik nergens anders hoor?</b><br/><small>Het zeldzaamste wat ${esc(n.first)} weet. Vraagt om vertrouwen.</small></span>`, '', 'rare')}
+          ${mv('eigen', L(`<span><b>Vertelt men hier iets wat ik nergens anders hoor?</b><br/><small>Het zeldzaamste wat ${esc(n.first)} weet. Vraagt om vertrouwen.</small></span>`,
+            `<span><b>Is anything told here that I won’t hear anywhere else?</b><br/><small>The rarest thing ${esc(n.first)} knows. Takes trust.</small></span>`), '', 'rare')}
         </div>
         ${f.canAskLost(t.nid) ? `<div class="asks wide">${mv('verloren', f.quest!.stage === 0
-          ? `<span><b>Het verhaal dat niemand meer kan afmaken</b><br/><small>Waar de waardin het over had.</small></span>`
-          : `<span><b>Kent u het verhaal van ${esc(f.quest!.grand)}?</b><br/><small>Alleen de goede persoon weet het. Wie het niet weet, vindt de vraag vreemd.</small></span>`, '', 'quest')}</div>` : ''}` : ''}
+          ? L(`<span><b>Het verhaal dat niemand meer kan afmaken</b><br/><small>Waar de waardin het over had.</small></span>`,
+            `<span><b>The tale nobody can finish any more</b><br/><small>The one the landlady mentioned.</small></span>`)
+          : L(`<span><b>Kent u het verhaal van ${esc(f.quest!.grand)}?</b><br/><small>Alleen de goede persoon weet het. Wie het niet weet, vindt de vraag vreemd.</small></span>`,
+            `<span><b>Do you know the tale of ${esc(f.quest!.grand)}?</b><br/><small>Only the right person knows it. Anyone else will find the question odd.</small></span>`), '', 'quest')}</div>` : ''}` : ''}
       <p class="talk-foot">${t.ended
-        ? '<button class="btn primary" id="talk-ok">Verder</button>'
-        : `<button class="btn ${live ? '' : 'primary'}" id="talk-end">Neem afscheid</button> <span class="sub">Een bezoek duurt een uur of twee, hoe het ook gaat.</span>`}</p>
+        ? `<button class="btn primary" id="talk-ok">${L('Verder', 'Continue')}</button>`
+        : `<button class="btn ${live ? '' : 'primary'}" id="talk-end">${L('Neem afscheid', 'Say goodbye')}</button> <span class="sub">${L('Een bezoek duurt een uur of twee, hoe het ook gaat.', 'A visit takes two hours or so, however it goes.')}</span>`}</p>
     </div>`;
   if (modalOpen && $('#modal .talk')) {
     $('#modal').innerHTML = html;
@@ -658,8 +680,8 @@ function renderTalk() {
 
 function lineHtml(l: TalkLine): string {
   if (l.entry) return taleCard(l.entry);
-  if (l.opening) return `<article class="tale-card opening"><div class="kicker">${svg(MISC_ICONS.kroniek, 18)} <span>Het begin van een verloren verhaal</span></div><p class="summary">${esc(l.opening)} …</p></article>`;
-  if (l.lead) return `<p class="line zij">${esc(l.text)}</p><div class="pencil-card">${svg(MISC_ICONS.kaart, 18)} <span>In potlood, in uw schrift en op de kaart: ${l.lead.lines.map(esc).join(' ')}</span></div>`;
+  if (l.opening) return `<article class="tale-card opening"><div class="kicker">${svg(MISC_ICONS.kroniek, 18)} <span>${L('Het begin van een verloren verhaal', 'The beginning of a lost tale')}</span></div><p class="summary">${esc(l.opening)} …</p></article>`;
+  if (l.lead) return `<p class="line zij">${esc(l.text)}</p><div class="pencil-card">${svg(MISC_ICONS.kaart, 18)} <span>${L('In potlood, in uw schrift en op de kaart:', 'In pencil, in your notebook and on the map:')} ${l.lead.lines.map(esc).join(' ')}</span></div>`;
   return `<p class="line ${l.who}">${esc(l.text)}</p>`;
 }
 
@@ -673,9 +695,9 @@ function showResult(n: Narrator | null, r: VisitResult, title: string) {
         : `<div class="kicker">${esc(f.whereName(f.at))}</div><h1>${esc(title)}</h1>`}
       ${r.lines.map((l) => `<p class="said-line">${esc(l)}</p>`).join('')}
       ${r.entries.map(taleCard).join('')}
-      ${r.lead ? `<div class="pencil-card">${svg(MISC_ICONS.kaart, 18)} <span>In potlood in uw schrift en op de kaart: ${r.lead.lines.map(esc).join(' ')}</span></div>` : ''}
-      ${n && r.trust[1] > r.trust[0] ? `<p class="sub">${esc(n.first)} kent u nu beter.</p>` : ''}
-      <p style="margin-top:18px"><button class="btn primary" id="res-ok">Verder</button></p>
+      ${r.lead ? `<div class="pencil-card">${svg(MISC_ICONS.kaart, 18)} <span>${L('In potlood in uw schrift en op de kaart:', 'In pencil, in your notebook and on the map:')} ${r.lead.lines.map(esc).join(' ')}</span></div>` : ''}
+      ${n && r.trust[1] > r.trust[0] ? `<p class="sub">${esc(n.first)} ${L('kent u nu beter.', 'knows you better now.')}</p>` : ''}
+      <p style="margin-top:18px"><button class="btn primary" id="res-ok">${L('Verder', 'Continue')}</button></p>
     </div>`);
   wireTales();
   $('#res-ok').addEventListener('click', closeModal);
@@ -683,11 +705,11 @@ function showResult(n: Narrator | null, r: VisitResult, title: string) {
 
 function entryBadge(e: Entry): string {
   const f = G.field;
-  if (e.kind === 'new') return '<span class="stamp">nieuw in uw schrift</span>';
+  if (e.kind === 'new') return `<span class="stamp">${L('nieuw in uw schrift', 'new in your notebook')}</span>`;
   const earlier = f.notebook.find((x) => x.num < e.num && (e.kind === 'same' ? x.n === e.n : x.t === e.t));
   return e.kind === 'version'
-    ? `<span class="stamp soft">een andere versie dan nr. ${earlier?.num ?? '?'}</span>`
-    : `<span class="stamp grey">hetzelfde als nr. ${earlier?.num ?? '?'}</span>`;
+    ? `<span class="stamp soft">${L('een andere versie dan nr.', 'a different version from no.')} ${earlier?.num ?? '?'}</span>`
+    : `<span class="stamp grey">${L('hetzelfde als nr.', 'the same as no.')} ${earlier?.num ?? '?'}</span>`;
 }
 
 function taleCard(e: Entry): string {
@@ -699,21 +721,24 @@ function taleCard(e: Entry): string {
     const words = v.d.split(' ');
     const part = words.slice(0, Math.max(6, Math.floor(words.length * 0.35))).join(' ');
     return `<article class="tale-card frag">
-      <div class="kicker">${svg(beingIcon(ty.being), 20, RED)} <span>nr. ${e.num} · ${esc(BEING_NAME[ty.being] ?? ty.being)}</span> <span class="stamp grey">fragment</span></div>
+      <div class="kicker">${svg(beingIcon(ty.being), 20, RED)} <span>${L('nr.', 'no.')} ${e.num} · ${esc(BEING_NAME[ty.being] ?? ty.being)}</span> <span class="stamp grey">fragment</span></div>
       <h2>${esc(ty.name)}?</h2>
       <p class="summary">${esc(part)} …</p>
-      <p class="sub">Verder wil het niet boven komen. Misschien op een andere dag.</p>
+      <p class="sub">${L('Verder wil het niet boven komen. Misschien op een andere dag.', 'Nothing more will come back. Perhaps another day.')}</p>
     </article>`;
   }
-  const via = e.via === 'onderweg' ? ' · onderweg gehoord' : e.via === 'brief' ? ' · per brief' : e.via === 'buurten' ? ' · bij het buurten' : e.via === 'avond' ? ' · op de vertelavond' : '';
+  const via = e.via === 'onderweg' ? L(' · onderweg gehoord', ' · heard on the road') : e.via === 'brief' ? L(' · per brief', ' · by letter')
+    : e.via === 'buurten' ? L(' · bij het buurten', ' · at the neighbours’') : e.via === 'avond' ? L(' · op de vertelavond', ' · at the storytelling evening') : '';
   const pts = f.points(e);
-  const why = e.quest ? 'het verloren verhaal' : e.scoop ? 'de ander had het al: half' : '';
+  const why = e.quest ? L('het verloren verhaal', 'the lost tale') : e.scoop ? L('de ander had het al: half', 'the rival had it first: half') : '';
   const tier = f.tier(e.t);
   const count = f.archiveCount(e.t);
   const rarity = e.kind === 'new'
-    ? `<div class="rarity"><span class="tier ${tier}">${tier === 'zeldzaam' ? 'zeldzaam' : tier === 'ongewoon' ? 'ongewoon' : 'bekend'}: ${count}× in de hele Verhalenbank</span>
-        ${e.holders <= 1 ? '<span class="uniq">alleen nog bij deze verteller</span>' : e.holders <= 3 ? `<span class="few">nog maar ${e.holders} mensen kennen het</span>` : `<span class="common">${e.holders} mensen in de streek kennen het</span>`}</div>`
-    : e.kind === 'version' && e.vholders <= 1 ? '<div class="rarity"><span class="uniq">een versie die verder niemand vertelt</span></div>' : '';
+    ? `<div class="rarity"><span class="tier ${tier}">${tier === 'zeldzaam' ? L('zeldzaam', 'rare') : tier === 'ongewoon' ? L('ongewoon', 'uncommon') : L('bekend', 'common')}: ${count}× ${L('in de hele Verhalenbank', 'in the whole Verhalenbank')}</span>
+        ${e.holders <= 1 ? `<span class="uniq">${L('alleen nog bij deze verteller', 'only this storyteller still knows it')}</span>`
+          : e.holders <= 3 ? `<span class="few">${L(`nog maar ${e.holders} mensen kennen het`, `only ${e.holders} people still know it`)}</span>`
+          : `<span class="common">${L(`${e.holders} mensen in de streek kennen het`, `${e.holders} people in the region know it`)}</span>`}</div>`
+    : e.kind === 'version' && e.vholders <= 1 ? `<div class="rarity"><span class="uniq">${L('een versie die verder niemand vertelt', 'a version nobody else tells')}</span></div>` : '';
   // the first time a tale is shown it is written in, word by word; a find is marked as one
   const fresh = !shownOnce.has(e.num);
   shownOnce.add(e.num);
@@ -722,13 +747,13 @@ function taleCard(e: Entry): string {
     ? v.d.split(' ').map((w, i) => `<span class="ink" style="animation-delay:${Math.min(4, i * 0.045).toFixed(2)}s">${esc(w)} </span>`).join('')
     : esc(v.d);
   return `<article class="tale-card${fresh ? ' fresh' : ''}${find ? ' find' : ''}">
-    ${find ? '<div class="find-ribbon">Vondst</div>' : ''}
-    <div class="kicker">${svg(beingIcon(ty.being), 20, RED)} <span>nr. ${e.num} · ${esc(BEING_NAME[ty.being] ?? ty.being)}${via}</span> ${entryBadge(e)}</div>
-    <h2>${esc(ty.name)} <span class="pts" title="punten voor uw schrift">+${pts}${why ? ` <small>${esc(why)}</small>` : ''}</span></h2>
+    ${find ? `<div class="find-ribbon">${L('Vondst', 'Find')}</div>` : ''}
+    <div class="kicker">${svg(beingIcon(ty.being), 20, RED)} <span>${L('nr.', 'no.')} ${e.num} · ${esc(BEING_NAME[ty.being] ?? ty.being)}${via}</span> ${entryBadge(e)}</div>
+    <h2>${esc(ty.name)} <span class="pts" title="${L('punten voor uw schrift', 'points for your notebook')}">+${pts}${why ? ` <small>${esc(why)}</small>` : ''}</span></h2>
     ${rarity}
     <p class="summary">${summary}</p>
-    <div class="orig-wrap"><button class="btn small" data-orig="${e.n}">Lees de opgetekende tekst</button>
-      <a href="${verhalenbankUrl(v.n)}" target="_blank" rel="noopener" class="muted">in de Verhalenbank ↗</a></div>
+    <div class="orig-wrap"><button class="btn small" data-orig="${e.n}">${L('Lees de opgetekende tekst', 'Read the recorded text')}</button>
+      <a href="${verhalenbankUrl(v.n)}" target="_blank" rel="noopener" class="muted">${L('in de Verhalenbank', 'in the Verhalenbank')} ↗</a></div>
   </article>`;
 }
 
@@ -738,9 +763,11 @@ function wireTales() {
     const n = +b.dataset.orig!;
     const wrap = b.parentElement!;
     markRead(f.region, f.sim.variant(n).t);
-    wrap.innerHTML = '<p class="sub">Het archief wordt doorzocht…</p>';
+    wrap.innerHTML = `<p class="sub">${L('Het archief wordt doorzocht…', 'Searching the archive…')}</p>`;
     const text = await loadText(f.region, n).catch(() => null);
-    wrap.innerHTML = text ? `<div class="original">${esc(text)}</div>` : '<p class="sub">Van deze variant is alleen de samenvatting bewaard.</p>';
+    // the record itself stays as it was written down, in Dutch or in dialect
+    wrap.innerHTML = text ? `${EN ? '<p class="sub">The original record, in Dutch or dialect:</p>' : ''}<div class="original">${esc(text)}</div>`
+      : `<p class="sub">${L('Van deze variant is alleen de samenvatting bewaard.', 'Only the summary of this variant has been kept.')}</p>`;
   }));
 }
 
@@ -754,7 +781,8 @@ export function openTale(num: number) {
     <div class="leaf sheet visit-leaf">
       ${closeBtn()}
       ${taleCard(e)}
-      <p class="sub">Verteld door ${esc(f.sim.name(n))} (${f.age(n)}), ${esc(where)}, dag ${e.day} in de ${PARTS[e.part]}.${n.died !== null ? ' <span class="red">Inmiddels overleden.</span>' : ''}</p>
+      <p class="sub">${L(`Verteld door ${esc(f.sim.name(n))} (${f.age(n)}), ${esc(where)}, dag ${e.day} in de ${PARTS[e.part]}.`,
+        `Told by ${esc(f.sim.name(n))} (${f.age(n)}), ${esc(where)}, day ${e.day}, in the ${PARTS[e.part]}.`)}${n.died !== null ? ` <span class="red">${L('Inmiddels overleden.', 'Has since died.')}</span>` : ''}</p>
     </div>`);
   wireTales();
 }
@@ -768,17 +796,24 @@ function openNotebook() {
   showModal(`
     <div class="leaf sheet wide">
       ${closeBtn()}
-      <div class="kicker">${svg(MISC_ICONS.notitieboek, 22)} Uw schrift</div>
-      <h1>${plural(nb.length, 'verhaal', 'verhalen')} opgeschreven</h1>
-      <p class="sub">${plural(types, 'verschillend verhaal', 'verschillende verhalen')}, van ${plural(new Set(nb.map((e) => e.narrator)).size, 'verteller', 'vertellers')}. ${nb.filter((e) => e.kind === 'version').length} andere versies, ${nb.filter((e) => e.kind === 'same').length} keer hetzelfde gehoord${nb.some((e) => e.frag) ? `, ${nb.filter((e) => e.frag).length} nog maar half` : ''}.</p>
+      <div class="kicker">${svg(MISC_ICONS.notitieboek, 22)} ${L('Uw schrift', 'Your notebook')}</div>
+      <h1>${EN ? `${plural(nb.length, 'tale', 'tales')} written down` : `${plural(nb.length, 'verhaal', 'verhalen')} opgeschreven`}</h1>
+      <p class="sub">${(() => {
+        const tellers = new Set(nb.map((e) => e.narrator)).size;
+        const versions = nb.filter((e) => e.kind === 'version').length, same = nb.filter((e) => e.kind === 'same').length;
+        const frags = nb.filter((e) => e.frag).length;
+        return EN
+          ? `${plural(types, 'different tale', 'different tales')}, from ${plural(tellers, 'storyteller', 'storytellers')}. ${plural(versions, 'other version', 'other versions')}, ${same} heard again${frags ? `, ${frags} only half` : ''}.`
+          : `${plural(types, 'verschillend verhaal', 'verschillende verhalen')}, van ${plural(tellers, 'verteller', 'vertellers')}. ${versions} andere versies, ${same} keer hetzelfde gehoord${frags ? `, ${frags} nog maar half` : ''}.`;
+      })()}</p>
       ${nb.length ? (() => {
         const finds = f.finds();
         const card = (e: Entry) => {
           const n = f.sim.narrators[e.narrator];
           const where = e.site !== null ? f.land.sites[e.site].name : f.land.places[e.place].name;
-          return `<button class="card ${e.kind}${finds.includes(e) ? ' find' : ''}" data-num="${e.num}"><div class="no"><span>nr. ${e.num}</span><span>+${f.points(e)} · dag ${e.day}</span></div>
+          return `<button class="card ${e.kind}${finds.includes(e) ? ' find' : ''}" data-num="${e.num}"><div class="no"><span>${L('nr.', 'no.')} ${e.num}</span><span>+${f.points(e)} · ${L('dag', 'day')} ${e.day}</span></div>
             <div class="ti">${svg(beingIcon(f.sim.type(e.t).being), 16, RED)} ${esc(f.sim.type(e.t).name)}</div>
-            <div class="who">${esc(f.sim.name(n))}, ${esc(where)}${e.frag ? ' · <i>fragment</i>' : e.kind === 'same' ? ' · <i>al gehoord</i>' : e.kind === 'version' ? ' · <i>andere versie</i>' : ''}</div></button>`;
+            <div class="who">${esc(f.sim.name(n))}, ${esc(where)}${e.frag ? ' · <i>fragment</i>' : e.kind === 'same' ? ` · <i>${L('al gehoord', 'heard before')}</i>` : e.kind === 'version' ? ` · <i>${L('andere versie', 'other version')}</i>` : ''}</div></button>`;
         };
         // by chapter: the kinds of tale in your sagenboek first, then the rest
         const groups = new Map<string, Entry[]>();
@@ -788,13 +823,13 @@ function openNotebook() {
           groups.set(key, [...(groups.get(key) ?? []), e]);
         }
         const order = [...f.chapters.filter((b) => groups.has(b)), ...(groups.has('overig') ? ['overig'] : [])];
-        return (finds.length ? `<h2 class="nb-h">Vondsten</h2><div class="cards">${finds.map(card).join('')}</div>` : '')
+        return (finds.length ? `<h2 class="nb-h">${L('Vondsten', 'Finds')}</h2><div class="cards">${finds.map(card).join('')}</div>` : '')
           + order.map((b) => {
             const have = f.chapterProgress().find((c) => c.being === b)?.have ?? 0;
-            return `<h2 class="nb-h">${b === 'overig' ? 'Overige verhalen' : `${svg(beingIcon(b), 18, RED)} ${esc(BEING_NAME[b] ?? b)}`}${b !== 'overig' ? ` <span class="${have >= CHAPTER_NEED ? 'red' : 'muted'}">${have >= CHAPTER_NEED ? 'hoofdstuk af' : `${have} van ${CHAPTER_NEED}`}</span>` : ''}</h2>
+            return `<h2 class="nb-h">${b === 'overig' ? L('Overige verhalen', 'Other tales') : `${svg(beingIcon(b), 18, RED)} ${esc(BEING_NAME[b] ?? b)}`}${b !== 'overig' ? ` <span class="${have >= CHAPTER_NEED ? 'red' : 'muted'}">${have >= CHAPTER_NEED ? L('hoofdstuk af', 'chapter complete') : `${have} ${L('van', 'of')} ${CHAPTER_NEED}`}</span>` : ''}</h2>
               <div class="cards">${groups.get(b)!.map(card).join('')}</div>`;
           }).join('');
-      })() : '<p class="sub">Nog leeg. Zoek iemand op en luister.</p>'}
+      })() : `<p class="sub">${L('Nog leeg. Zoek iemand op en luister.', 'Still empty. Go and see someone, and listen.')}</p>`}
     </div>`);
   $('#modal').querySelectorAll<HTMLElement>('[data-num]').forEach((el) => el.addEventListener('click', () => openTale(+el.dataset.num!)));
 }
@@ -803,13 +838,13 @@ function openDiary() {
   const f = G.field;
   let day = 0;
   const body = f.diary.map((d) => {
-    const head = d.day !== day ? `<h3 class="chron-year">Dag ${(day = d.day)} <span class="wx">${WX_ICON[f.weathers[d.day] ?? 'bewolkt']} ${WEATHER[f.weathers[d.day] ?? 'bewolkt'].name}</span></h3>` : '';
+    const head = d.day !== day ? `<h3 class="chron-year">${L('Dag', 'Day')} ${(day = d.day)} <span class="wx">${WX_ICON[f.weathers[d.day] ?? 'bewolkt']} ${WEATHER[f.weathers[d.day] ?? 'bewolkt'].name}</span></h3>` : '';
     return `${head}<div class="entry d-${d.kind}"><span class="d">${PARTS[d.part]}</span>${esc(d.text)}</div>`;
   }).join('');
   showModal(`
     <div class="leaf sheet">
       ${closeBtn()}
-      <div class="kicker">${svg(MISC_ICONS.kroniek, 22)} Dagboek</div>
+      <div class="kicker">${svg(MISC_ICONS.kroniek, 22)} ${L('Dagboek', 'Diary')}</div>
       <h1>${esc(f.sim.corpus.meta.regions[f.region].name)}, ${SEASON_NAME[f.season]} ${f.year}</h1>
       <div id="chron">${body}</div>
     </div>`);
@@ -824,8 +859,26 @@ function openIntro(first: boolean) {
     <div class="leaf sheet intro-leaf">
       ${closeBtn()}
       <div class="kicker">${cap(SEASON_NAME[f.season])} ${f.year} · ${esc(f.sim.corpus.meta.regions[f.region].name)}</div>
-      <h1>${first ? `Aangekomen in ${esc(home)}` : 'Hoe het werkt'}</h1>
-      <p class="lead-in">U hebt ${DAYS} dagen om in deze streek sagen op te tekenen. Wat u niet opschrijft, verdwijnt vroeg of laat.</p>
+      <h1>${first ? `${L('Aangekomen in', 'Arrived in')} ${esc(home)}` : L('Hoe het werkt', 'How it works')}</h1>
+      ${EN ? `<p class="lead-in">You have ${DAYS} days to record legends in this region. Whatever you don’t write down will sooner or later be gone.</p>
+      <ol class="steps">
+        <li>${svg(MISC_ICONS.kaart, 26)}<span><b>Set out.</b> ${touch ? 'Tap' : 'Click'} a village or a place on the map.</span></li>
+        <li>${svg(MISC_ICONS.verzamelaar, 26)}<span><b>Have a chat.</b> People who don’t know you yet need to warm up first. Ask too soon, and the mood turns.</span></li>
+        <li>${svg(MISC_ICONS.catalogus, 26, RED)}<span><b>Look for finds.</b> What only your storyteller still knows, or what was rarely recorded, counts most.</span></li>
+        <li>${svg(MISC_ICONS.notitieboek, 26, RED)}<span><b>Follow the trail.</b> Somewhere one tale lives on that only one person still knows. The landlady knows where the trail begins.</span></li>
+        <li>${svg(MISC_ICONS.kroniek, 26)}<span><b>Time is short.</b> The old and the ill can’t wait, and from day three someone else is collecting too.</span></li>
+      </ol>
+      <details class="more"${first ? '' : ' open'}><summary>More</summary>
+      <div class="howto">
+        <p><b>Getting there.</b> Wherever you have been, the map takes on colour. On the road you sometimes meet someone with something to tell.</p>
+        <p><b>A visit.</b> You have a few turns. Chat first, ask about the old days, or tell a tale yourself: that brings memories back. Some love to tell; others laugh at old wives’ tales, or are afraid of being laughed at.</p>
+        <p><b>Finds.</b> Ask for them once people trust you enough: “Is anything told here that I won’t hear anywhere else?”</p>
+        <p><b>Your book of legends.</b> ${touch ? 'At the bottom' : 'On the left'} are the chapters of the book you are making: three tales of a kind make a chapter.</p>
+        <p><b>Coming back.</b> Sometimes a tale only half comes back. On another day it may work. And people who know you tell more.</p>
+        <p><b>Heard.</b> What people tell you about others is listed ${touch ? 'at the bottom' : 'on the left'}, and pencilled on the map.</p>
+        <p><b>Weather and night.</b> When it rains, nobody works outside, but the roads are muddy. In the mist you lose your way off the roads. At night, or in the morning mist, you sometimes see something by the bog, the gallows or the lime tree: ${touch ? 'tap' : 'click'} it when you are close.</p>
+        <p><b>The rival.</b> You keep hearing where the other collector is going tomorrow. Whatever they write down first is worth only half as much to you.</p>
+      </div></details>` : `<p class="lead-in">U hebt ${DAYS} dagen om in deze streek sagen op te tekenen. Wat u niet opschrijft, verdwijnt vroeg of laat.</p>
       <ol class="steps">
         <li>${svg(MISC_ICONS.kaart, 26)}<span><b>Ga op pad.</b> ${touch ? 'Tik' : 'Klik'} op een dorp of plek op de kaart.</span></li>
         <li>${svg(MISC_ICONS.verzamelaar, 26)}<span><b>Maak een praatje.</b> Wie u nog niet kent, moet eerst wat ontdooien. Vraag te vroeg, en de sfeer slaat om.</span></li>
@@ -843,11 +896,11 @@ function openIntro(first: boolean) {
         <p><b>Gehoord.</b> Wat mensen over anderen vertellen, staat ${touch ? 'onderaan' : 'links'} en in potlood op de kaart.</p>
         <p><b>Weer en nacht.</b> Als het regent, werkt niemand buiten, maar de wegen zijn modderig. In de mist verdwaal je buiten de wegen. ’s Nachts, of in de ochtendmist, ziet u soms iets bij het veen, de galg of de linde: ${touch ? 'tik' : 'klik'} erop als u dichtbij bent.</p>
         <p><b>De ander.</b> U hoort steeds waar de andere verzamelaar morgen heen gaat. Wat die het eerst opschrijft, is voor u maar half zoveel waard.</p>
-      </div></details>
+      </div></details>`}
       <p class="persona">${esc(f.persona.perk)}</p>
       ${first && feest() ? `<p class="feest-line">${esc(FEEST_LINE[feest()!])}</p>` : ''}
-      <p style="margin-top:16px"><button class="btn primary" id="intro-ok">${first ? 'Aan de slag' : 'Verder'}</button>
-        ${first ? '' : '<button class="linkbtn colofon-btn" id="intro-colofon">Colofon</button>'}</p>
+      <p style="margin-top:16px"><button class="btn primary" id="intro-ok">${first ? L('Aan de slag', 'Get started') : L('Verder', 'Continue')}</button>
+        ${first ? '' : `<button class="linkbtn colofon-btn" id="intro-colofon">${L('Colofon', 'Colophon')}</button>`}</p>
     </div>`);
   $('#intro-ok').addEventListener('click', closeModal);
   document.querySelector('#intro-colofon')?.addEventListener('click', openColofon);
@@ -856,7 +909,7 @@ function openIntro(first: boolean) {
 // ------------------------------------------------------------------ leaves and notices
 
 function closeBtn() {
-  return `<button class="iconbtn close" title="Sluiten (Esc)">${svg(MISC_ICONS.sluit, 18)}</button>`;
+  return `<button class="iconbtn close" title="${L('Sluiten', 'Close')} (Esc)">${svg(MISC_ICONS.sluit, 18)}</button>`;
 }
 
 export function showModal(html: string) {
@@ -893,11 +946,11 @@ function showEncounter(enc: NonNullable<typeof G.field.encounter>) {
   showModal(`
     <div class="leaf sheet visit-leaf">
       ${closeBtn()}
-      <div class="visit-head">${portrait(n, 56)}<div><div class="kicker">Onderweg</div><h1>${esc(f.sim.name(n))}</h1>
-        <p class="sub">${esc(enc.who)} · uit ${esc(f.land.places[n.place].name)}</p></div></div>
+      <div class="visit-head">${portrait(n, 56)}<div><div class="kicker">${L('Onderweg', 'On the road')}</div><h1>${esc(f.sim.name(n))}</h1>
+        <p class="sub">${esc(enc.who)} · ${L('uit', 'from')} ${esc(f.land.places[n.place].name)}</p></div></div>
       ${enc.lines.map((l) => `<p class="said-line">${esc(l)}</p>`).join('')}
       ${enc.entry ? taleCard(enc.entry) : ''}
-      <p style="margin-top:18px"><button class="btn primary" id="res-ok">Verder</button></p>
+      <p style="margin-top:18px"><button class="btn primary" id="res-ok">${L('Verder', 'Continue')}</button></p>
     </div>`);
   wireTales();
   $('#res-ok').addEventListener('click', closeModal);
@@ -914,10 +967,10 @@ function showPost() {
   showModal(`
     <div class="leaf sheet visit-leaf">
       ${closeBtn()}
-      <div class="kicker">${svg(MISC_ICONS.notitieboek, 22)} Post, dag ${f.day}</div>
-      <h1>${unread.length === 1 ? 'Een brief' : `${unread.length} brieven`} op uw oproep</h1>
+      <div class="kicker">${svg(MISC_ICONS.notitieboek, 22)} ${L('Post, dag', 'Post, day')} ${f.day}</div>
+      <h1>${EN ? `${unread.length === 1 ? 'A letter' : `${unread.length} letters`} in reply to your appeal` : `${unread.length === 1 ? 'Een brief' : `${unread.length} brieven`} op uw oproep`}</h1>
       ${unread.map(letterHtml).join('')}
-      <p style="margin-top:18px"><button class="btn primary" id="res-ok">Verder</button></p>
+      <p style="margin-top:18px"><button class="btn primary" id="res-ok">${L('Verder', 'Continue')}</button></p>
     </div>`);
   wireTales();
   $('#res-ok').addEventListener('click', closeModal);
@@ -973,8 +1026,8 @@ const WX_ICON: Record<Weather, string> = {
 function showDay() {
   const f = G.field;
   const el = $('#daycard');
-  el.innerHTML = `<div class="dc-day">Dag ${f.day}</div><div class="dc-wx">${WX_ICON[f.weather]} ${esc(weatherLine(f.season, f.weather))}</div>
-    ${f.day === DAYS ? '<div class="dc-last">De laatste dag in het veld.</div>' : feest() && f.day === 2 ? `<div class="dc-last">${esc(FEEST_LINE[feest()!])}</div>` : ''}`;
+  el.innerHTML = `<div class="dc-day">${L('Dag', 'Day')} ${f.day}</div><div class="dc-wx">${WX_ICON[f.weather]} ${esc(weatherLine(f.season, f.weather))}</div>
+    ${f.day === DAYS ? `<div class="dc-last">${L('De laatste dag in het veld.', 'The last day in the field.')}</div>` : feest() && f.day === 2 ? `<div class="dc-last">${esc(FEEST_LINE[feest()!])}</div>` : ''}`;
   // the night passes: the screen goes dark, the new day's card comes up, and the morning comes slowly back
   const veil = $('#dayveil');
   clearTimeout(dayTimer);
@@ -1005,12 +1058,12 @@ function showApparition(site: number) {
   showModal(`
     <div class="leaf sheet visit-leaf apparition">
       ${closeBtn()}
-      <div class="kicker">${svg(beingIcon(r.being), 22, RED)} ${f.isNight() ? 'Nacht' : 'Mist'} · ${esc(s.name)}</div>
-      <h1>Wat was dat?</h1>
+      <div class="kicker">${svg(beingIcon(r.being), 22, RED)} ${f.isNight() ? L('Nacht', 'Night') : L('Mist', 'Mist')} · ${esc(s.name)}</div>
+      <h1>${L('Wat was dat?', 'What was that?')}</h1>
       ${r.lines.map((l) => `<p class="said-line">${esc(l)}</p>`).join('')}
-      ${r.lead ? `<div class="pencil-card">${svg(MISC_ICONS.kaart, 18)} <span>In potlood: ${r.lead.lines.map(esc).join(' ')}</span></div>` : ''}
-      <p class="sub">Nu weet u waar u naar kunt vragen: ${esc(themeName(r.being))}.</p>
-      <p style="margin-top:16px"><button class="btn primary" id="res-ok">Verder</button></p>
+      ${r.lead ? `<div class="pencil-card">${svg(MISC_ICONS.kaart, 18)} <span>${L('In potlood:', 'In pencil:')} ${r.lead.lines.map(esc).join(' ')}</span></div>` : ''}
+      <p class="sub">${L('Nu weet u waar u naar kunt vragen:', 'Now you know what to ask about:')} ${esc(themeName(r.being))}.</p>
+      <p style="margin-top:16px"><button class="btn primary" id="res-ok">${L('Verder', 'Continue')}</button></p>
     </div>`);
   $('#res-ok').addEventListener('click', closeModal);
 }
@@ -1050,9 +1103,10 @@ function renderClock() {
   const f = G.field;
   const c = G.clock ?? { day: Math.min(f.day, DAYS), part: f.part, slot: f.slot };
   const narrow = matchMedia('(max-width: 700px), (max-height: 520px)').matches;
-  const time = clockTime(c.part, c.slot ?? 0).replace(' uur', '');
+  const hour = HOURS[c.part][Math.min(1, c.slot ?? 0)];
+  const time = L(`${hour}.00`, `${hour}:00`);
   const rt = document.querySelector('#road-time');
-  if (rt) rt.textContent = `${cap(partName(c.part, c.slot))} van dag ${c.day}.`;
+  if (rt) rt.textContent = `${cap(partName(c.part, c.slot))} ${L('van dag', 'of day')} ${c.day}.`;
   // music only in the dark: it comes with the evening, on the road as it comes, and stays over the end
   // (not by the clock: a summer evening is light until late, a winter afternoon dark early)
   const dark = f.isDark(c);
@@ -1060,14 +1114,14 @@ function renderClock() {
   setNightMusic(f.isNight(c));
   // the panels and leaves go to lamplight when the evening comes, on the road as it comes
   document.body.classList.toggle('night', dark && !f.over);
-  $('#day').textContent = narrow ? `Dag ${c.day}/${DAYS} · ${time}` : `Dag ${c.day} van ${DAYS}, ${partName(c.part, c.slot)} ${time}`;
+  $('#day').textContent = narrow ? `${L('Dag', 'Day')} ${c.day}/${DAYS} · ${time}` : `${L('Dag', 'Day')} ${c.day} ${L('van', 'of')} ${DAYS}, ${partName(c.part, c.slot)} ${time}`;
   // and the weather of that day
   const w = f.weathers[c.day] ?? f.weather;
   const misty = w === 'mist' && c.part === 0;
   const shown: Weather = misty ? 'mist' : w === 'mist' ? 'bewolkt' : w;
   // a clear evening has stars, not sun
   const clearNight = shown === 'helder' && f.isDark(c);
-  $('#wx').innerHTML = `${clearNight ? MOON_ICON : WX_ICON[shown]}<span>${clearNight ? 'sterrenhemel' : WEATHER[shown].name}</span>`;
+  $('#wx').innerHTML = `${clearNight ? MOON_ICON : WX_ICON[shown]}<span>${clearNight ? L('sterrenhemel', 'starry sky') : WEATHER[shown].name}</span>`;
   $('#wx').title = weatherLine(f.season, w);
 }
 

@@ -1,7 +1,7 @@
 // Names, dates and the little sentences that describe how a story changed.
 import type { Meta, Variant } from './data';
 import { Rng } from './rng';
-import { L } from './i18n';
+import { EN, L } from './i18n';
 
 // Village names in the toponymic style of each region (partly invented, partly borrowed from small hamlets)
 const PLACE_NAMES: Record<string, string[]> = {
@@ -48,14 +48,16 @@ export function seasonOf(week: number): number {
 
 export function dateLabel(startYear: number, week: number): string {
   const y = startYear + Math.floor(week / WEEKS_PER_YEAR);
-  return `${SEASONS[seasonOf(week)]} ${y}`;
+  return `${EN ? ['spring', 'summer', 'autumn', 'winter'][seasonOf(week)] : SEASONS[seasonOf(week)]} ${y}`;
 }
 
 export function yearOf(startYear: number, week: number): number {
   return startYear + Math.floor(week / WEEKS_PER_YEAR);
 }
 
-const MONTHS = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+const MONTHS = EN
+  ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  : ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
 export function fullDate(startYear: number, week: number): string {
   const y = yearOf(startYear, week);
   const w = week % WEEKS_PER_YEAR;
@@ -80,8 +82,9 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const PLURAL = new Set(['witte_wieven', 'kabouter', 'dwaallicht', 'bokkenrijder', 'vrijmetselaar', 'ketting', 'soldaat', 'schoen', 'zout']);
 const v = (ids: string[], sg: string, pl: string) => (ids.length > 1 || PLURAL.has(ids[0]) ? pl : sg);
 
-/** One or two Dutch sentences that say what changed when `a` became `b`. */
+/** One or two sentences that say what changed when `a` became `b`. */
 export function describeChange(meta: Meta, a: Variant, b: Variant): string {
+  if (EN) return describeChangeEn(meta, a, b);
   const out: string[] = [];
   for (const cat of ['being', 'place', 'motif']) {
     const A = new Set(tagsBy(meta, a, cat)), B = new Set(tagsBy(meta, b, cat));
@@ -108,6 +111,33 @@ export function describeChange(meta: Meta, a: Variant, b: Variant): string {
   return out.length ? out.join(' ') : 'Andere woorden, andere mensen, hetzelfde verhaal.';
 }
 
+function describeChangeEn(meta: Meta, a: Variant, b: Variant): string {
+  const out: string[] = [];
+  for (const cat of ['being', 'place', 'motif']) {
+    const A = new Set(tagsBy(meta, a, cat)), B = new Set(tagsBy(meta, b, cat));
+    const gone = [...A].filter((x) => !B.has(x));
+    const added = [...B].filter((x) => !A.has(x));
+    if (!gone.length && !added.length) continue;
+    if (cat === 'being') {
+      if (gone.length && added.length) out.push(`${cap(label(meta, gone[0]))} became ${label(meta, added[0])}.`);
+      else if (added.length) out.push(`Now ${label(meta, added[0])} ${v([added[0]], 'plays', 'play')} a part too.`);
+      else out.push(`${cap(label(meta, gone[0]))} dropped out of the tale.`);
+    } else if (cat === 'place') {
+      if (gone.length && added.length) out.push(`It now happens at ${label(meta, added[0])}, no longer at ${label(meta, gone[0])}.`);
+      else if (added.length) out.push(`The tale gained ${label(meta, added[0])}.`);
+      else out.push(`${cap(label(meta, gone[0]))} dropped out of the tale.`);
+    } else {
+      const parts: string[] = [];
+      const ad = added.slice(0, 2), go = gone.slice(0, 2);
+      if (ad.length) parts.push(`${ad.map((x) => label(meta, x)).join(' and ')} came in`);
+      if (go.length) parts.push(`${go.map((x) => label(meta, x)).join(' and ')} disappeared`);
+      out.push(cap(parts.join('; ')) + '.');
+    }
+    if (out.length >= 2) break;
+  }
+  return out.length ? out.join(' ') : 'Other words, other people, the same tale.';
+}
+
 export function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 }
@@ -117,7 +147,15 @@ export function plural(n: number, one: string, many: string): string {
 }
 
 /** What the land looks like, and so what the generated sheet will show. */
-export const REGION_LAND: Record<string, string> = {
+export const REGION_LAND: Record<string, string> = EN ? {
+  friesland: 'Clay along the coast, fen and lakes in the south-west, sandy soil with wooded banks in the Frisian Woods. On the map: lots of water and bog, little heath.',
+  oosten: 'Sandy soils with old open-field villages, heath and raised bog, from the Groningen terp country to the Achterhoek. On the map: heath, bog and woods.',
+  limburg: 'The Maas valley, with woods and heath on the higher ground and loess in the south. On the map: lots of woods and heath.',
+  brabant: 'Sandy soil with fields, woods and fens, villages round a church and a square. On the map: fields and woods.',
+  antwerpen: 'The Kempen: heath, fens, pine woods and poor sandy soil, with the villages far apart. On the map: lots of heath.',
+  oostvl: 'The Meetjesland and the Waasland: fields and meadows, rows of trees along the brooks, polders to the north. On the map: open farmland.',
+  westvl: 'Polders behind the dunes, fields and farmsteads inland: flat, open country. On the map: fields, little heath or woods.',
+} : {
   friesland: 'Klei langs de kust, laagveen en meren in het zuidwesten, zandgrond met houtwallen in de Wouden. Op het blad: veel water en veen, weinig heide.',
   oosten: 'Zandgronden met esdorpen, heide en hoogveen, van het Groninger wierdenland tot de Achterhoek. Op het blad: heide, veen en bos.',
   limburg: 'Het Maasdal, met bossen en heide op de hogere gronden en löss in het zuiden. Op het blad: veel bos en heide.',

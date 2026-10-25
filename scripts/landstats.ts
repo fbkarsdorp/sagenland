@@ -1,12 +1,12 @@
 // How different the villages' repertoires are when the collector arrives:
 //   npx tsx scripts/landstats.ts [region] [seed]
 import { readFileSync } from 'node:fs';
-import { buildCorpus, type Meta } from '../src/data';
+import { buildCorpus, nameMeta, type Meta } from '../src/data';
 import { newField } from '../src/field';
 import { VILLAGE } from '../src/land';
 
 const [region = 'oosten', seedS = '3'] = process.argv.slice(2);
-const meta: Meta = JSON.parse(readFileSync('public/data/meta.json', 'utf8'));
+const meta: Meta = nameMeta(JSON.parse(readFileSync('public/data/meta.json', 'utf8')));
 const corpus = buildCorpus(region, meta, JSON.parse(readFileSync(`public/data/${region}.json`, 'utf8')).variants);
 const f = newField(corpus, 'volhouder', +seedS);
 const sim = f.sim;

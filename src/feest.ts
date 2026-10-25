@@ -3,9 +3,15 @@
 // Nicholas the saint rides his white horse over the roofs; at Christmas there is snow in the air, a star over every
 // church, and from somewhere far away the midwinter horn. ?feest=halloween|sinterklaas|kerst in the address tries one.
 
+import { EN } from './i18n';
+
 export type Feest = 'halloween' | 'sinterklaas' | 'kerst';
 
-export const FEEST_LINE: Record<Feest, string> = {
+export const FEEST_LINE: Record<Feest, string> = EN ? {
+  halloween: 'It is All Hallows’ Eve. They say the dead walk tonight.',
+  sinterklaas: 'It is St Nicholas’ Eve. Tonight the saint rides over the roofs.',
+  kerst: 'It is Christmas. Far away someone is blowing the midwinter horn.',
+} : {
   halloween: 'Het is Allerheiligenavond. Men zegt dat de doden vannacht rondgaan.',
   sinterklaas: 'Het is Sinterklaasavond. Vannacht rijdt de Sint over de daken.',
   kerst: 'Het is Kerstmis. In de verte blaast iemand op de midwinterhoorn.',

@@ -1,5 +1,6 @@
 // Map symbols (black ink) and the folklorist's annotations (red ink), as SVG on a 32×32 grid.
 // The same markup is used in the HTML legend and rasterised into Phaser textures.
+import { EN } from './i18n';
 
 const S = 'fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
 const sw = (w: number) => `fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"`;
@@ -74,7 +75,12 @@ export function beingIcon(being: string | undefined): string {
   return BEING_ICONS[being ?? ''] ?? BEING_ICONS.spook;
 }
 
-export const BEING_NAME: Record<string, string> = {
+export const BEING_NAME: Record<string, string> = EN ? {
+  duivel: 'The devil', heks: 'Witches', spook: 'Ghosts and the dead', witte_wieven: 'White women', kabouter: 'Gnomes',
+  weerwolf: 'Werewolves', mare: 'The nightmare', dwaallicht: "Will-o'-the-wisps", watergeest: 'Water spirits',
+  spookdier: 'Ghostly animals', voorgezicht: 'Second sight', tovenaar: 'Sorcerers and exorcists', reus: 'Giants',
+  heilige: 'Saints and miracles', schat: 'Treasure', vrijmetselaar: 'Freemasons', mens: 'People', dood: 'Death',
+} : {
   duivel: 'Duivel', heks: 'Heksen', spook: 'Spoken en doden', witte_wieven: 'Witte wieven', kabouter: 'Kabouters',
   weerwolf: 'Weerwolven', mare: 'Nachtmerrie', dwaallicht: 'Dwaallichten', watergeest: 'Watergeesten',
   spookdier: 'Spookdieren', voorgezicht: 'Voorgezicht', tovenaar: 'Tovenaars en bezweerders', reus: 'Reuzen',

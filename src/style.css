@@ -1053,3 +1053,8 @@ body.night .visit-head .portrait { filter: sepia(0.2) drop-shadow(0 0 10px rgba(
 .colofon-leaf a { color: var(--red); }
 .colofon-btn { margin-left: 14px; }
 @media (max-width: 700px) { #colofon { padding: 10px 6px; } }
+
+/* the language switch at the top of the start page */
+.lang-switch { position: absolute; top: 12px; right: 18px; z-index: 3; font-size: 13.5px; color: var(--ink-3); background: rgba(237, 226, 198, 0.9); padding: 3px 10px; border-radius: 3px; }
+.lang-switch b { color: var(--ink); font-weight: 500; }
+.lang-switch .linkbtn { font-size: 13.5px; }

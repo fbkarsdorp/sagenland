@@ -2,6 +2,9 @@
 // Shared by the setup screen, the region leaf and the inset on the map sheet (all Canvas2D).
 import type { Meta } from './data';
 import { BORDER, ISLANDS, LAND, REGION_SHAPES, REGION_TOWNS, RIVERS, TOWNS, WATERS, type LL } from './geo';
+import { EN, L } from './i18n';
+
+const TOWN_EN: Record<string, string> = { Antwerpen: 'Antwerp', Gent: 'Ghent', Brugge: 'Bruges', Brussel: 'Brussels' };
 
 const BOUNDS = { w: 2.45, e: 7.32, s: 50.38, n: 53.62 };
 const KX = Math.cos((51.5 * Math.PI) / 180);
@@ -196,7 +199,7 @@ export function drawLocator(ctx: CanvasRenderingContext2D, box: Box, o: LocatorO
       ctx.font = `italic ${(o.compact ? 8.5 : 10) * s}px "IM Fell English", serif`;
       const right = t.left || t.at[0] > 6.4;
       ctx.textAlign = right ? 'right' : 'left';
-      ctx.fillText(t.n, x + (right ? -4 : 4) * s, y);
+      ctx.fillText(EN ? TOWN_EN[t.n] ?? t.n : t.n, x + (right ? -4 : 4) * s, y);
     }
   }
   if (!o.compact) {
@@ -204,17 +207,17 @@ export function drawLocator(ctx: CanvasRenderingContext2D, box: Box, o: LocatorO
     ctx.fillStyle = 'rgba(42, 33, 26, 0.75)';
     ctx.textAlign = 'center';
     const [nx, ny] = project(box, [4.3, 53.25]);
-    ctx.fillText('Noordzee', nx, ny);
+    ctx.fillText(L('Noordzee', 'North Sea'), nx, ny);
     const [dx, dy] = project(box, [6.95, 51.45]);
     ctx.save();
     ctx.translate(dx, dy);
     ctx.rotate(-Math.PI / 2.4);
     ctx.fillStyle = 'rgba(42, 33, 26, 0.4)';
-    ctx.fillText('Duitsland', 0, 0);
+    ctx.fillText(L('Duitsland', 'Germany'), 0, 0);
     ctx.restore();
     const [fx, fy] = project(box, [2.75, 50.52]);
     ctx.fillStyle = 'rgba(42, 33, 26, 0.4)';
-    ctx.fillText('Frankrijk', fx, fy);
+    ctx.fillText(L('Frankrijk', 'France'), fx, fy);
   }
   ctx.restore();
 }

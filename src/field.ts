@@ -12,16 +12,18 @@ import { Rng } from './rng';
 import { Sim, type Narrator } from './sim';
 import { SITE, VILLAGE, generateLand, type Land, type Site } from './land';
 import { W, idx, inb, placeRoadTile, roadPath } from './world';
-import { placeNames } from './text';
+import { listOf, placeNames } from './text';
+import { EN, L } from './i18n';
 
-export const PARTS = ['ochtend', 'middag', 'avond'] as const;
+export const PARTS = [L('ochtend', 'morning'), L('middag', 'afternoon'), L('avond', 'evening')];
 /** Each part of the day has two stretches of about two hours: a visit takes one, a journey as many as it needs. */
 export const HOURS: [number, number][] = [[9, 11], [13, 15], [19, 21]];
 export function clockTime(part: number, slot: number): string {
-  return `${HOURS[part][Math.min(1, slot)]}.00 uur`;
+  return EN ? `${HOURS[part][Math.min(1, slot)]}:00` : `${HOURS[part][Math.min(1, slot)]}.00 uur`;
 }
 /** A duration in stretches of two hours, in words. */
 export function durationText(halves: number): string {
+  if (EN) return halves === 1 ? 'two hours' : halves === 2 ? 'four hours' : halves === 3 ? 'six hours' : `${halves * 2} hours`;
   return halves === 1 ? 'twee uur' : halves === 2 ? 'vier uur' : halves === 3 ? 'zes uur' : `${halves * 2} uur`;
 }
 export const DAYS = 12;
@@ -31,10 +33,11 @@ export type Where = { kind: 'place'; id: number } | { kind: 'site'; id: number }
 
 /** Who you are in the field: modelled on the collecting patterns in the archive's metadata. */
 export const PERSONA: Record<string, { travel: string; verb: string; speed: number; year: number; perk: string; title: string }> = {
-  volhouder: { travel: 'fiets', verb: 'fietsen', speed: 22, year: 1952, title: 'meneer', perk: 'Wie u een keer gesproken hebt, vertrouwt u sneller.' },
-  rondreiziger: { travel: 'auto', verb: 'rijden', speed: 36, year: 1963, title: 'meneer', perk: 'Met de bandrecorder neemt u op wat er verteld wordt, soms ook een tweede verhaal. Maar niet iedereen praat vrij tegen dat apparaat.' },
-  student: { travel: 'voet', verb: 'lopen', speed: 13, year: 1968, title: 'jongeman', perk: 'In uw eigen dorp kent iedereen u al.' },
-  notabele: { travel: 'rijtuig', verb: 'rijden', speed: 18, year: 1905, title: 'dokter', perk: 'Als dokter komt u bij de zieken binnen, en die vertellen u veel. Maar voor de dokter houden de mensen hun bijgeloof liever verborgen.' },
+  // `verb` is how you get about, after a duration: 'twee uur fietsen', 'two hours by bike'
+  volhouder: { travel: 'fiets', verb: L('fietsen', 'by bike'), speed: 22, year: 1952, title: L('meneer', 'sir'), perk: L('Wie u een keer gesproken hebt, vertrouwt u sneller.', 'People you have talked to once trust you sooner.') },
+  rondreiziger: { travel: 'auto', verb: L('rijden', 'by car'), speed: 36, year: 1963, title: L('meneer', 'sir'), perk: L('Met de bandrecorder neemt u op wat er verteld wordt, soms ook een tweede verhaal. Maar niet iedereen praat vrij tegen dat apparaat.', 'Your tape recorder catches what is told, sometimes a second tale as well. But not everyone talks freely to that machine.') },
+  student: { travel: 'voet', verb: L('lopen', 'on foot'), speed: 13, year: 1968, title: L('jongeman', 'young man'), perk: L('In uw eigen dorp kent iedereen u al.', 'In your own village everyone already knows you.') },
+  notabele: { travel: 'rijtuig', verb: L('rijden', 'by carriage'), speed: 18, year: 1905, title: L('dokter', 'doctor'), perk: L('Als dokter komt u bij de zieken binnen, en die vertellen u veel. Maar voor de dokter houden de mensen hun bijgeloof liever verborgen.', 'As the doctor you are let in to see the sick, and they tell you a lot. But people would rather hide their superstitions from the doctor.') },
 };
 
 /** Tales people do not tell a stranger. */
@@ -43,10 +46,10 @@ const SHY = new Set(['heks', 'mare', 'voorgezicht', 'tovenaar']);
 /** How a teller takes to the collector. */
 export type Temper = 'schuchter' | 'verteller' | 'gelovig' | 'spotter';
 export const TEMPER: Record<Temper, { name: string; hint: string }> = {
-  schuchter: { name: 'schuchter, maar weet veel', hint: 'Vertelt niet zomaar. Noem een verhaal dat u kent: dan komt er vaak iets boven.' },
-  verteller: { name: 'een rasverteller', hint: 'Vertelt graag en goed, liefst iets om om te lachen. Gelooft er zelf niet zo in.' },
-  gelovig: { name: 'gelooft wat er verteld wordt', hint: 'Vertelt het als iets wat echt gebeurd is, maar is bang om uitgelachen te worden.' },
-  spotter: { name: 'lacht om oudewijvenpraat', hint: 'Weet zelf niet veel, maar weet wel wie er wat weet.' },
+  schuchter: { name: L('schuchter, maar weet veel', 'shy, but knows a lot'), hint: L('Vertelt niet zomaar. Noem een verhaal dat u kent: dan komt er vaak iets boven.', 'Does not tell just like that. Name a tale you know: often something comes back.') },
+  verteller: { name: L('een rasverteller', 'a born storyteller'), hint: L('Vertelt graag en goed, liefst iets om om te lachen. Gelooft er zelf niet zo in.', 'Loves to tell and tells it well, preferably something to laugh at. Does not really believe it.') },
+  gelovig: { name: L('gelooft wat er verteld wordt', 'believes what is told'), hint: L('Vertelt het als iets wat echt gebeurd is, maar is bang om uitgelachen te worden.', 'Tells it as something that really happened, but is afraid of being laughed at.') },
+  spotter: { name: L('lacht om oudewijvenpraat', 'laughs at old wives’ tales'), hint: L('Weet zelf niet veel, maar weet wel wie er wat weet.', 'Does not know much, but knows who knows what.') },
 };
 
 export type Via = 'bezoek' | 'avond' | 'buurten' | 'onderweg' | 'brief';
@@ -92,6 +95,8 @@ export interface Diary {
   part: number;
   text: string;
   kind: 'travel' | 'visit' | 'death' | 'evening' | 'arrive' | 'day' | 'letter' | 'rival';
+  /** news worth a notice on screen, not just a line in the diary */
+  notice?: boolean;
 }
 
 /** A storytelling occasion: the evening at the inn, or neighbours gathering at a farm. */
@@ -151,6 +156,9 @@ export interface Quest {
   hinted: boolean;
 }
 
+/** The title of what you learn at the site of the trail after dark (the interface plays the sighting sound for it). */
+export const DARK_TITLE = L('In het donker', 'In the dark');
+
 /** Bonus for the lost tale, on top of what it is worth as a rare tale. */
 export const QUEST_BONUS = 10;
 
@@ -177,9 +185,9 @@ export interface Talk {
   closed: boolean;
 }
 
-export const OPEN_WORDS: [number, string][] = [[0.25, 'afwachtend'], [0.45, 'ontdooit wat'], [0.65, 'op het gemak'], [1.01, 'vertrouwelijk']];
+export const OPEN_WORDS: [number, string][] = [[0.25, L('afwachtend', 'guarded')], [0.45, L('ontdooit wat', 'thawing a little')], [0.65, L('op het gemak', 'at ease')], [1.01, L('vertrouwelijk', 'confiding')]];
 export function openWord(o: number): string {
-  return OPEN_WORDS.find(([t]) => o < t)?.[1] ?? 'vertrouwelijk';
+  return OPEN_WORDS.find(([t]) => o < t)?.[1] ?? L('vertrouwelijk', 'confiding');
 }
 
 /** Points for the archive: what makes a collection worth something. */
@@ -206,39 +214,41 @@ export interface VisitResult {
 
 /** The time of year of the twelve days. Most collecting was done in autumn and winter, when the work on the land was done. */
 export type Season = 'lente' | 'zomer' | 'herfst' | 'winter';
-export const SEASON_NAME: Record<Season, string> = { lente: 'voorjaar', zomer: 'zomer', herfst: 'najaar', winter: 'winter' };
+export const SEASON_NAME: Record<Season, string> = EN
+  ? { lente: 'spring', zomer: 'summer', herfst: 'autumn', winter: 'winter' }
+  : { lente: 'voorjaar', zomer: 'zomer', herfst: 'najaar', winter: 'winter' };
 /** the week of the year the twelve days begin, for the world's own calendar */
 const SEASON_WEEK: Record<Season, number> = { lente: 4, zomer: 17, herfst: 30, winter: 43 };
 
 /** The weather of a day in the field: in autumn as often wet as dry, with mist over the low ground some mornings. */
 export type Weather = 'helder' | 'bewolkt' | 'regen' | 'mist' | 'sneeuw';
 export const WEATHER: Record<Weather, { name: string; line: string }> = {
-  helder: { name: 'helder', line: 'Een heldere herfstdag. Wie kan, is op het land.' },
-  bewolkt: { name: 'bewolkt', line: 'Grijs en stil. Het blad valt.' },
-  regen: { name: 'regen', line: 'Het regent. Op de wegen is het modder, maar de mensen zitten binnen bij de kachel.' },
-  mist: { name: 'mist', line: 'Mist over het veen en de heide. Buiten de wegen verdwaal je zo.' },
-  sneeuw: { name: 'sneeuw', line: 'Er is sneeuw gevallen. Niemand is op het land; de wegen zijn glad en stil.' },
+  helder: { name: L('helder', 'clear'), line: L('Een heldere herfstdag. Wie kan, is op het land.', 'A clear autumn day. Everyone who can is out on the land.') },
+  bewolkt: { name: L('bewolkt', 'overcast'), line: L('Grijs en stil. Het blad valt.', 'Grey and still. The leaves are falling.') },
+  regen: { name: L('regen', 'rain'), line: L('Het regent. Op de wegen is het modder, maar de mensen zitten binnen bij de kachel.', 'It is raining. The roads are mud, but people are indoors by the stove.') },
+  mist: { name: L('mist', 'mist'), line: L('Mist over het veen en de heide. Buiten de wegen verdwaal je zo.', 'Mist over the bog and the heath. Off the roads you lose your way in no time.') },
+  sneeuw: { name: L('sneeuw', 'snow'), line: L('Er is sneeuw gevallen. Niemand is op het land; de wegen zijn glad en stil.', 'Snow has fallen. Nobody is out on the land; the roads are slippery and quiet.') },
 };
 /** What a day's weather is like in each season, for the morning's card. */
 const WEATHER_LINE: Record<Season, Partial<Record<Weather, string>>> = {
   lente: {
-    helder: 'Een zachte voorjaarsdag. Er wordt geploegd en gezaaid; wie kan, is op het land.',
-    bewolkt: 'Grijs, maar zacht. De eerste bloesem staat aan de bomen.',
-    regen: 'Een voorjaarsbui. De mensen schuilen binnen, de wegen zijn zacht.',
-    mist: 'Ochtendmist over de natte weiden. Buiten de wegen verdwaal je zo.',
+    helder: L('Een zachte voorjaarsdag. Er wordt geploegd en gezaaid; wie kan, is op het land.', 'A mild spring day. Ploughing and sowing; everyone who can is out on the land.'),
+    bewolkt: L('Grijs, maar zacht. De eerste bloesem staat aan de bomen.', 'Grey, but mild. The first blossom is out on the trees.'),
+    regen: L('Een voorjaarsbui. De mensen schuilen binnen, de wegen zijn zacht.', 'A spring shower. People shelter indoors; the roads are soft.'),
+    mist: L('Ochtendmist over de natte weiden. Buiten de wegen verdwaal je zo.', 'Morning mist over the wet meadows. Off the roads you lose your way in no time.'),
   },
   zomer: {
-    helder: 'Een warme zomerdag. Het is oogsttijd: bijna iedereen is op het land.',
-    bewolkt: 'Drukkend en grijs. Op het land wordt doorgewerkt.',
-    regen: 'Een zomerse onweersbui. Het werk ligt stil; de mensen zijn thuis.',
-    mist: 'Nevel over het veen in de vroege ochtend. Hij trekt snel op.',
+    helder: L('Een warme zomerdag. Het is oogsttijd: bijna iedereen is op het land.', 'A hot summer day. It is harvest time: nearly everyone is out on the land.'),
+    bewolkt: L('Drukkend en grijs. Op het land wordt doorgewerkt.', 'Close and grey. Out on the land the work goes on.'),
+    regen: L('Een zomerse onweersbui. Het werk ligt stil; de mensen zijn thuis.', 'A summer thunderstorm. Work has stopped; people are at home.'),
+    mist: L('Nevel over het veen in de vroege ochtend. Hij trekt snel op.', 'Haze over the bog in the early morning. It soon lifts.'),
   },
   herfst: {},
   winter: {
-    helder: 'Een heldere vriesdag. Er is weinig werk op het land; de mensen zitten bij de kachel.',
-    bewolkt: 'Grijs en guur. Het wordt vroeg donker, en dan wordt er verteld.',
-    regen: 'Natte sneeuw en regen. Niemand gaat de deur uit die niet hoeft.',
-    mist: 'IJzige mist over het land. Buiten de wegen verdwaal je zo.',
+    helder: L('Een heldere vriesdag. Er is weinig werk op het land; de mensen zitten bij de kachel.', 'A clear, frosty day. There is little work on the land; people sit by the stove.'),
+    bewolkt: L('Grijs en guur. Het wordt vroeg donker, en dan wordt er verteld.', 'Grey and raw. It gets dark early, and then the stories come out.'),
+    regen: L('Natte sneeuw en regen. Niemand gaat de deur uit die niet hoeft.', 'Sleet and rain. Nobody goes out who does not have to.'),
+    mist: L('IJzige mist over het land. Buiten de wegen verdwaal je zo.', 'Freezing fog over the land. Off the roads you lose your way in no time.'),
   },
 };
 /**
@@ -269,7 +279,7 @@ export function nightAt(season: Season, part: number, slot: number): boolean {
 }
 /** The name of a time of day: the late evening is the night. */
 export function partName(part: number, slot = 0): string {
-  return part === 2 && slot === 1 ? 'nacht' : PARTS[part];
+  return part === 2 && slot === 1 ? L('nacht', 'night') : PARTS[part];
 }
 
 export function weatherLine(season: Season, w: Weather): string {
@@ -278,13 +288,13 @@ export function weatherLine(season: Season, w: Weather): string {
 
 /** What is seen at night at a place tales are tied to, and what kind of tale it belongs to. */
 export const APPARITION: Record<string, { being: string; seen: string }> = {
-  veen: { being: 'dwaallicht', seen: 'Boven het veen dansen lichtjes, nu eens hier, dan weer daar. Als u beter kijkt, zijn ze weg.' },
-  heide: { being: 'witte_wieven', seen: 'Bij de stenen op de heide staat iets wits in de nevel. Even later is het er niet meer.' },
-  galg: { being: 'spook', seen: 'Onder de galg staat een gestalte. U knippert met uw ogen, en er is niemand.' },
-  bos: { being: 'spookdier', seen: 'Aan de rand van het bos kijken twee gloeiende ogen u aan. Dan kraakt er een tak en zijn ze weg.' },
-  water: { being: 'watergeest', seen: 'Bij het veer rimpelt het water, terwijl er geen wind staat.' },
-  kruisweg: { being: 'duivel', seen: 'Op de kruisweg staat een zwarte man die u nakijkt. Als u omkijkt, is de weg leeg.' },
-  linde: { being: 'heks', seen: 'Onder de linde bewegen schimmen in een kring, alsof er gedanst wordt.' },
+  veen: { being: 'dwaallicht', seen: L('Boven het veen dansen lichtjes, nu eens hier, dan weer daar. Als u beter kijkt, zijn ze weg.', 'Little lights dance over the bog, now here, now there. When you look harder, they are gone.') },
+  heide: { being: 'witte_wieven', seen: L('Bij de stenen op de heide staat iets wits in de nevel. Even later is het er niet meer.', 'By the stones on the heath, something white stands in the mist. A moment later it is gone.') },
+  galg: { being: 'spook', seen: L('Onder de galg staat een gestalte. U knippert met uw ogen, en er is niemand.', 'A figure stands under the gallows. You blink, and there is nobody there.') },
+  bos: { being: 'spookdier', seen: L('Aan de rand van het bos kijken twee gloeiende ogen u aan. Dan kraakt er een tak en zijn ze weg.', 'At the edge of the woods two glowing eyes are watching you. Then a twig snaps and they are gone.') },
+  water: { being: 'watergeest', seen: L('Bij het veer rimpelt het water, terwijl er geen wind staat.', 'By the ferry the water ripples, though there is no wind.') },
+  kruisweg: { being: 'duivel', seen: L('Op de kruisweg staat een zwarte man die u nakijkt. Als u omkijkt, is de weg leeg.', 'A man in black stands at the crossroads, watching you go. When you look back, the road is empty.') },
+  linde: { being: 'heks', seen: L('Onder de linde bewegen schimmen in een kring, alsof er gedanst wordt.', 'Under the lime tree, shadows move in a ring, as if there were dancing.') },
 };
 
 export interface Known {
@@ -409,7 +419,7 @@ export class Field {
     if (this.weathers[1] === 'regen' || this.weathers[1] === 'sneeuw') this.weathers[1] = 'bewolkt';
     this.firstLeads();
     this.quest = this.makeQuest();
-    this.write('arrive', `Aangekomen in ${home.name}. ${cap(this.lodgingLine())}`);
+    this.write('arrive', `${L('Aangekomen in', 'Arrived in')} ${home.name}. ${cap(this.lodgingLine())}`);
   }
 
   on(fn: () => void) {
@@ -459,15 +469,17 @@ export class Field {
   role(n: Narrator): string {
     const b = this.sim.map.buildings[n.home];
     const r = new Rng(n.id * 7919 + 13);
-    if (!b) return 'woont in het dorp';
+    if (!b) return L('woont in het dorp', 'lives in the village');
     switch (b.kind) {
-      case 'hut': return SITE[this.siteOf(n)?.kind ?? 'heide'].loner ?? 'woont buiten het dorp';
-      case 'boerderij': return r.pick(['op de boerderij', 'boert op de es', 'op de hoeve']);
-      case 'herberg': return 'houdt de herberg';
-      case 'smidse': return 'aan de smidse';
-      case 'kerk': return 'koster van de kerk';
-      case 'school': return 'van de school';
-      default: return r.pick(['dagloner', 'naait voor de buren', 'klompenmaker', 'werkt op het land', 'timmert', 'houdt een winkeltje', 'wever', 'werkt bij de boeren']);
+      case 'hut': return SITE[this.siteOf(n)?.kind ?? 'heide'].loner ?? L('woont buiten het dorp', 'lives outside the village');
+      case 'boerderij': return r.pick(EN ? ['on the farm', 'farms the open field', 'on the farmstead'] : ['op de boerderij', 'boert op de es', 'op de hoeve']);
+      case 'herberg': return L('houdt de herberg', 'keeps the inn');
+      case 'smidse': return L('aan de smidse', 'at the smithy');
+      case 'kerk': return L('koster van de kerk', 'sexton of the church');
+      case 'school': return L('van de school', 'at the school');
+      default: return r.pick(EN
+        ? ['day labourer', 'sews for the neighbours', 'clog maker', 'works the land', 'carpenter', 'keeps a little shop', 'weaver', 'works for the farmers']
+        : ['dagloner', 'naait voor de buren', 'klompenmaker', 'werkt op het land', 'timmert', 'houdt een winkeltje', 'wever', 'werkt bij de boeren']);
     }
   }
 
@@ -543,15 +555,15 @@ export class Field {
   traits(n: Narrator): string[] {
     const out: string[] = [];
     const met = this.met.has(n.id);
-    if (this.ill.has(n.id)) out.push('ziek');
+    if (this.ill.has(n.id)) out.push(L('ziek', 'ill'));
     if (met) {
       out.push(TEMPER[this.temper(n)].name);
       const left = [...n.know.keys()].filter((t) => !this.toldUs.get(n.id)?.has(t)).length;
-      out.push(left === 0 ? 'heeft u alles verteld' : left > 4 ? 'weet nog veel' : 'weet nog wat');
+      out.push(left === 0 ? L('heeft u alles verteld', 'has told you everything') : left > 4 ? L('weet nog veel', 'knows a lot more') : L('weet nog wat', 'knows a bit more'));
       const frags = this.notebook.filter((e) => e.narrator === n.id && e.frag).length;
-      if (frags) out.push(frags === 1 ? 'een verhaal half verteld' : `${frags} verhalen half verteld`);
+      if (frags) out.push(frags === 1 ? L('een verhaal half verteld', 'one tale half told') : L(`${frags} verhalen half verteld`, `${frags} tales half told`));
     }
-    if (this.rivalWasHere(n)) out.push('had bezoek van de ander');
+    if (this.rivalWasHere(n)) out.push(L('had bezoek van de ander', 'had a visit from the other collector'));
     return out;
   }
 
@@ -640,7 +652,7 @@ export class Field {
     else this.visitedSites.add(to.id);
     for (const l of this.leads) if ((l.kind === 'site' || l.kind === 'place') && this.same(l.at, to)) l.done = true;
     const dur = durationText(r.parts);
-    this.write('travel', `Van ${from} naar ${this.whereName(to)} (${dur}).${first ? ' ' + this.arrivalLine(to) : ''}`);
+    this.write('travel', `${L('Van', 'From')} ${from} ${L('naar', 'to')} ${this.whereName(to)} (${dur}).${first ? ' ' + this.arrivalLine(to) : ''}`);
     this.encounter = this.meetOnRoad(r.tiles, fromWhere, to, evening);
     // when the journey began, so the day can pass by on the way rather than all at once
     this.departed = { day: this.day, part: this.part, slot: this.slot, parts: r.parts, footStart: r.footStart, footEnd: r.footEnd };
@@ -664,7 +676,9 @@ export class Field {
     const n = r.pick(cands);
     this.metOnRoad = this.day;
     const bridge = tiles.some((t) => this.land.tiles[t].bridge);
-    const who = bridge && r.chance(0.5) ? 'de man bij de brug' : r.pick(['een voerman met paard en wagen', 'een marskramer met zijn kist', 'een boerin op weg naar de markt', 'een jongen met een kruiwagen turf', 'een veldwachter', 'een schaapherder met zijn kudde']);
+    const who = bridge && r.chance(0.5) ? L('de man bij de brug', 'the man at the bridge') : r.pick(EN
+      ? ['a carter with his horse and cart', 'a pedlar with his pack', 'a farmer’s wife on her way to market', 'a boy with a barrow of peat', 'a village constable', 'a shepherd with his flock']
+      : ['een voerman met paard en wagen', 'een marskramer met zijn kist', 'een boerin op weg naar de markt', 'een jongen met een kruiwagen turf', 'een veldwachter', 'een schaapherder met zijn kudde']);
     const at = Math.floor(tiles.length * r.range(0.35, 0.65));
     this.met.add(n.id);
     this.trust.set(n.id, Math.max(this.trustOf(n), 0.4));
@@ -672,22 +686,27 @@ export class Field {
     const t = [...n.know.entries()].sort((a, b) => b[1].s - a[1].s).find(([t]) => !this.notebook.some((e) => e.t === t))?.[0]
       ?? [...n.know.keys()][0];
     const entry = this.record(n, t, { via: 'onderweg', site: null, frag: r.chance(0.2) });
-    const lines = [
-      `Onderweg loopt u een eind op met ${who}: ${this.sim.name(n)} uit ${this.land.places[n.place].name}.`,
-      evening ? 'Het wordt al donker. Om de tijd te doden begint die te vertellen.' : 'Over het weer, over de weg, en dan ineens over iets heel anders.',
-    ];
+    const lines = EN
+      ? [
+        `On the way you walk a stretch with ${who}: ${this.sim.name(n)} from ${this.land.places[n.place].name}.`,
+        evening ? 'It is getting dark. To pass the time, they start telling a story.' : 'You talk about the weather, the road, and then suddenly about something else entirely.',
+      ]
+      : [
+        `Onderweg loopt u een eind op met ${who}: ${this.sim.name(n)} uit ${this.land.places[n.place].name}.`,
+        evening ? 'Het wordt al donker. Om de tijd te doden begint die te vertellen.' : 'Over het weer, over de weg, en dan ineens over iets heel anders.',
+      ];
     return { at, narrator: n.id, who, entry, lines };
   }
 
   arrivalLine(w: Where): string {
     if (w.kind === 'place') return VILLAGE[this.land.kinds[w.id]].desc;
     const s = this.land.sites[w.id];
-    return s.hut !== null ? `Er staat een huisje. Iemand ${SITE[s.kind].loner}.` : 'Er is niemand. Het is er stil.';
+    return s.hut !== null ? `${L('Er staat een huisje. Iemand', 'There is a cottage. Someone')} ${SITE[s.kind].loner}.` : L('Er is niemand. Het is er stil.', 'There is nobody. It is quiet.');
   }
 
   /** Wait until the next part of the day begins. */
   wait() {
-    this.write('day', `Gewacht in ${this.whereName(this.at)}.`);
+    this.write('day', `${L('Gewacht in', 'Waited in')} ${this.whereName(this.at)}.`);
     // in the evening you can stay up for the night; at night you go to bed
     this.advance(this.part === 2 && this.slot === 0 && this.season !== 'winter' ? 1 : 2 - this.slot);
   }
@@ -726,9 +745,13 @@ export class Field {
       this.sim.die(n);
       this.ill.delete(id);
       const where = this.land.places[n.place].name;
-      this.write('death', untold.length
-        ? `${this.sim.name(n)} uit ${where} is overleden. ${untold.length === 1 ? 'Eén verhaal dat niemand had opgeschreven, ging' : `${untold.length} verhalen die niemand had opgeschreven, gingen`} mee in het graf.`
-        : `${this.sim.name(n)} uit ${where} is overleden. Wat er te vertellen was, staat in uw schrift.`);
+      this.write('death', EN
+        ? untold.length
+          ? `${this.sim.name(n)} from ${where} has died. ${untold.length === 1 ? 'One tale that nobody had written down went' : `${untold.length} tales that nobody had written down went`} with them to the grave.`
+          : `${this.sim.name(n)} from ${where} has died. What there was to tell is in your notebook.`
+        : untold.length
+          ? `${this.sim.name(n)} uit ${where} is overleden. ${untold.length === 1 ? 'Eén verhaal dat niemand had opgeschreven, ging' : `${untold.length} verhalen die niemand had opgeschreven, gingen`} mee in het graf.`
+          : `${this.sim.name(n)} uit ${where} is overleden. Wat er te vertellen was, staat in uw schrift.`);
       for (const l of this.leads) if (l.narrator === id) l.done = true;
     }
     this.post();
@@ -763,12 +786,18 @@ export class Field {
     const lines: TalkLine[] = [];
     if (this.rivalWasHere(n)) {
       open -= 0.15;
-      lines.push({ who: 'zij', text: `„Ik heb pas nog zoveel verteld aan ${this.rival!.who.replace(/^een /, 'die ')}. Wat wilt u nou nog?”` });
+      lines.push({ who: 'zij', text: EN
+        ? `“I only just told ${this.rival!.who.replace(/^an? /, 'that ')} all sorts. What more do you want?”`
+        : `„Ik heb pas nog zoveel verteld aan ${this.rival!.who.replace(/^een /, 'die ')}. Wat wilt u nou nog?”` });
     }
     const first = !this.met.has(nid);
-    lines.push({ who: 'info', text: first
-      ? `${n.first} doet de deur open en kijkt u afwachtend aan.`
-      : `${n.first} herkent u${this.trustOf(n) >= 0.5 ? ' en laat u binnen' : ''}.` });
+    lines.push({ who: 'info', text: EN
+      ? first
+        ? `${n.first} opens the door and looks at you, waiting.`
+        : `${n.first} recognises you${this.trustOf(n) >= 0.5 ? ' and lets you in' : ''}.`
+      : first
+        ? `${n.first} doet de deur open en kijkt u afwachtend aan.`
+        : `${n.first} herkent u${this.trustOf(n) >= 0.5 ? ' en laat u binnen' : ''}.` });
     this.met.add(nid);
     this.visits.set(nid, (this.visits.get(nid) ?? 0) + 1);
     for (const l of this.leads) if (l.narrator === nid) l.done = true;
@@ -825,76 +854,95 @@ export class Field {
       talk.entries.push(e);
       out.push({ who: 'zij', text: '', entry: e });
       // a teller who held a tale back last time, as one of Bakker's tellers did
-      if ((this.visits.get(talk.nid) ?? 0) >= 2 && !frag && r.chance(0.2)) out.push({ who: 'zij', text: '„Dit vond ik de vorige keer eigenlijk te kinderachtig om te vertellen.”' });
+      if ((this.visits.get(talk.nid) ?? 0) >= 2 && !frag && r.chance(0.2)) out.push({ who: 'zij', text: L('„Dit vond ik de vorige keer eigenlijk te kinderachtig om te vertellen.”', '“Last time I thought this one was too childish to tell, to be honest.”') });
       shift(0.05);
     };
     const say = (who: TalkLine['who'], text: string) => out.push({ who, text });
 
     if (m.kind === 'praat') {
-      say('u', 'U praat wat over het weer, de oogst en de prijzen op de markt.');
+      say('u', L('U praat wat over het weer, de oogst en de prijzen op de markt.', 'You chat a little about the weather, the harvest and prices at the market.'));
       const gain = { verteller: 0.15, spotter: 0.12, gelovig: 0.1, schuchter: 0.08 }[tm] / (times + 1);
       shift(gain);
-      say('zij', times ? `${name} knikt beleefd. Daar is alles nu wel over gezegd.` : tm === 'spotter' ? `${name} maakt een grap over de pastoor. U lacht mee.` : `${name} praat graag mee.`);
+      say('zij', EN
+        ? times ? `${name} nods politely. There is not much more to say about that.` : tm === 'spotter' ? `${name} cracks a joke about the priest. You laugh along.` : `${name} is happy to chat.`
+        : times ? `${name} knikt beleefd. Daar is alles nu wel over gezegd.` : tm === 'spotter' ? `${name} maakt een grap over de pastoor. U lacht mee.` : `${name} praat graag mee.`);
     } else if (m.kind === 'leven') {
-      say('u', `U vraagt naar vroeger: de ouders, het werk, het dorp zoals het was.`);
+      say('u', L(`U vraagt naar vroeger: de ouders, het werk, het dorp zoals het was.`, 'You ask about the old days: their parents, their work, the village as it was.'));
       const gain = { gelovig: 0.16, schuchter: 0.16, verteller: 0.08, spotter: 0.05 }[tm] / (times + 1);
       shift(gain);
-      say('zij', tm === 'schuchter' ? `${name} vertelt, eerst zachtjes, over een moeder die alles wist van vroeger.`
-        : tm === 'gelovig' ? `„Vroeger was het hier anders, hoor. Toen gebeurden er nog dingen.”`
-        : tm === 'spotter' ? `„Vroeger? Toen was iedereen arm en bang in het donker.”` : `${name} haalt herinneringen op, met handen en voeten.`);
+      say('zij', EN
+        ? tm === 'schuchter' ? `${name} talks, quietly at first, about a mother who knew everything about the old days.`
+          : tm === 'gelovig' ? '“It was different here back then, you know. Things still happened in those days.”'
+          : tm === 'spotter' ? '“The old days? Everyone was poor and scared of the dark.”' : `${name} brings back memories, with a lot of waving of hands.`
+        : tm === 'schuchter' ? `${name} vertelt, eerst zachtjes, over een moeder die alles wist van vroeger.`
+          : tm === 'gelovig' ? `„Vroeger was het hier anders, hoor. Toen gebeurden er nog dingen.”`
+          : tm === 'spotter' ? `„Vroeger? Toen was iedereen arm en bang in het donker.”` : `${name} haalt herinneringen op, met handen en voeten.`);
     } else if (m.kind === 'free') {
-      say('u', 'U vraagt of er vroeger verhalen verteld werden.');
-      if (!untold.length) say('zij', `„Ik weet u echt niets meer te vertellen.”`);
+      say('u', L('U vraagt of er vroeger verhalen verteld werden.', 'You ask whether stories used to be told.'));
+      if (!untold.length) say('zij', L(`„Ik weet u echt niets meer te vertellen.”`, '“I really have nothing more to tell you.”'));
       else if (ok()) {
-        say('zij', tm === 'verteller' ? `${name} gaat er eens goed voor zitten.`
-          : tm === 'spotter' ? `„Ze zeggen dat het echt gebeurd is, maar ik geloof er niks van.”`
-          : tm === 'gelovig' ? `„Het is echt gebeurd, hoor. Mijn moeder heeft het zelf gezien.”` : `${name} begint aarzelend te vertellen.`);
+        say('zij', EN
+          ? tm === 'verteller' ? `${name} settles in comfortably.`
+            : tm === 'spotter' ? '“They say it really happened, but I don’t believe a word of it.”'
+            : tm === 'gelovig' ? '“It really happened, mind. My mother saw it herself.”' : `${name} starts to tell, hesitantly.`
+          : tm === 'verteller' ? `${name} gaat er eens goed voor zitten.`
+            : tm === 'spotter' ? `„Ze zeggen dat het echt gebeurd is, maar ik geloof er niks van.”`
+            : tm === 'gelovig' ? `„Het is echt gebeurd, hoor. Mijn moeder heeft het zelf gezien.”` : `${name} begint aarzelend te vertellen.`);
         tell(untold[0][0]);
         const tape = this.archetype === 'rondreiziger';
         if (untold[1] && tape && tm !== 'schuchter' && talk.open >= 0.55) {
-          say('info', 'De band loopt nog. Er komt er nog een.');
+          say('info', L('De band loopt nog. Er komt er nog een.', 'The tape is still running. Here comes another one.'));
           tell(untold[1][0]);
         }
-        if (tape && tm === 'schuchter') say('info', `${name} kijkt steeds naar de bandrecorder.`);
+        if (tape && tm === 'schuchter') say('info', L(`${name} kijkt steeds naar de bandrecorder.`, `${name} keeps glancing at the tape recorder.`));
       } else {
         shift(-0.06);
-        say('zij', tm === 'schuchter' ? `„Ik weet niet zo goed wat u wilt horen,” zegt ${name}, en zoekt naar woorden.`
-          : `${name} haalt de schouders op. „Verhalen? Daar heb ik nooit zo op gelet.”`);
-        if (tm === 'schuchter') say('info', 'Misschien helpt het als u zelf een verhaal vertelt.');
+        say('zij', EN
+          ? tm === 'schuchter' ? `“I don’t really know what you want to hear,” says ${name}, searching for words.`
+            : `${name} shrugs. “Stories? I never paid much attention to those.”`
+          : tm === 'schuchter' ? `„Ik weet niet zo goed wat u wilt horen,” zegt ${name}, en zoekt naar woorden.`
+            : `${name} haalt de schouders op. „Verhalen? Daar heb ik nooit zo op gelet.”`);
+        if (tm === 'schuchter') say('info', L('Misschien helpt het als u zelf een verhaal vertelt.', 'Perhaps it would help if you told a story yourself.'));
       }
     } else if (m.kind === 'theme') {
       const being = m.being;
       this.asked.set(being, (this.asked.get(being) ?? 0) + 1);
-      say('u', `U vraagt naar ${themeName(being)}.`);
+      say('u', `${L('U vraagt naar', 'You ask about')} ${themeName(being)}.`);
       const cands = untold.filter(([t]) => sim.type(t)?.being === being);
       if (tm === 'spotter' && !ok()) {
         shift(-0.04);
-        say('zij', `${name} schiet in de lach. „${cap(themeName(being))}? Daar geloven alleen oude wijven in.”`);
+        say('zij', EN
+          ? `${name} bursts out laughing. “${cap(themeName(being))}? Only old wives believe in that.”`
+          : `${name} schiet in de lach. „${cap(themeName(being))}? Daar geloven alleen oude wijven in.”`);
         if (talk.open >= 0.25) {
           const lead = this.leadFor(being, n);
-          if (lead) out.push({ who: 'zij', text: `„Vraag het ${this.leadName(lead)} maar. Die gelooft het allemaal.”`, lead });
+          if (lead) out.push({ who: 'zij', text: EN ? `“Go and ask ${this.leadName(lead)}. They believe all of it.”` : `„Vraag het ${this.leadName(lead)} maar. Die gelooft het allemaal.”`, lead });
         }
       } else if (!cands.length) {
         const knewSome = [...told].some((t) => sim.type(t)?.being === being);
-        say('zij', knewSome ? `„Meer weet ik daar niet van.”` : `„Daar weet ik niets van.”`);
+        say('zij', knewSome ? L(`„Meer weet ik daar niet van.”`, '“That’s all I know about that.”') : L(`„Daar weet ik niets van.”`, '“I don’t know anything about that.”'));
         if (talk.open >= 0.3) {
           const lead = this.leadFor(being, n);
-          if (lead) out.push({ who: 'zij', text: `„Maar vraag het eens aan ${this.leadName(lead)}.”`, lead });
+          if (lead) out.push({ who: 'zij', text: EN ? `“But you could ask ${this.leadName(lead)}.”` : `„Maar vraag het eens aan ${this.leadName(lead)}.”`, lead });
         }
       } else if (ok()) {
-        say('zij', tm === 'gelovig' ? `${name} gaat zachter praten. „Ik zal u vertellen wat er gebeurd is.”` : tm === 'spotter' ? 'Half lachend vertelt die het toch.' : `${name} denkt even na, en begint dan te vertellen.`);
+        say('zij', EN
+          ? tm === 'gelovig' ? `${name} lowers their voice. “I’ll tell you what happened.”` : tm === 'spotter' ? 'Half laughing, they tell it anyway.' : `${name} thinks for a moment, then starts to tell.`
+          : tm === 'gelovig' ? `${name} gaat zachter praten. „Ik zal u vertellen wat er gebeurd is.”` : tm === 'spotter' ? 'Half lachend vertelt die het toch.' : `${name} denkt even na, en begint dan te vertellen.`);
         tell(cands[0][0]);
       } else if (tm === 'gelovig' && SHY.has(being)) {
         shift(-0.2);
-        say('zij', `${name} kijkt u wantrouwig aan. „U wilt ons zeker uitlachen.”`);
+        say('zij', EN ? `${name} gives you a suspicious look. “You just want to laugh at us.”` : `${name} kijkt u wantrouwig aan. „U wilt ons zeker uitlachen.”`);
       } else {
         shift(-0.1);
-        say('zij', SHY.has(being) ? `${name} kijkt even weg. „Daar praten we hier niet over met vreemden.”` : `„Ach, dat zijn maar praatjes.”`);
+        say('zij', EN
+          ? SHY.has(being) ? `${name} looks away. “We don’t talk about that with strangers round here.”` : '“Oh, that’s just talk.”'
+          : SHY.has(being) ? `${name} kijkt even weg. „Daar praten we hier niet over met vreemden.”` : `„Ach, dat zijn maar praatjes.”`);
       }
     } else if (m.kind === 'prompt') {
       // telling a tale yourself jogs the memory: 'no, I don't know that one, but I do know…' (Jaarsma and Mrs Kobus)
       const ty = sim.type(m.t);
-      say('u', `U vertelt zelf het verhaal van ${ty.name.toLowerCase()}, zoals u het hoorde.`);
+      say('u', EN ? `You tell them “${ty.name}” yourself, the way you heard it.` : `U vertelt zelf het verhaal van ${ty.name.toLowerCase()}, zoals u het hoorde.`);
       const same = untold.find(([t]) => t === m.t);
       const v = sim.variant(this.notebook.find((e) => e.t === m.t)?.n ?? 0);
       const tags = new Set(v?.g ?? []);
@@ -902,100 +950,122 @@ export class Field {
         const w = sim.variant(sim.nodes[mem.node].n);
         return [t, w.g.filter((g) => tags.has(g)).length + (sim.type(t).being === ty.being ? 2 : 0)] as const;
       }).filter(([, sc]) => sc > 0).sort((a, b) => b[1] - a[1]);
-      if (told.has(m.t)) say('zij', '„Dat heb ik u toch al verteld?”');
+      if (told.has(m.t)) say('zij', L('„Dat heb ik u toch al verteld?”', '“But I told you that one already?”'));
       else if (ok() && same) {
         tell(same[0], 0.6);
         const e = talk.entries[talk.entries.length - 1];
-        out.splice(out.length - 1, 0, { who: 'zij', text: e.kind === 'same' ? '„Ja, dat ken ik. Zo heb ik het ook altijd gehoord.”' : '„Ja, dat ken ik. Maar bij ons ging het anders.”' });
+        out.splice(out.length - 1, 0, { who: 'zij', text: e.kind === 'same'
+          ? L('„Ja, dat ken ik. Zo heb ik het ook altijd gehoord.”', '“Yes, I know that one. That’s how I always heard it too.”')
+          : L('„Ja, dat ken ik. Maar bij ons ging het anders.”', '“Yes, I know that one. But round here it went differently.”') });
       } else if (ok() && related.length) {
-        say('zij', `${name} denkt lang na. „Nee, dat ken ik niet. Maar ik weet wel iets anders…”`);
+        say('zij', EN ? `${name} thinks for a long time. “No, I don’t know that one. But I do know something else…”` : `${name} denkt lang na. „Nee, dat ken ik niet. Maar ik weet wel iets anders…”`);
         tell(related[0][0], tm === 'schuchter' ? 0.4 : 0.8);
       } else if (tm === 'spotter') {
         shift(-0.03);
-        say('zij', `${name} grinnikt. „En dat gelooft u allemaal?”`);
+        say('zij', EN ? `${name} chuckles. “And you believe all that?”` : `${name} grinnikt. „En dat gelooft u allemaal?”`);
       } else {
         shift(0.1);
-        say('zij', related.length || same ? `${name} luistert aandachtig. Er komt nog niets, maar het ijs is gebroken.` : `„${ty.name}? Nee, daar zegt het me niets. Maar mooi verteld.”`);
+        say('zij', EN
+          ? related.length || same ? `${name} listens closely. Nothing comes yet, but the ice is broken.` : `“${ty.name}? No, that doesn’t ring a bell. But nicely told.”`
+          : related.length || same ? `${name} luistert aandachtig. Er komt nog niets, maar het ijs is gebroken.` : `„${ty.name}? Nee, daar zegt het me niets. Maar mooi verteld.”`);
       }
     } else if (m.kind === 'again') {
       const e = this.notebook[m.num - 1];
-      say('u', 'U vraagt naar het verhaal dat de vorige keer maar half bovenkwam.');
-      if (!e || e.narrator !== talk.nid || !e.frag) say('zij', `${name} weet niet wat u bedoelt.`);
+      say('u', L('U vraagt naar het verhaal dat de vorige keer maar half bovenkwam.', 'You ask about the tale that only half came back last time.'));
+      if (!e || e.narrator !== talk.nid || !e.frag) say('zij', L(`${name} weet niet wat u bedoelt.`, `${name} does not know what you mean.`));
       else if (ok()) {
         e.frag = false;
-        say('zij', '„O ja, dat verhaal. Nu weet ik het weer. Het ging zo:”');
+        say('zij', L('„O ja, dat verhaal. Nu weet ik het weer. Het ging zo:”', '“Oh yes, that one. Now I remember. It went like this:”'));
         out.push({ who: 'zij', text: '', entry: e });
         if (!talk.entries.includes(e)) talk.entries.push(e);
         shift(0.05);
-      } else say('zij', '„Het wil nog niet boven komen. Komt u nog eens terug.”');
+      } else say('zij', L('„Het wil nog niet boven komen. Komt u nog eens terug.”', '“It won’t come back to me yet. Come again another time.”'));
     } else if (m.kind === 'verloren') {
       const q = this.quest!;
       if (q.stage === 0) {
-        say('u', 'U vraagt naar het verhaal dat niemand meer kan afmaken.');
+        say('u', L('U vraagt naar het verhaal dat niemand meer kan afmaken.', 'You ask about the tale that nobody can finish any more.'));
         if (!ok()) {
           shift(-0.05);
-          say('zij', `${name} schudt het hoofd. „Dat is te lang geleden. Een andere keer misschien.”`);
+          say('zij', EN ? `${name} shakes their head. “That was too long ago. Another time, perhaps.”` : `${name} schudt het hoofd. „Dat is te lang geleden. Een andere keer misschien.”`);
         } else {
           q.stage = 1;
           const church = this.land.places[q.church];
-          say('zij', `„Mijn grootmoeder vertelde het, en die had het van ${q.grand}. Ik weet alleen nog hoe het begint:”`);
+          say('zij', EN
+            ? `“My grandmother used to tell it, and she had it from ${q.grand}. All I remember is how it begins:”`
+            : `„Mijn grootmoeder vertelde het, en die had het van ${q.grand}. Ik weet alleen nog hoe het begint:”`);
           out.push({ who: 'zij', text: '', opening: q.opening });
-          say('zij', `„Hoe het afloopt, weet niemand meer. ${q.grand} ligt begraven bij de kerk van ${church.name}. Misschien vindt u daar meer.”`);
-          const clue = `${sim.name(n)} weet nog hoe het verhaal van ${q.grand} begint. ${q.grand.split(' ')[0]} ligt begraven in ${church.name}.`;
+          say('zij', EN
+            ? `“How it ends, nobody knows any more. ${q.grand} lies buried by the church in ${church.name}. Perhaps you’ll find more there.”`
+            : `„Hoe het afloopt, weet niemand meer. ${q.grand} ligt begraven bij de kerk van ${church.name}. Misschien vindt u daar meer.”`);
+          const clue = EN
+            ? `${sim.name(n)} still knows how the tale of ${q.grand} begins. ${q.grand.split(' ')[0]} lies buried in ${church.name}.`
+            : `${sim.name(n)} weet nog hoe het verhaal van ${q.grand} begint. ${q.grand.split(' ')[0]} ligt begraven in ${church.name}.`;
           q.clues.push(clue);
-          this.questLead([`Het graf van ${q.grand}`, `bij de kerk van ${church.name}.`], { kind: 'place', id: church.id });
+          this.questLead(EN ? [`The grave of ${q.grand}`, `by the church in ${church.name}.`] : [`Het graf van ${q.grand}`, `bij de kerk van ${church.name}.`], { kind: 'place', id: church.id });
           shift(0.05);
         }
       } else {
-        say('u', `U vraagt naar het verhaal van ${q.grand}.`);
+        say('u', EN ? `You ask about the tale of ${q.grand}.` : `U vraagt naar het verhaal van ${q.grand}.`);
         if (talk.nid !== q.target) {
           shift(-0.12);
-          say('zij', `${name} kijkt verbaasd. „${q.grand.split(' ')[0]}? Nooit van gehoord. Dat moet u bij een ander vragen.”`);
+          say('zij', EN
+            ? `${name} looks puzzled. “${q.grand.split(' ')[0]}? Never heard of them. You’ll have to ask someone else.”`
+            : `${name} kijkt verbaasd. „${q.grand.split(' ')[0]}? Nooit van gehoord. Dat moet u bij een ander vragen.”`);
         } else if (!ok()) {
           shift(-0.05);
-          say('zij', `${name} wordt stil, en kijkt naar het vuur. „Waarom wilt u dat weten?” Zo ver is het nog niet.`);
+          say('zij', EN
+            ? `${name} goes quiet and looks into the fire. “Why do you want to know?” You are not there yet.`
+            : `${name} wordt stil, en kijkt naar het vuur. „Waarom wilt u dat weten?” Zo ver is het nog niet.`);
         } else {
-          say('zij', `${name} kijkt u lang aan. „Dat verhaal… dat heb ik van mijn moeder, en die had het van ${q.grand.split(' ')[0]}. Niemand heeft het me ooit gevraagd.”`);
+          say('zij', EN
+            ? `${name} looks at you for a long time. “That tale… I had it from my mother, and she had it from ${q.grand.split(' ')[0]}. Nobody has ever asked me about it.”`
+            : `${name} kijkt u lang aan. „Dat verhaal… dat heb ik van mijn moeder, en die had het van ${q.grand.split(' ')[0]}. Niemand heeft het me ooit gevraagd.”`);
           const e = this.record(n, q.t);
           e.quest = true;
           talk.entries.push(e);
           out.push({ who: 'zij', text: '', entry: e });
           q.stage = 4;
-          q.clues.push(`Gevonden: het verhaal van ${q.grand}, bij ${sim.name(n)} in ${this.land.places[n.place].name}.`);
+          q.clues.push(EN
+            ? `Found: the tale of ${q.grand}, with ${sim.name(n)} in ${this.land.places[n.place].name}.`
+            : `Gevonden: het verhaal van ${q.grand}, bij ${sim.name(n)} in ${this.land.places[n.place].name}.`);
           for (const l of this.leads) if (l.kind === 'quest') l.done = true;
-          this.write('day', `Het verloren verhaal gevonden bij ${sim.name(n)}.`);
+          this.write('day', EN ? `Found the lost tale with ${sim.name(n)}.` : `Het verloren verhaal gevonden bij ${sim.name(n)}.`);
           shift(0.1);
         }
       }
     } else if (m.kind === 'eigen') {
       // the rarest thing this teller knows: what hardly anyone else in the region still tells
-      say('u', 'U vraagt of er iets is wat ze alleen hier vertellen, wat u nergens anders zult horen.');
+      say('u', L('U vraagt of er iets is wat ze alleen hier vertellen, wat u nergens anders zult horen.', 'You ask whether there is something they only tell here, something you won’t hear anywhere else.'));
       const rarest = untold.map(([t]) => [t, this.knowers(t)] as const).sort((a, b) => a[1] - b[1] || this.archiveCount(a[0]) - this.archiveCount(b[0]))[0];
-      if (!rarest) say('zij', '„Ik heb u alles verteld wat ik weet.”');
+      if (!rarest) say('zij', L('„Ik heb u alles verteld wat ik weet.”', '“I’ve told you everything I know.”'));
       else if (!ok()) {
         shift(-0.08);
-        say('zij', `${name} kijkt u even aan. „Waarom wilt u dat weten?” Zo ver is het nog niet.`);
+        say('zij', EN ? `${name} gives you a look. “Why do you want to know?” You are not there yet.` : `${name} kijkt u even aan. „Waarom wilt u dat weten?” Zo ver is het nog niet.`);
       } else if (rarest[1] > 3) {
-        say('zij', `${name} denkt na en schudt het hoofd. „Wat ik weet, kent iedereen hier wel. Maar als u wilt…”`);
+        say('zij', EN
+          ? `${name} thinks, and shakes their head. “What I know, everybody round here knows. But if you like…”`
+          : `${name} denkt na en schudt het hoofd. „Wat ik weet, kent iedereen hier wel. Maar als u wilt…”`);
         tell(untold[0][0]);
       } else {
-        say('zij', rarest[1] <= 1 ? `${name} aarzelt. „Dit heb ik van mijn grootmoeder. Ik denk niet dat iemand anders het nog weet.”` : `„Er is wel iets. Dat hoor je niet vaak meer.”`);
+        say('zij', EN
+          ? rarest[1] <= 1 ? `${name} hesitates. “I had this from my grandmother. I don’t think anyone else knows it now.”` : '“There is something. You don’t hear it much any more.”'
+          : rarest[1] <= 1 ? `${name} aarzelt. „Dit heb ik van mijn grootmoeder. Ik denk niet dat iemand anders het nog weet.”` : `„Er is wel iets. Dat hoor je niet vaak meer.”`);
         tell(rarest[0], 0.7);
       }
     } else if (m.kind === 'others') {
-      say('u', 'U vraagt wie er in de buurt nog meer kan vertellen.');
-      if (!ok()) say('zij', tm === 'schuchter' ? '„Ik kom niet zoveel bij de mensen.”' : '„Ik zou het niet weten.”');
+      say('u', L('U vraagt wie er in de buurt nog meer kan vertellen.', 'You ask who else around here can tell stories.'));
+      if (!ok()) say('zij', tm === 'schuchter' ? L('„Ik kom niet zoveel bij de mensen.”', '“I don’t get out among people much.”') : L('„Ik zou het niet weten.”', '“I wouldn’t know.”'));
       else {
         const lead = this.leadFor(null, n);
-        if (lead) out.push({ who: 'zij', text: `„Dan moet u bij ${this.leadName(lead)} zijn. Die kan vertellen!”`, lead });
-        else say('zij', `${name} weet niemand meer te noemen die u nog niet kent.`);
+        if (lead) out.push({ who: 'zij', text: EN ? `“Then you want ${this.leadName(lead)}. Now there’s a storyteller!”` : `„Dan moet u bij ${this.leadName(lead)} zijn. Die kan vertellen!”`, lead });
+        else say('zij', L(`${name} weet niemand meer te noemen die u nog niet kent.`, `${name} cannot think of anyone you have not met yet.`));
       }
     }
     // pushed too far: the visit is over
     if (talk.open < 0.06) {
       talk.closed = true;
-      say('info', `${name} staat op. „Ik moet de koeien nog doen.” Het bezoek is voorbij.`);
-    } else if (talk.moves === 0) say('info', 'Het is tijd om te gaan.');
+      say('info', EN ? `${name} stands up. “I still have to see to the cows.” The visit is over.` : `${name} staat op. „Ik moet de koeien nog doen.” Het bezoek is voorbij.`);
+    } else if (talk.moves === 0) say('info', L('Het is tijd om te gaan.', 'It is time to go.'));
     talk.lines.push(...out);
     return out;
   }
@@ -1012,19 +1082,27 @@ export class Field {
     const gain = (this.archetype === 'volhouder' ? 0.12 : 0.07) + Math.max(0, went) * 0.5 + (talk.entries.length ? 0.05 : 0);
     const after = Math.max(0.05, Math.min(1, went < -0.08 ? before - 0.06 : before + gain));
     this.trust.set(talk.nid, after);
-    if (went < -0.08) out.push({ who: 'info', text: `U voelt dat u te snel ging. ${n.first} zal de volgende keer wat terughoudender zijn.` });
-    else if (after > before + 0.1) out.push({ who: 'info', text: `${n.first} kent u nu beter.` });
+    if (went < -0.08) out.push({ who: 'info', text: EN ? `You feel you went too fast. ${n.first} will be more reserved next time.` : `U voelt dat u te snel ging. ${n.first} zal de volgende keer wat terughoudender zijn.` });
+    else if (after > before + 0.1) out.push({ who: 'info', text: EN ? `${n.first} knows you better now.` : `${n.first} kent u nu beter.` });
     // in a village where the neighbours gather, someone will mention it
     const buurt = this.occasions.find((o) => o.kind === 'buurten' && !o.known && o.place === n.place && o.day >= this.day);
     if (buurt && talk.open >= 0.35 && new Rng(sim.seed + talk.nid).chance(0.6)) {
       buurt.known = true;
-      const host = buurt.host !== null ? sim.name(sim.narrators[buurt.host]) : 'een van de boeren';
-      const l = this.addLead('evening', [`Dag ${buurt.day}: ’s avonds buurten`, `bij ${host} in ${this.land.places[buurt.place].name}.`], { kind: 'place', id: buurt.place }, null, n.first);
-      out.push({ who: 'zij', text: `„Op dag ${buurt.day} komen de buren ’s avonds bij ${host}. Dan wordt er verteld. Komt u ook?”`, lead: l });
+      const host = buurt.host !== null ? sim.name(sim.narrators[buurt.host]) : L('een van de boeren', 'one of the farmers');
+      const where = this.land.places[buurt.place].name;
+      const l = this.addLead('evening', EN
+        ? [`Day ${buurt.day}: an evening at the neighbours’`, `at ${host}’s in ${where}.`]
+        : [`Dag ${buurt.day}: ’s avonds buurten`, `bij ${host} in ${where}.`], { kind: 'place', id: buurt.place }, null, n.first);
+      out.push({ who: 'zij', text: EN
+        ? `“On day ${buurt.day} the neighbours come round to ${host}’s in the evening. There’ll be stories. Will you come too?”`
+        : `„Op dag ${buurt.day} komen de buren ’s avonds bij ${host}. Dan wordt er verteld. Komt u ook?”`, lead: l });
     }
     talk.lines.push(...out);
-    const what = talk.entries.length ? `${talk.entries.length === 1 ? 'een verhaal' : `${talk.entries.length} verhalen`} opgeschreven` : 'niets opgeschreven';
-    this.write('visit', `Bij ${sim.name(n)} in ${this.whereName(this.at)}: ${what}.`);
+    const k = talk.entries.length;
+    const what = EN
+      ? k ? `${k === 1 ? 'one tale' : `${k} tales`} written down` : 'nothing written down'
+      : k ? `${k === 1 ? 'een verhaal' : `${k} verhalen`} opgeschreven` : 'niets opgeschreven';
+    this.write('visit', `${L('Bij', 'Visited')} ${sim.name(n)} in ${this.whereName(this.at)}: ${what}.`);
     this.advance(1);
     return out;
   }
@@ -1080,15 +1158,17 @@ export class Field {
     this.introduced.add(best.id);
     const w = this.whereIs(best);
     const own = [...best.know.keys()].filter((t) => this.knowers(t) <= 1).length;
-    const about = being ? `weet van ${themeName(being)}` : own >= 2 ? 'weet dingen die je nergens anders hoort' : 'kan vertellen';
-    const by = source ?? from?.first ?? 'iemand';
-    const lines = [`${sim.name(best)} (${this.age(best)})`, `in ${this.whereName(w)} ${about}.`, `— zegt ${by}`];
-    return this.addLead('person', lines, w, best.id, source ?? (from ? sim.name(from) : 'iemand'));
+    const about = EN
+      ? being ? `knows about ${themeName(being)}` : own >= 2 ? 'knows things you hear nowhere else' : 'can tell a tale or two'
+      : being ? `weet van ${themeName(being)}` : own >= 2 ? 'weet dingen die je nergens anders hoort' : 'kan vertellen';
+    const by = source ?? from?.first ?? L('iemand', 'someone');
+    const lines = [`${sim.name(best)} (${this.age(best)})`, `${EN && w.kind === 'site' ? 'at' : 'in'} ${this.whereName(w)} ${about}.`, EN ? `— so ${by} ${by === "people" ? "say" : "says"}` : `— zegt ${by}`];
+    return this.addLead('person', lines, w, best.id, source ?? (from ? sim.name(from) : L('iemand', 'someone')));
   }
 
   leadName(l: Lead): string {
     const n = this.sim.narrators[l.narrator!];
-    return `${this.sim.name(n)} ${l.at.kind === 'site' ? 'bij' : 'in'} ${this.whereName(l.at)}`;
+    return `${this.sim.name(n)} ${l.at.kind === 'site' ? L('bij', 'at') : 'in'} ${this.whereName(l.at)}`;
   }
 
   private addLead(kind: Lead['kind'], lines: string[], at: Where, narrator: number | null, source: string): Lead {
@@ -1099,13 +1179,17 @@ export class Field {
 
   private firstLeads() {
     const sim = this.sim, land = this.land;
-    const host = 'de waardin';
+    const host = L('de waardin', 'the landlady');
     const ev = this.evening;
-    this.addLead('evening', [`Dag ${ev.day}: vertelavond`, `in de herberg van ${land.places[ev.place].name}.`], { kind: 'place', id: ev.place }, null, host);
+    this.addLead('evening', EN
+      ? [`Day ${ev.day}: storytelling evening`, `at the inn in ${land.places[ev.place].name}.`]
+      : [`Dag ${ev.day}: vertelavond`, `in de herberg van ${land.places[ev.place].name}.`], { kind: 'place', id: ev.place }, null, host);
     const sick = [...this.ill].map((id) => sim.narrators[id]).sort((a, b) => b.know.size - a.know.size)[0];
     if (sick) {
       this.introduced.add(sick.id);
-      this.addLead('person', [`${sim.name(sick)} in ${land.places[sick.place].name},`, `${this.age(sick)} jaar, „weet alles van vroeger”.`, 'Is ziek.'], this.whereIs(sick), sick.id, host);
+      this.addLead('person', EN
+        ? [`${sim.name(sick)} in ${land.places[sick.place].name},`, `${this.age(sick)}, “knows all about the old days”.`, 'Is ill.']
+        : [`${sim.name(sick)} in ${land.places[sick.place].name},`, `${this.age(sick)} jaar, „weet alles van vroeger”.`, 'Is ziek.'], this.whereIs(sick), sick.id, host);
     }
     // a loner far out, and a place nobody likes to talk about
     const loners = land.sites.filter((s) => s.hut !== null).sort((a, b) => dist(b, land.places[0]) - dist(a, land.places[0]));
@@ -1114,7 +1198,9 @@ export class Field {
       const n = sim.alive().find((x) => x.home === lone.hut);
       if (n) {
         this.introduced.add(n.id);
-        this.addLead('person', [`Bij ${lone.name} woont iemand die`, `${SITE[lone.kind].loner}.`, '„Die heeft dingen gezien.”'], { kind: 'site', id: lone.id }, n.id, host);
+        this.addLead('person', EN
+          ? [`Out at ${lone.name}, someone`, `${SITE[lone.kind].loner}.`, '“They’ve seen things.”']
+          : [`Bij ${lone.name} woont iemand die`, `${SITE[lone.kind].loner}.`, '„Die heeft dingen gezien.”'], { kind: 'site', id: lone.id }, n.id, host);
       }
     }
     // the village that keeps most tales of its own: the landlady has heard as much
@@ -1122,13 +1208,15 @@ export class Field {
       const types = new Set(sim.alive(p.id).flatMap((n) => [...n.know.keys()]));
       return [p, [...types].filter((t) => sim.alive().every((n) => n.place === p.id || !n.know.has(t))).length] as const;
     }).sort((a, b) => b[1] - a[1])[0];
-    if (own && own[1] >= 2) this.addLead('place', [`In ${own[0].name} vertellen ze`, 'dingen die je nergens anders hoort.'], { kind: 'place', id: own[0].id }, null, host);
+    if (own && own[1] >= 2) this.addLead('place', EN
+      ? [`In ${own[0].name} they tell`, 'things you hear nowhere else.']
+      : [`In ${own[0].name} vertellen ze`, 'dingen die je nergens anders hoort.'], { kind: 'place', id: own[0].id }, null, host);
     const open = land.sites.find((s) => s.kind === 'galg') ?? land.sites.find((s) => s.hut === null);
-    if (open) this.addLead('site', [cap(`${open.name}:`), '„Daar wil niemand over praten.”'], { kind: 'site', id: open.id }, null, host);
+    if (open) this.addLead('site', [cap(`${open.name}:`), L('„Daar wil niemand over praten.”', '“Nobody wants to talk about that place.”')], { kind: 'site', id: open.id }, null, host);
   }
 
   private lodgingLine(): string {
-    return `${this.persona.perk} Bij de waardin hoort u over een vertelavond, over een zieke oude man of vrouw die veel weet, en over plekken waar het niet pluis is.`;
+    return `${this.persona.perk} ${L('Bij de waardin hoort u over een vertelavond, over een zieke oude man of vrouw die veel weet, en over plekken waar het niet pluis is.', 'From the landlady you hear about a storytelling evening, about an old man or woman who is ill and knows a great deal, and about places that are not quite right.')}`;
   }
 
   // ------------------------------------------------------------------ the lost tale
@@ -1161,26 +1249,32 @@ export class Field {
     const church = churches.find((p) => p.id !== 0) ?? churches[0] ?? land.places[0];
     sim.implant(target, variant);
     const firsts = sim.corpus.meta.regions[this.region].firsts;
-    const grand = `${firsts[r.int(Math.min(40, firsts.length))]} ${sim.narrators[starter.id].last === target.last ? 'van ' + site.name.replace(/^(het|de) /, '') : r.pick(sim.corpus.meta.regions[this.region].lasts.slice(0, 60))}`;
+    // a family named after the place it came from, if the two branches share a name ('Jan van Galgenberg', 'Jan of Gallows Hill')
+    const grand = `${firsts[r.int(Math.min(40, firsts.length))]} ${sim.narrators[starter.id].last === target.last ? L('van ', 'of ') + site.name.replace(/^(het|de|the) /i, '') : r.pick(sim.corpus.meta.regions[this.region].lasts.slice(0, 60))}`;
     const words = variant.d.split(' ');
     const opening = words.slice(0, Math.max(8, Math.floor(words.length * 0.4))).join(' ');
     const q: Quest = { t, n: variant.n, grand, starter: starter.id, church: church.id, site: site.id, village: village.id, target: target.id,
       mark: r.chance(0.6) ? 'oorijzer' : 'pijp', stage: 0, clues: [], opening, hinted: false };
-    this.addLead('quest', [`${sim.name(starter)} (${this.age(starter)}) begint soms`, 'over een verhaal dat niemand', 'meer kan afmaken.'], { kind: 'place', id: 0 }, starter.id, 'de waardin');
+    this.addLead('quest', EN
+      ? [`${sim.name(starter)} (${this.age(starter)}) sometimes`, 'talks about a tale that nobody', 'can finish any more.']
+      : [`${sim.name(starter)} (${this.age(starter)}) begint soms`, 'over een verhaal dat niemand', 'meer kan afmaken.'], { kind: 'place', id: 0 }, starter.id, L('de waardin', 'the landlady'));
     return q;
   }
 
-  /** How the one who still knows the tale can be recognised. */
-  questLook(): string {
+  /** How the one who still knows the tale can be recognised; `who` gives it as a clause after 'someone'. */
+  questLook(who = false): string {
     const q = this.quest!;
     const n = this.sim.narrators[q.target];
-    const age = `ruim ${Math.floor(this.age(n) / 10) * 10}`;
-    return q.mark === 'oorijzer' ? `${age}, en draagt nog het gouden oorijzer van de familie` : `${age}, en rookt altijd een pijpje`;
+    const decade = Math.floor(this.age(n) / 10) * 10;
+    if (EN) return `over ${decade}${who ? ' who' : ', and'} ${q.mark === 'oorijzer' ? 'still wears the family’s gold ear iron' : 'always smokes a pipe'}`;
+    const age = `ruim ${decade}`;
+    const look = q.mark === 'oorijzer' ? `${age}, en draagt nog het gouden oorijzer van de familie` : `${age}, en rookt altijd een pijpje`;
+    return who ? look.replace(/^ruim (\d+), en /, 'ruim $1 die ') : look;
   }
 
   private questLead(lines: string[], at: Where) {
     for (const l of this.leads) if (l.kind === 'quest') l.done = true;
-    this.addLead('quest', lines, at, null, 'speurtocht');
+    this.addLead('quest', lines, at, null, L('speurtocht', 'the trail'));
   }
 
   /** Whether the lost tale can be asked about in this conversation. */
@@ -1199,39 +1293,63 @@ export class Field {
     if (q.stage === 1 && this.at.kind === 'place' && this.at.id === q.church) {
       q.stage = 2;
       const s = land.sites[q.site];
-      const clue = `Op het kerkhof van ${land.places[q.church].name}: „Hier rust ${q.grand}, geboren bij ${s.name}.”`;
+      const stone = EN ? `“Here lies ${q.grand}, born at ${s.name}.”` : `„Hier rust ${q.grand}, geboren bij ${s.name}.”`;
+      const clue = EN ? `In the churchyard of ${land.places[q.church].name}: ${stone}` : `Op het kerkhof van ${land.places[q.church].name}: ${stone}`;
       q.clues.push(clue);
-      this.questLead([`${cap(s.name)}: waar ${q.grand.split(' ')[0]}`, 'vandaan kwam.'], { kind: 'site', id: s.id });
+      this.questLead(EN
+        ? [`${cap(s.name)}: where ${q.grand.split(' ')[0]}`, 'came from.']
+        : [`${cap(s.name)}: waar ${q.grand.split(' ')[0]}`, 'vandaan kwam.'], { kind: 'site', id: s.id });
       this.write('day', clue);
-      return { title: 'Het kerkhof', lines: [
-        `Tussen de scheve stenen achter de kerk vindt u het graf. Het mos is van de letters geschraapt, door iemand die er nog komt.`,
-        `„Hier rust ${q.grand}, geboren bij ${s.name}.”`,
-        `Bij ${s.name} moet u zijn. Daar weten ze misschien waar de familie gebleven is.`,
-      ] };
+      return { title: L('Het kerkhof', 'The churchyard'), lines: EN
+        ? [
+          'Among the leaning stones behind the church you find the grave. The moss has been scraped from the letters, by someone who still comes here.',
+          stone,
+          `${cap(s.name)} is where you need to go. They may know there where the family went.`,
+        ]
+        : [
+          `Tussen de scheve stenen achter de kerk vindt u het graf. Het mos is van de letters geschraapt, door iemand die er nog komt.`,
+          stone,
+          `Bij ${s.name} moet u zijn. Daar weten ze misschien waar de familie gebleven is.`,
+        ] };
     }
     if (q.stage === 2 && this.at.kind === 'site' && this.at.id === q.site) {
       const s = land.sites[q.site];
       if (!this.isNight()) {
         if (q.hinted) return null;
         q.hinted = true;
-        return { title: cap(s.name), lines: [
-          `Overdag is het hier stil. ${s.hut !== null ? 'Wie hier woont, is niet thuis.' : 'Er is niemand.'}`,
-          `Maar men zegt dat je hier ’s nachts dingen ziet. Wacht tot het nacht is.`,
-        ] };
+        return { title: cap(s.name), lines: EN
+          ? [
+            `By day it is quiet here. ${s.hut !== null ? 'Whoever lives here is not at home.' : 'There is nobody.'}`,
+            'But they say you see things here at night. Wait until it is dark.',
+          ]
+          : [
+            `Overdag is het hier stil. ${s.hut !== null ? 'Wie hier woont, is niet thuis.' : 'Er is niemand.'}`,
+            `Maar men zegt dat je hier ’s nachts dingen ziet. Wacht tot het nacht is.`,
+          ] };
       }
       q.stage = 3;
       const v = land.places[q.village];
-      const clue = `Bij ${s.name}: de familie van ${q.grand.split(' ')[0]} is naar ${v.name} getrokken. Wie het verhaal nog kent, is ${this.questLook()}.`;
+      const first = q.grand.split(' ')[0];
+      const clue = EN
+        ? `At ${s.name}: the family of ${first} moved to ${v.name}. The one who still knows the tale is ${this.questLook()}.`
+        : `Bij ${s.name}: de familie van ${first} is naar ${v.name} getrokken. Wie het verhaal nog kent, is ${this.questLook()}.`;
       q.clues.push(clue);
-      this.questLead([`In ${v.name}: iemand van`, this.questLook().replace(/^ruim (\d+), en /, 'ruim $1 die ') + '.'], { kind: 'place', id: v.id });
+      this.questLead([EN ? `In ${v.name}: someone` : `In ${v.name}: iemand van`, this.questLook(true) + '.'], { kind: 'place', id: v.id });
       this.write('day', clue);
       const loner = sim.alive().find((n) => n.home === s.hut);
-      return { title: 'In het donker', lines: [
-        loner
-          ? `Bij het licht van een lantaarn vertelt ${sim.name(loner)}: „${q.grand.split(' ')[0]}? Die woonde hier, lang geleden. De familie is later naar ${v.name} getrokken. Daar hebben ze het verhaal nog.”`
-          : `In de nevel staat een witte gestalte. Ze heft een arm en wijst, over het land, naar ${v.name}. Dan is ze weg.`,
-        `„Je herkent het aan dit: ${this.questLook()}.”`,
-      ] };
+      return { title: DARK_TITLE, lines: EN
+        ? [
+          loner
+            ? `By the light of a lantern, ${sim.name(loner)} tells you: “${first}? They lived here, long ago. The family later moved to ${v.name}. They still have the tale there.”`
+            : `A white figure stands in the mist. She raises an arm and points, across the land, towards ${v.name}. Then she is gone.`,
+          `“You’ll know them by this: ${this.questLook()}.”`,
+        ]
+        : [
+          loner
+            ? `Bij het licht van een lantaarn vertelt ${sim.name(loner)}: „${first}? Die woonde hier, lang geleden. De familie is later naar ${v.name} getrokken. Daar hebben ze het verhaal nog.”`
+            : `In de nevel staat een witte gestalte. Ze heft een arm en wijst, over het land, naar ${v.name}. Dan is ze weg.`,
+          `„Je herkent het aan dit: ${this.questLook()}.”`,
+        ] };
     }
     return null;
   }
@@ -1263,11 +1381,13 @@ export class Field {
     this.seen.add(siteId);
     const lines = [a.seen];
     const near = this.sim.alive(s.place)[0] ?? this.sim.alive()[0];
-    const lead = this.leadFor(a.being, null, "men");
-    if (lead) lines.push(`Wie weet er meer van ${themeName(a.being)}? In ${this.whereName(lead.at)} zou ${this.sim.name(this.sim.narrators[lead.narrator!])} het weten.`);
-    else lines.push(`Niemand die u kent, weet hier iets van. Maar vraag er eens naar.`);
+    const lead = this.leadFor(a.being, null, L('men', 'people'));
+    if (lead) lines.push(EN
+      ? `Who knows more about ${themeName(a.being)}? ${this.sim.name(this.sim.narrators[lead.narrator!])} ${lead.at.kind === 'site' ? 'at' : 'in'} ${this.whereName(lead.at)} would know.`
+      : `Wie weet er meer van ${themeName(a.being)}? In ${this.whereName(lead.at)} zou ${this.sim.name(this.sim.narrators[lead.narrator!])} het weten.`);
+    else lines.push(L(`Niemand die u kent, weet hier iets van. Maar vraag er eens naar.`, 'Nobody you know knows anything about this. But do ask around.'));
     void near;
-    this.write('day', `Bij ${s.name} iets gezien: ${themeName(a.being)}?`);
+    this.write('day', EN ? `Saw something at ${s.name}: ${themeName(a.being)}?` : `Bij ${s.name} iets gezien: ${themeName(a.being)}?`);
     this.changed();
     return { lines, lead, being: a.being };
   }
@@ -1299,19 +1419,23 @@ export class Field {
     }
     const entries: Entry[] = [];
     const lines = o.kind === 'herberg'
-      ? ['De gelagkamer zit vol. Er wordt gerookt, gedronken, en verteld.']
-      : ['In de keuken van de boerderij zitten de buren om de kachel. De ouderen vertellen over vroeger, de jongeren luisteren en lachen.'];
+      ? [L('De gelagkamer zit vol. Er wordt gerookt, gedronken, en verteld.', 'The taproom is full. People smoke, drink, and tell stories.')]
+      : [L('In de keuken van de boerderij zitten de buren om de kachel. De ouderen vertellen over vroeger, de jongeren luisteren en lachen.', 'In the farm kitchen the neighbours sit round the stove. The old ones talk about the old days; the young ones listen and laugh.')];
     for (const n of tellers) {
       this.met.add(n.id);
       if (!this.toldUs.has(n.id)) this.toldUs.set(n.id, new Set());
       const t = [...n.know.entries()].filter(([t]) => !this.toldUs.get(n.id)!.has(t)).sort((a, b) => b[1].s - a[1].s)[0];
       if (!t) continue;
       entries.push(this.record(n, t[0], { via: o.kind === 'herberg' ? 'avond' : 'buurten', frag: r.chance(0.08) }));
-      lines.push(`${sim.name(n)} vertelt.`);
+      lines.push(`${sim.name(n)} ${L('vertelt', 'tells a tale')}.`);
     }
     for (const n of people) this.trust.set(n.id, Math.max(this.trustOf(n), 0.5));
-    lines.push(o.kind === 'herberg' ? 'Na vanavond kent het hele dorp u.' : 'U mag terugkomen, zegt de boer bij de deur.');
-    this.write('evening', `${o.kind === 'herberg' ? 'Vertelavond' : 'Buurten'} in ${this.land.places[o.place].name}: ${entries.length} verhalen opgeschreven.`);
+    lines.push(o.kind === 'herberg'
+      ? L('Na vanavond kent het hele dorp u.', 'After tonight, the whole village knows you.')
+      : L('U mag terugkomen, zegt de boer bij de deur.', 'You are welcome to come back, the farmer says at the door.'));
+    this.write('evening', EN
+      ? `${o.kind === 'herberg' ? 'Storytelling evening' : 'Evening at the neighbours’'} in ${this.land.places[o.place].name}: ${entries.length === 1 ? 'one tale' : `${entries.length} tales`} written down.`
+      : `${o.kind === 'herberg' ? 'Vertelavond' : 'Buurten'} in ${this.land.places[o.place].name}: ${entries.length} verhalen opgeschreven.`);
     this.advance(2 - this.slot);
     return { lines, entries, lead: null, trust: [0, 0] };
   }
@@ -1325,7 +1449,7 @@ export class Field {
 
   appeal() {
     this.appealDay = this.day;
-    this.write('letter', 'Een oproep geschreven voor het weekblad: wie kent nog oude verhalen, van spoken, heksen en witte wieven? Schrijft u mij.');
+    this.write('letter', L('Een oproep geschreven voor het weekblad: wie kent nog oude verhalen, van spoken, heksen en witte wieven? Schrijft u mij.', 'Wrote an appeal for the local weekly: who still knows the old tales of ghosts, witches and white women? Please write to me.'));
     this.advance(1);
   }
 
@@ -1341,8 +1465,8 @@ export class Field {
     // one reader, at most, disapproves (as some readers of Iduna did of Dykstra's appeals)
     if (r.chance(0.3) && !this.letters.some((l) => !l.entries.length)) {
       this.letters.push({ day: this.day, from: null, entries: [], lead: null, read: false,
-        text: 'Een lezer schrijft aan het weekblad dat zulke bakerpraatjes en spookgeschiedenissen niet in een fatsoenlijke krant thuishoren.' });
-      this.write('letter', 'Een boze brief in het weekblad over uw oproep.');
+        text: L('Een lezer schrijft aan het weekblad dat zulke bakerpraatjes en spookgeschiedenissen niet in een fatsoenlijke krant thuishoren.', 'A reader writes to the weekly that such old wives’ tales and ghost stories have no place in a decent newspaper.') });
+      this.write('letter', L('Een boze brief in het weekblad over uw oproep.', 'An angry letter in the weekly about your appeal.'));
       return;
     }
     // a reader somewhere you have not been, who remembers something from childhood
@@ -1357,8 +1481,12 @@ export class Field {
     const lead = r.chance(0.6) ? this.leadFor(null, n, sim.name(n)) : null;
     const role = this.role(n);
     this.letters.push({ day: this.day, from: n.id, entries: [entry], lead, read: false,
-      text: `${sim.name(n)} uit ${this.land.places[n.place].name} (${role}) schrijft u naar aanleiding van uw oproep. Het verhaal hieronder hoorde ${n.first} als kind.${lead ? ` En: „${this.leadName(lead)} weet er veel meer van.”` : ''}` });
-    this.write('letter', `Een brief van ${sim.name(n)} uit ${this.land.places[n.place].name}, met een verhaal.`);
+      text: EN
+        ? `${sim.name(n)} from ${this.land.places[n.place].name} (${role}) writes to you in answer to your appeal. ${n.first} heard the tale below as a child.${lead ? ` And: “${this.leadName(lead)} knows a lot more about it.”` : ''}`
+        : `${sim.name(n)} uit ${this.land.places[n.place].name} (${role}) schrijft u naar aanleiding van uw oproep. Het verhaal hieronder hoorde ${n.first} als kind.${lead ? ` En: „${this.leadName(lead)} weet er veel meer van.”` : ''}` });
+    this.write('letter', EN
+      ? `A letter from ${sim.name(n)} in ${this.land.places[n.place].name}, with a tale.`
+      : `Een brief van ${sim.name(n)} uit ${this.land.places[n.place].name}, met een verhaal.`);
   }
 
   // ------------------------------------------------------------------ the other collector
@@ -1374,8 +1502,11 @@ export class Field {
     if (!this.rival) {
       const tape = this.year >= 1950 && this.archetype !== 'rondreiziger';
       const far = [...this.land.places].sort((a, b) => dist(b, this.land.places[0]) - dist(a, this.land.places[0]))[0];
-      this.rival = { who: tape ? 'een meneer met een bandrecorder' : 'een onderwijzer die ook verhalen verzamelt', travel: tape ? 'auto' : 'fiets', at: far.id, from: null, next: null, since: this.day, visited: new Map(), got: [] };
-      this.write('rival', `Er is nog iemand in de streek die verhalen verzamelt: ${this.rival.who}. Gezien in ${far.name}. Wat die het eerst opschrijft, is voor u minder waard.`);
+      const who = tape ? L('een meneer met een bandrecorder', 'a gentleman with a tape recorder') : L('een onderwijzer die ook verhalen verzamelt', 'a schoolteacher who collects tales too');
+      this.rival = { who, travel: tape ? 'auto' : 'fiets', at: far.id, from: null, next: null, since: this.day, visited: new Map(), got: [] };
+      this.write('rival', EN
+        ? `Someone else is collecting tales in the region: ${who}. Seen in ${far.name}. Whatever they write down first is worth less to you.`
+        : `Er is nog iemand in de streek die verhalen verzamelt: ${who}. Gezien in ${far.name}. Wat die het eerst opschrijft, is voor u minder waard.`, true);
     } else if (this.rival.next !== null) {
       this.rival.from = this.rival.at;
       this.rival.at = this.rival.next;
@@ -1391,18 +1522,24 @@ export class Field {
       // a lead you had not followed up yet: the rival was there first
       for (const l of this.leads) if (l.narrator === n.id && !l.done) {
         l.done = true;
-        l.lines = [...l.lines, '(De ander was u voor.)'];
-        this.write('rival', `De andere verzamelaar was u voor bij ${sim.name(n)}.`);
+        l.lines = [...l.lines, L('(De ander was u voor.)', '(The other collector got there first.)')];
+        this.write('rival', EN ? `The other collector got to ${sim.name(n)} before you.` : `De andere verzamelaar was u voor bij ${sim.name(n)}.`, true);
       }
     }
-    this.write('rival', `De andere verzamelaar was vandaag in ${this.land.places[rv.at].name}${there.length ? `, bij ${there.map((n) => sim.name(n)).join(' en ')}` : ''}.`);
+    const names = there.map((n) => sim.name(n));
+    const whom = EN ? listOf(names) : names.join(' en ');
+    this.write('rival', EN
+      ? `The other collector was in ${this.land.places[rv.at].name} today${there.length ? `, calling on ${whom}` : ''}.`
+      : `De andere verzamelaar was vandaag in ${this.land.places[rv.at].name}${there.length ? `, bij ${whom}` : ''}.`);
     // tomorrow: where your best tellers live, half the time; otherwise somewhere with tellers left
     const yours = [...this.met].map((id) => sim.narrators[id])
       .filter((n) => n.died === null && !this.isLoner(n) && n.know.size >= 5 && !rv.visited.has(n.id) && n.place !== rv.at)
       .sort((a, b) => b.know.size - a.know.size);
     const fresh = this.land.places.filter((p) => p.id !== rv.at && sim.alive(p.id).some((n) => !rv.visited.has(n.id) && n.know.size > 0));
     rv.next = yours.length && r.chance(0.55) ? yours[0].place : fresh.length ? r.pick(fresh).id : null;
-    if (rv.next !== null) this.write('rival', `Morgen gaat de andere verzamelaar naar ${this.land.places[rv.next].name}, hoort u.`);
+    if (rv.next !== null) this.write('rival', EN
+      ? `Tomorrow the other collector is going to ${this.land.places[rv.next].name}, you hear.`
+      : `Morgen gaat de andere verzamelaar naar ${this.land.places[rv.next].name}, hoort u.`, true);
   }
 
   // ------------------------------------------------------------------ the score: what the notebook is worth
@@ -1456,8 +1593,8 @@ export class Field {
 
   // ------------------------------------------------------------------ the record
 
-  private write(kind: Diary['kind'], text: string) {
-    this.diary.push({ day: this.day, part: this.part, kind, text });
+  private write(kind: Diary['kind'], text: string, notice = false) {
+    this.diary.push({ day: this.day, part: this.part, kind, text, notice });
   }
 
   /** What was told in the region while you were there: every tale someone knows. */
@@ -1488,10 +1625,15 @@ export function cap(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+/** What you ask about: 'U vraagt naar heksen', 'You ask about witches'. */
 export function themeName(being: string): string {
-  return ({
+  return ((EN ? {
+    duivel: 'the devil', heks: 'witches', spook: 'ghosts', witte_wieven: 'the white women', kabouter: 'gnomes', weerwolf: 'werewolves',
+    mare: 'the nightmare', dwaallicht: 'will-o’-the-wisps', watergeest: 'water spirits', spookdier: 'ghostly animals', voorgezicht: 'second sight',
+    tovenaar: 'sorcerers', reus: 'giants', heilige: 'saints', schat: 'treasure', vrijmetselaar: 'freemasons', dood: 'death',
+  } : {
     duivel: 'de duivel', heks: 'heksen', spook: 'spoken', witte_wieven: 'witte wieven', kabouter: 'kabouters', weerwolf: 'weerwolven',
     mare: 'de nachtmerrie', dwaallicht: 'dwaallichten', watergeest: 'watergeesten', spookdier: 'spookdieren', voorgezicht: 'voorgezichten',
     tovenaar: 'tovenaars', reus: 'reuzen', heilige: 'heiligen', schat: 'schatten', vrijmetselaar: 'vrijmetselaars', dood: 'de dood',
-  } as Record<string, string>)[being] ?? being;
+  }) as Record<string, string>)[being] ?? being;
 }

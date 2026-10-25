@@ -12,6 +12,7 @@ import { TILE, W, idx, placeRoadTile, roadPath } from './world';
 import { Rng } from './rng';
 import { SINT_FRAMES, drawBat, drawPumpkin, drawSint, drawStar, feest } from './feest';
 import { sfx } from './sound';
+import { L } from './i18n';
 
 /** How fast each kind of traveller goes, in sheet pixels per second, and how far one frame of the cycle carries. */
 const PACE: Record<string, { speed: number; step: number; scale: number }> = {
@@ -117,7 +118,7 @@ export class MapScene extends Phaser.Scene {
     this.night = new Night(this, this.features);
     this.spirits = new Spirits(this, f, (site) => {
       if (Spirits.near(G.field, site)) G.emit('apparition', site);
-      else G.emit('hover', { text: 'Te ver weg om te zien wat het is.', x: innerWidth / 2 - 100, y: 80 });
+      else G.emit('hover', { text: L('Te ver weg om te zien wat het is.', 'Too far away to see what it is.'), x: innerWidth / 2 - 100, y: 80 });
     });
     this.lamp = this.add.image(0, 0, 'glow').setTint(0xffe08a).setBlendMode(Phaser.BlendModes.ADD).setScale(0.5).setAlpha(0).setDepth(6.9);
     this.rider = this.add.image(0, 0, 'rider', 'i0').setOrigin(0.47, 58 / BOX).setScale(this.pace.scale / RES).setDepth(7);
@@ -780,7 +781,7 @@ export class MapScene extends Phaser.Scene {
       const [x, y] = pos(rv.at);
       this.rival = this.add.image(x, y, 'rival', 'i0').setOrigin(0.47, 58 / BOX).setScale(0.72 / RES).setDepth(6.9).setTint(0x8a96a8).setAlpha(0);
       this.tweens.add({ targets: this.rival, alpha: 0.95, duration: 1200 });
-      this.rivalLabel = this.add.text(x, y - 44, 'de ander', {
+      this.rivalLabel = this.add.text(x, y - 44, L('de ander', 'the other collector'), {
         fontFamily: '"IM Fell English", serif', fontStyle: 'italic', fontSize: '13px', color: '#4a5a78', resolution: 3,
         stroke: 'rgba(239,229,203,0.9)', strokeThickness: 3,
       }).setOrigin(0.5).setDepth(9).setAlpha(0);
@@ -819,7 +820,7 @@ export class MapScene extends Phaser.Scene {
   /** A farm dog comes out barking, runs along for a bit, and sits down satisfied. */
   private dog(x: number, y: number, facing: number) {
     const d = this.add.image(x - facing * 26, y + 6, 'a-hond', '1').setOrigin(0.5, 0.9).setScale(0.8 / RES).setDepth(6.9).setFlipX(facing < 0);
-    const bark = this.add.text(x - facing * 26, y - 8, 'waf!', {
+    const bark = this.add.text(x - facing * 26, y - 8, L('waf!', 'woof!'), {
       fontFamily: '"IM Fell English", serif', fontStyle: 'italic', fontSize: '11px', color: '#3e3e48', resolution: 3,
     }).setOrigin(0.5).setDepth(9);
     this.tweens.add({ targets: bark, y: y - 18, alpha: 0, duration: 900, delay: 300, onComplete: () => bark.destroy() });
@@ -1156,7 +1157,7 @@ export class MapScene extends Phaser.Scene {
       if (!w) return G.emit('hover', null);
       const here = f.same(w, f.at);
       const r = here ? null : f.route(w);
-      const how = here ? 'u bent hier' : r ? `${durationText(r.parts)} ${r.foot > 3 && f.persona.travel !== 'voet' ? `${f.persona.verb} en lopen` : f.persona.verb}` : 'onbereikbaar';
+      const how = here ? L('u bent hier', 'you are here') : r ? `${durationText(r.parts)} ${r.foot > 3 && f.persona.travel !== 'voet' ? `${f.persona.verb} ${L('en lopen', 'and on foot')}` : f.persona.verb}` : L('onbereikbaar', 'out of reach');
       G.emit('hover', { text: `${f.whereName(w)} · ${how}`, ...screen(ptr) });
     });
 

@@ -105,14 +105,21 @@ async function getJSON<T>(path: string): Promise<T> {
 
 let metaPromise: Promise<Meta> | null = null;
 export function loadMeta(): Promise<Meta> {
-  metaPromise ??= getJSON<Meta>('meta.json').then((meta) => {
-    for (const t of Object.values(meta.types)) t.name = EN ? t.en : t.nl;
-    for (const [k, r] of Object.entries(meta.regions)) r.name = EN ? (REGION_EN[k] ?? r.nl) : r.nl;
-    for (const [k, a] of Object.entries(meta.archetypes)) a.name = EN ? (ARCHETYPE_EN[k] ?? a.nl) : a.nl;
-    if (EN) for (const t of meta.tags) t.label = TAG_EN[t.id] ?? t.label;
-    return meta;
-  });
+  metaPromise ??= getJSON<Meta>('meta.json').then(nameMeta);
   return metaPromise;
+}
+
+/** Fills in the names to show, in the language of this edition. */
+export function nameMeta(meta: Meta): Meta {
+  for (const t of Object.values(meta.types)) t.name = EN ? t.en : t.nl;
+  for (const [k, r] of Object.entries(meta.regions)) r.name = EN ? (REGION_EN[k] ?? r.nl) : r.nl;
+  for (const [k, a] of Object.entries(meta.archetypes)) {
+    a.name = EN ? (ARCHETYPE_EN[k] ?? a.nl) : a.nl;
+    // the student collections are named by a description, not a person
+    if (EN) a.real.name = a.real.name.replace(/^(\d+) Vlaamse en Limburgse studenten$/, '$1 Flemish and Limburg students');
+  }
+  if (EN) for (const t of meta.tags) t.label = TAG_EN[t.id] ?? t.label;
+  return meta;
 }
 
 export function buildCorpus(region: string, meta: Meta, variants: Variant[]): Corpus {

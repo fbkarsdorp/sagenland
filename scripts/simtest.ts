@@ -1,12 +1,12 @@
 // Headless run of the simulation for balancing:
 //   npx tsx scripts/simtest.ts [region] [archetype] [seed] [play 1|0] [feasts 1|0] [none|light|care]
 import { readFileSync } from 'node:fs';
-import { buildCorpus, type Meta } from '../src/data';
+import { buildCorpus, nameMeta, type Meta } from '../src/data';
 import { Sim } from '../src/sim';
 import { layRoad, BUILD } from '../src/world';
 
 const [region = 'friesland', arch = 'volhouder', seedS = '7', playS = '1'] = process.argv.slice(2);
-const meta: Meta = JSON.parse(readFileSync('public/data/meta.json', 'utf8'));
+const meta: Meta = nameMeta(JSON.parse(readFileSync('public/data/meta.json', 'utf8')));
 const data = JSON.parse(readFileSync(`public/data/${region}.json`, 'utf8'));
 const corpus = buildCorpus(region, meta, data.variants);
 const t0 = Date.now();

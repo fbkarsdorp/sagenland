@@ -1,6 +1,7 @@
 // The collector's region: villages of different sizes and characters, the roads between them,
 // and the places outside the villages that tales are tied to (a gallows field, a bog, an old lime tree).
 import { Rng, makeNoise } from './rng';
+import { EN, L } from './i18n';
 import {
   H, N8, W, addBuilding, crossroads, idx, inb, layRoad,
   type BKind, type MapData, type Place, type Terrain, type Tile,
@@ -9,12 +10,12 @@ import {
 export type VillageKind = 'kerkdorp' | 'esdorp' | 'gehucht' | 'molendorp' | 'veendorp' | 'heidedorp';
 
 export const VILLAGE: Record<VillageKind, { name: string; desc: string }> = {
-  kerkdorp: { name: 'kerkdorp', desc: 'Een dorp rond de kerk, met een herberg, een smidse en een school.' },
-  esdorp: { name: 'boerendorp', desc: 'Grote boerderijen rond de akkers. Hier wonen families al eeuwen op dezelfde grond.' },
-  gehucht: { name: 'gehucht', desc: 'Een paar boerderijen bij elkaar, ver van alles.' },
-  molendorp: { name: 'molendorp', desc: 'Een dorp onder de molen, waar boeren van heinde en ver hun koren brengen.' },
-  veendorp: { name: 'veendorp', desc: 'Huizen in een lange rij langs de weg door het veen. Arm, en vol verhalen over het water.' },
-  heidedorp: { name: 'heidedorp', desc: 'Een handvol huizen aan de rand van de heide, bij de schaapskooien.' },
+  kerkdorp: { name: L('kerkdorp', 'church village'), desc: L('Een dorp rond de kerk, met een herberg, een smidse en een school.', 'A village round the church, with an inn, a smithy and a school.') },
+  esdorp: { name: L('boerendorp', 'farming village'), desc: L('Grote boerderijen rond de akkers. Hier wonen families al eeuwen op dezelfde grond.', 'Big farms around the fields. Families here have lived on the same land for centuries.') },
+  gehucht: { name: L('gehucht', 'hamlet'), desc: L('Een paar boerderijen bij elkaar, ver van alles.', 'A few farms together, far from everything.') },
+  molendorp: { name: L('molendorp', 'mill village'), desc: L('Een dorp onder de molen, waar boeren van heinde en ver hun koren brengen.', 'A village below the mill, where farmers from far and wide bring their grain.') },
+  veendorp: { name: L('veendorp', 'peat village'), desc: L('Huizen in een lange rij langs de weg door het veen. Arm, en vol verhalen over het water.', 'Houses in a long row along the road through the bog. Poor, and full of tales about the water.') },
+  heidedorp: { name: L('heidedorp', 'heath village'), desc: L('Een handvol huizen aan de rand van de heide, bij de schaapskooien.', 'A handful of houses at the edge of the heath, by the sheepfolds.') },
 };
 
 export type SiteKind = 'galg' | 'kruisweg' | 'linde' | 'veen' | 'heide' | 'bos' | 'water';
@@ -34,13 +35,14 @@ export interface Site {
 }
 
 export const SITE: Record<SiteKind, { attract: string; loner: string | null; names: string[] }> = {
-  galg: { attract: 'galg', loner: null, names: ['het Galgenveld', 'de Galgenberg'] },
-  kruisweg: { attract: 'kruisweg', loner: null, names: ['de Kruisweg', 'het Kruis'] },
-  linde: { attract: 'kruisweg', loner: 'woont in het huisje bij de linde', names: ['de Dikke Linde', 'de Oude Eik'] },
-  veen: { attract: 'veen', loner: 'steekt turf in het veen', names: ['het Hoogveen', 'het Zwarte Veen'] },
-  heide: { attract: 'heide', loner: 'hoedt de schapen op de heide', names: ['het Heideveld', 'de Steenhoop'] },
-  bos: { attract: 'bos', loner: 'is houtvester in het bos', names: ['het Elsbroek', 'het Donkere Bos'] },
-  water: { attract: 'water', loner: 'zet mensen over bij het veer', names: ['het Veer', 'de Overhaal'] },
+  // names with their article, lower case, as they stand inside a sentence
+  galg: { attract: 'galg', loner: null, names: EN ? ['the Gallows Field', 'Gallows Hill'] : ['het Galgenveld', 'de Galgenberg'] },
+  kruisweg: { attract: 'kruisweg', loner: null, names: EN ? ['the Crossroads', 'the Wayside Cross'] : ['de Kruisweg', 'het Kruis'] },
+  linde: { attract: 'kruisweg', loner: L('woont in het huisje bij de linde', 'lives in the cottage by the lime tree'), names: EN ? ['the Great Lime', 'the Old Oak'] : ['de Dikke Linde', 'de Oude Eik'] },
+  veen: { attract: 'veen', loner: L('steekt turf in het veen', 'cuts peat in the bog'), names: EN ? ['the High Bog', 'the Black Bog'] : ['het Hoogveen', 'het Zwarte Veen'] },
+  heide: { attract: 'heide', loner: L('hoedt de schapen op de heide', 'keeps the sheep on the heath'), names: EN ? ['the Open Heath', 'the Cairn'] : ['het Heideveld', 'de Steenhoop'] },
+  bos: { attract: 'bos', loner: L('is houtvester in het bos', 'is the forester in the woods'), names: EN ? ['the Alder Marsh', 'the Dark Wood'] : ['het Elsbroek', 'het Donkere Bos'] },
+  water: { attract: 'water', loner: L('zet mensen over bij het veer', 'runs the ferry'), names: EN ? ['the Ferry', 'the Crossing'] : ['het Veer', 'de Overhaal'] },
 };
 
 export interface Land extends MapData {
