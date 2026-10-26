@@ -11,7 +11,7 @@ import type { Corpus } from './data';
 import { Rng } from './rng';
 import { Sim, type Narrator } from './sim';
 import { SITE, VILLAGE, generateLand, type Land, type Site } from './land';
-import { W, idx, inb, placeRoadTile, roadPath } from './world';
+import { H, N4, W, idx, inb, placeRoadTile } from './world';
 import { listOf, placeNames } from './text';
 import { EN, L } from './i18n';
 
@@ -604,36 +604,23 @@ export class Field {
 
   // ------------------------------------------------------------------ travel
 
-  /** The way there over the roads, with the last stretch on foot across the land; and how long it takes. */
+  /**
+   * The quickest way there, and how long it takes: on foot across the land to a road (or not at all, when walking is
+   * quicker), along the road, and on foot again to where you are going.
+   */
   route(to: Where): { tiles: number[]; parts: number; foot: number; footStart: number; footEnd: number } | null {
     if (this.same(this.at, to)) return null;
     const map = this.land;
-    const ends = [this.at, to].map((w) => {
-      if (w.kind === 'place') return { road: placeRoadTile(map, map.places[w.id]), off: [] as number[] };
-      const s = map.sites[w.id];
-      if (map.tiles[idx(s.x, s.y)].road) return { road: idx(s.x, s.y), off: [] };
-      // the nearest road, and a straight walk from it
-      let best: number | null = null, bd = Infinity;
-      for (let y = s.y - 10; y <= s.y + 10; y++)
-        for (let x = s.x - 10; x <= s.x + 10; x++) {
-          if (!inb(x, y) || !map.tiles[idx(x, y)].road) continue;
-          const d = Math.abs(x - s.x) + Math.abs(y - s.y);
-          if (d < bd) { bd = d; best = idx(x, y); }
-        }
-      return { road: best, off: best === null ? [] : line(best % W, Math.floor(best / W), s.x, s.y) };
-    });
-    const [a, b] = ends;
-    if (a.road === null || b.road === null) return null;
-    const road = roadPath(map, a.road, b.road);
-    if (!road) return null;
-    const tiles = [...[...a.off].reverse(), ...road, ...b.off];
-    const foot = a.off.length + b.off.length;
+    const tile = (w: Where) => (w.kind === 'place' ? placeRoadTile(map, map.places[w.id]) : idx(map.sites[w.id].x, map.sites[w.id].y));
+    const from = tile(this.at), goal = tile(to);
+    if (from === null || goal === null) return null;
     // mud slows the roads; in mist the way across open land is hard to find
     const wet = this.weather === 'sneeuw' ? (this.persona.travel === 'auto' ? 0.6 : 0.65) : this.wet ? (this.persona.travel === 'auto' ? 0.85 : 0.7) : 1;
     const lost = this.misty ? 0.5 : 1;
+    const way = quickest(map, from, goal, 1 / (this.persona.speed * wet), 1 / (8 * lost));
+    if (!way) return null;
     // in stretches of two hours (half a part of the day)
-    const parts = Math.max(1, Math.ceil(2 * (road.length / (this.persona.speed * wet) + foot / (8 * lost))));
-    return { tiles, parts, foot, footStart: a.off.length, footEnd: b.off.length };
+    return { tiles: way.tiles, parts: Math.max(1, Math.ceil(2 * way.cost)), foot: way.foot, footStart: way.footStart, footEnd: way.footEnd };
   }
 
   travel(to: Where): number[] | null {
@@ -1606,15 +1593,79 @@ export class Field {
   }
 }
 
-function line(x0: number, y0: number, x1: number, y1: number): number[] {
-  const out: number[] = [];
-  let x = x0, y = y0;
-  while (x !== x1 || y !== y1) {
-    if (x !== x1 && (Math.abs(x1 - x) >= Math.abs(y1 - y))) x += Math.sign(x1 - x);
-    else y += Math.sign(y1 - y);
-    if (inb(x, y)) out.push(idx(x, y));
+/**
+ * Dijkstra over the map in three stages: walking from the start, on the road, walking to the end. Costs are in parts
+ * of the day per tile; water off the road is slow going (wading, or finding someone with a boat).
+ */
+function quickest(map: Land, from: number, goal: number, road: number, foot: number) {
+  const n = W * H;
+  const cost = new Float64Array(3 * n).fill(Infinity);
+  const prev = new Int32Array(3 * n).fill(-1);
+  const heap: [number, number][] = [];
+  const push = (state: number, c: number, p: number) => {
+    if (c >= cost[state]) return;
+    cost[state] = c;
+    prev[state] = p;
+    heap.push([c, state]);
+    for (let i = heap.length - 1; i > 0;) {
+      const up = (i - 1) >> 1;
+      if (heap[up][0] <= heap[i][0]) break;
+      [heap[up], heap[i]] = [heap[i], heap[up]];
+      i = up;
+    }
+  };
+  const pop = () => {
+    const top = heap[0], last = heap.pop()!;
+    if (heap.length) {
+      heap[0] = last;
+      for (let i = 0; ;) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < heap.length && heap[l][0] < heap[m][0]) m = l;
+        if (r < heap.length && heap[r][0] < heap[m][0]) m = r;
+        if (m === i) break;
+        [heap[m], heap[i]] = [heap[i], heap[m]];
+        i = m;
+      }
+    }
+    return top;
+  };
+  const walk = (i: number) => (map.tiles[i].t === 'water' && !map.tiles[i].road ? 4 : 1) * foot;
+  push(from, 0, -1);
+  let end = -1;
+  while (heap.length) {
+    const [c, state] = pop();
+    if (c > cost[state]) continue;
+    const i = state % n, stage = Math.floor(state / n);
+    if (i === goal) {
+      end = state;
+      break;
+    }
+    // onto the road, and off it again, cost nothing in themselves
+    if (stage < 2 && map.tiles[i].road) push(state + n, c, state);
+    const x = i % W, y = Math.floor(i / W);
+    for (const [dx, dy] of N4) {
+      if (!inb(x + dx, y + dy)) continue;
+      const j = idx(x + dx, y + dy);
+      if (stage === 1) {
+        if (map.tiles[j].road) push(n + j, c + road, state);
+      } else push(stage * n + j, c + walk(j), state);
+    }
   }
-  return out;
+  if (end < 0) return null;
+  // back from the end: the tiles, and for each step whether it was on foot
+  const tiles: number[] = [], steps: boolean[] = [];
+  for (let s = end; s >= 0; s = prev[s]) {
+    const p = prev[s];
+    if (p >= 0 && p % n === s % n) continue;
+    tiles.push(s % n);
+    if (p >= 0) steps.push(Math.floor(s / n) !== 1);
+  }
+  tiles.reverse();
+  steps.reverse();
+  const footStart = steps.indexOf(false) < 0 ? steps.length : steps.indexOf(false);
+  const footEnd = steps.indexOf(false) < 0 ? 0 : steps.length - 1 - steps.lastIndexOf(false);
+  return { tiles, cost: cost[end], foot: steps.filter(Boolean).length, footStart, footEnd };
 }
 
 function dist(a: { x: number; y: number }, b: { x: number; y: number }) {
