@@ -14,7 +14,16 @@ export interface PortraitSpec {
   mark?: 'oorijzer' | 'pijp' | 'none';
   /** a woman or a man, by the first name; undecided names may get anything */
   woman?: boolean | null;
+  /** the year of the season: from the 1950s brown and dark faces are less rare in the countryside */
+  year?: number;
 }
+
+/**
+ * Brown and dark skin. Rare in the villages of the archive's time, but there: Indo-Dutch families from Indonesia
+ * (1945 to the early 1960s), Moluccan families in camps in the countryside (1951), people from Suriname and the
+ * Antilles (mostly in the cities, from the 1950s). Fewer still around 1900.
+ */
+const DARK_SKIN = ['#c08e64', '#a8744c', '#8e5c3a', '#74472c', '#5a3622', '#47291a'];
 
 const INK = '#2a211a';
 let uid = 0;
@@ -39,14 +48,22 @@ export function drawPortrait(o: PortraitSpec, size: number): string {
   const rx = { oval: 12, rond: 13.5, lang: 11, hoekig: 12.8, smal: 10.6 }[shape] + rnd() * 1.2;
   const ry = { oval: 14, rond: 12.8, lang: 15.5, hoekig: 13.6, smal: 14.6 }[shape] + rnd() * 1.2;
   const jaw = { oval: 0.45, rond: 0.7, lang: 0.35, hoekig: 0.95, smal: 0.3 }[shape];
+  // its own draw from the seed, so everyone else keeps the face they had
+  const u = ((o.seed * 2246822519 + 3266489917) >>> 0) / 4294967296;
+  const darkShare = (o.year ?? 1950) >= 1945 ? 0.07 : 0.02;
+  const dark = u < darkShare;
   let skin = pick(['#efd3b4', '#e8c39d', '#dcb08a', '#eacaa9', '#d9a982', '#f0d9c0']);
+  if (dark) skin = DARK_SKIN[Math.floor((u / darkShare) * DARK_SKIN.length)];
+  // lines and shadows on dark skin are drawn darker still, not in the warm brown that suits light skin
+  const deep = dark && DARK_SKIN.indexOf(skin) >= 2;
   if (o.ill) skin = mixHex(skin, '#c8c8bc', 0.4);
-  const skinShade = mixHex(skin, '#7a4a30', 0.25);
+  const skinShade = mixHex(skin, deep ? '#1a0e08' : '#7a4a30', 0.25);
   const j2 = 0.5 + 0.38 * jaw;
   const headPath = `M${cx - rx},${cy} A${rx},${ry} 0 0 1 ${cx + rx},${cy} C${cx + rx},${cy + ry * 0.62} ${cx + rx * j2},${cy + ry} ${cx},${cy + ry} C${cx - rx * j2},${cy + ry} ${cx - rx},${cy + ry * 0.62} ${cx - rx},${cy} Z`;
 
   // hair colour goes with age
-  const young = pick(['#2a2018', '#3b2a1c', '#5a3a22', '#7a5530', '#a07840', '#c8a060', '#8a3a1c']);
+  const young = dark ? pick(['#16100c', '#1f1712', '#2a2018', '#16100c', '#2a2018', '#3b2a1c', '#16100c'])
+    : pick(['#2a2018', '#3b2a1c', '#5a3a22', '#7a5530', '#a07840', '#c8a060', '#8a3a1c']);
   const hair = age >= 70 ? pick(['#ebe6da', '#e0dbcf', '#f2efe6']) : age >= 56 ? pick(['#a8a296', '#9a948a', '#b8b2a6']) : age >= 44 && chance(0.4) ? mixHex(young, '#a8a296', 0.45) : young;
   const hairLine = mixHex(hair, INK, 0.45);
 
@@ -141,11 +158,11 @@ export function drawPortrait(o: PortraitSpec, size: number): string {
 
   // the head
   P(`<path d="${headPath}" fill="${skin}" stroke="${INK}" stroke-width="0.9"/>`);
-  if (cheeks) for (const side of [-1, 1]) P(`<ellipse cx="${cx + side * 6.5}" cy="${cy + 5}" rx="2.6" ry="1.7" fill="#d9786a" opacity="${o.ill ? 0.12 : 0.3}"/>`);
+  if (cheeks) for (const side of [-1, 1]) P(`<ellipse cx="${cx + side * 6.5}" cy="${cy + 5}" rx="2.6" ry="1.7" fill="${deep ? '#7a3428' : '#d9786a'}" opacity="${o.ill ? 0.12 : deep ? 0.22 : 0.3}"/>`);
 
-  if (age < 30 && chance(0.4)) for (let k = 0; k < 10; k++) P(`<circle cx="${cx + (rnd() - 0.5) * 12}" cy="${cy + 2 + rnd() * 4}" r="0.35" fill="#b0704a" opacity="0.7"/>`);
+  if (!dark && age < 30 && chance(0.4)) for (let k = 0; k < 10; k++) P(`<circle cx="${cx + (rnd() - 0.5) * 12}" cy="${cy + 2 + rnd() * 4}" r="0.35" fill="#b0704a" opacity="0.7"/>`);
   // lines of age
-  const wr = mixHex(skin, '#5a3a2a', 0.45);
+  const wr = mixHex(skin, deep ? '#120a06' : '#5a3a2a', 0.45);
   if (age >= 48) P(`<path d="M${cx - 5},${cy - 8.5} q5,-1 10,0" stroke="${wr}" stroke-width="0.5" fill="none"/>`);
   if (age >= 60) P(`<path d="M${cx - 4},${cy - 10.5} q4,-1 8,0" stroke="${wr}" stroke-width="0.5" fill="none"/>`);
   if (age >= 55) for (const side of [-1, 1]) P(`<path d="M${cx + side * 8.6},${cy - 1.2} l${side * 1.6},-0.8 M${cx + side * 8.6},${cy} l${side * 1.8},0.3" stroke="${wr}" stroke-width="0.45" fill="none"/>`);
@@ -157,9 +174,11 @@ export function drawPortrait(o: PortraitSpec, size: number): string {
   const ey = cy - 1, ex = 4.6 + rnd() * 1;
   for (const side of [-1, 1]) {
     const x = cx + side * ex;
+    // on dark skin an ink dot or line would vanish: the white of the eye shows it
+    if (deep && eyes !== 'oval' && eyes !== 'happy') P(`<ellipse cx="${x}" cy="${ey + (eyes === 'down' ? 0.5 : 0)}" rx="1.9" ry="${eyes === 'squint' ? 0.9 : 1.25}" fill="#f4eee2" stroke="${INK}" stroke-width="0.4"/>`);
     if (eyes === 'dot') P(`<circle cx="${x}" cy="${ey}" r="1.15" fill="${INK}"/>`);
-    else if (eyes === 'oval') P(`<ellipse cx="${x}" cy="${ey}" rx="1.9" ry="1.25" fill="#fbf8f0" stroke="${INK}" stroke-width="0.45"/><circle cx="${x + 0.2}" cy="${ey + 0.1}" r="0.85" fill="${pick(['#3a2a1a', '#3a5a7a', '#4a5a3a'])}"/>`);
-    else if (eyes === 'happy') P(`<path d="M${x - 1.6},${ey + 0.4} q1.6,-1.8 3.2,0" stroke="${INK}" stroke-width="0.9" fill="none"/>`);
+    else if (eyes === 'oval') P(`<ellipse cx="${x}" cy="${ey}" rx="1.9" ry="1.25" fill="#fbf8f0" stroke="${INK}" stroke-width="0.45"/><circle cx="${x + 0.2}" cy="${ey + 0.1}" r="0.85" fill="${pick(dark ? ['#3a2a1a', '#24160c', '#3a2a1a'] : ['#3a2a1a', '#3a5a7a', '#4a5a3a'])}"/>`);
+    else if (eyes === 'happy') P(`<path d="M${x - 1.6},${ey + 0.4} q1.6,-1.8 3.2,0" stroke="${deep ? '#0a0604' : INK}" stroke-width="${deep ? 1.3 : 0.9}" fill="none"/>`);
     else if (eyes === 'down') P(`<path d="M${x - 1.6},${ey} q1.6,1 3.2,0" stroke="${INK}" stroke-width="0.8" fill="none"/><circle cx="${x}" cy="${ey + 0.9}" r="0.7" fill="${INK}"/>`);
     else P(`<path d="M${x - 1.5},${ey} l3,0" stroke="${INK}" stroke-width="0.9"/>`);
   }
@@ -181,7 +200,7 @@ export function drawPortrait(o: PortraitSpec, size: number): string {
   }
   // nose
   const ny = cy + 1.5;
-  const nc = mixHex(skin, '#6a3a24', 0.5);
+  const nc = mixHex(skin, deep ? '#120a06' : '#6a3a24', 0.5);
   if (nose === 'button') P(`<path d="M${cx - 1.6},${ny + 3.6} q1.6,1.4 3.2,0" stroke="${nc}" stroke-width="0.8" fill="none"/>`);
   else if (nose === 'long') P(`<path d="M${cx},${ny - 1} L${cx + 0.8},${ny + 4.8} q-0.8,0.8 -2,0.2" stroke="${nc}" stroke-width="0.8" fill="none"/>`);
   else if (nose === 'hook') P(`<path d="M${cx - 0.3},${ny - 1.5} q2.6,2.4 1.4,6.4 q-1.2,0.8 -2.4,-0.2" stroke="${nc}" stroke-width="0.85" fill="none"/>`);
@@ -195,7 +214,7 @@ export function drawPortrait(o: PortraitSpec, size: number): string {
   if (facial === 'stoppels') for (let k = 0; k < 18; k++) P(`<circle cx="${cx + (rnd() - 0.5) * rx * 1.5}" cy="${my + 1 + rnd() * (ry - 9)}" r="0.28" fill="${hairLine}" opacity="0.6"/>`);
 
   // mouth
-  const mc = '#7a3a2a';
+  const mc = deep ? '#3a1a12' : '#7a3a2a';
   if (mouth === 'smile') P(`<path d="M${cx - 3.2},${my} Q${cx},${my + 2.4} ${cx + 3.2},${my}" stroke="${mc}" stroke-width="0.9" fill="none"/>`);
   else if (mouth === 'grin') P(`<path d="M${cx - 3.4},${my - 0.3} Q${cx},${my + 4} ${cx + 3.4},${my - 0.3} Z" fill="#5a2a22" stroke="${mc}" stroke-width="0.6"/><path d="M${cx - 2.6},${my + 0.2} L${cx + 2.6},${my + 0.2}" stroke="#f3efe4" stroke-width="0.9"/>`);
   else if (mouth === 'flat') P(`<path d="M${cx - 2.6},${my + 0.6} L${cx + 2.6},${my + 0.6}" stroke="${mc}" stroke-width="0.85"/>`);

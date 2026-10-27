@@ -1196,7 +1196,7 @@ export function portrait(n: Narrator, size: number): string {
   const q = f.quest;
   // in the village of the lost tale, only the one who has it wears the mark of the clue
   const mark = q && n.place === q.village ? (n.id === q.target ? q.mark : 'none') : undefined;
-  return drawPortrait({ seed: n.id + f.sim.seed * 7, age: f.age(n), temper: f.temper(n), work: f.sim.map.buildings[n.home]?.kind, ill: f.ill.has(n.id), mark, woman: isWoman(n.first) }, size);
+  return drawPortrait({ seed: n.id + f.sim.seed * 7, age: f.age(n), temper: f.temper(n), work: f.sim.map.buildings[n.home]?.kind, ill: f.ill.has(n.id), mark, woman: isWoman(n.first), year: f.year }, size);
 }
 
 // ------------------------------------------------------------------ atmosphere in the HTML layer
