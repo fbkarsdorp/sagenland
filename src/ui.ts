@@ -112,6 +112,8 @@ export function mountUI() {
   G.on('changed', render);
   G.on('arrived', () => {
     chosen = null;
+    // what people here have to tell, now that you are among them
+    G.field.news();
     render();
     const f = G.field;
     if (f.encounter) {

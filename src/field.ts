@@ -799,8 +799,7 @@ export class Field {
           : `${this.sim.name(n)} uit ${where} is overleden. Wat er te vertellen was, staat in uw schrift.`);
       for (const l of this.leads) if (l.narrator === id) l.done = true;
     }
-    if (this.day === 2) this.openQuest();
-    if (this.day === PATRON_DAY) this.openPatrons();
+    this.news();
     this.post();
     this.rivalDay();
   }
@@ -1601,23 +1600,52 @@ export class Field {
     return this.day >= PATRON_DAY && p?.nid === nid && p.state === 'none';
   }
 
-  /** On the fourth morning the landlady mentions the priest of the nearest church village. */
-  private openPatrons() {
-    const home = this.land.places[0];
-    const p = [...this.patrons].sort((a, b) => dist(this.land.places[a.place], home) - dist(this.land.places[b.place], home))[0];
-    if (!p) return;
+  /**
+   * News that is told to you, not sent: it only reaches you where there are people to tell it. The landlady starts you on
+   * the lost tale once you are at the lodgings from the second day on; from the fourth day whoever is around mentions the
+   * priest. Called each morning, and on arrival.
+   */
+  news() {
+    if (this.over || this.practising || this.at.kind !== 'place') return;
+    const at = this.at.id;
+    let told = false;
+    if (!this.questTold && this.day >= 2 && at === 0) {
+      this.questTold = true;
+      this.openQuest();
+      told = true;
+    }
+    if (!this.patronTold && this.day >= PATRON_DAY && this.patrons.length) {
+      this.patronTold = true;
+      this.openPatrons(at);
+      told = true;
+    }
+    if (told) this.changed();
+  }
+  private questTold = false;
+  private patronTold = false;
+
+  /** The priest of the nearest church village, as the landlady or the people around you mention him. */
+  private openPatrons(at: number) {
+    const here = this.land.places[at];
+    const p = [...this.patrons].sort((a, b) => dist(this.land.places[a.place], here) - dist(this.land.places[b.place], here))[0];
     const where = this.land.places[p.place].name;
+    const source = at === 0 ? L('de waardin', 'the landlady') : EN ? `people in ${here.name}` : `mensen in ${here.name}`;
     this.addLead('person', EN
       ? [`The ${p.title} in ${where}`, 'knows everyone. A good word from him', 'opens doors; superstition he’d rather not hear of.']
-      : [`De ${p.title} van ${where}`, 'kent iedereen. Een goed woord van hem', 'opent deuren; bijgeloof hoort hij liever niet.'], { kind: 'place', id: p.place }, p.nid, L('de waardin', 'the landlady'));
-    this.write('day', EN
-      ? `The landlady: “The ${p.title} in ${where} knows everyone. If he puts in a good word for you, doors open. But he won’t hear of superstition.”`
-      : `De waardin: „De ${p.title} van ${where} kent iedereen. Als hij een goed woord voor u doet, gaan de deuren open. Maar van bijgeloof wil hij niets weten.”`, true);
+      : [`De ${p.title} van ${where}`, 'kent iedereen. Een goed woord van hem', 'opent deuren; bijgeloof hoort hij liever niet.'], { kind: 'place', id: p.place }, p.nid, source);
+    const said = EN
+      ? `knows everyone. If he puts in a good word for you, doors open. But he won’t hear of superstition.”`
+      : `kent iedereen. Als hij een goed woord voor u doet, gaan de deuren open. Maar van bijgeloof wil hij niets weten.”`;
+    this.write('day', at === 0
+      ? EN ? `The landlady: “The ${p.title} in ${where} ${said}` : `De waardin: „De ${p.title} van ${where} ${said}`
+      : at === p.place
+        ? EN ? `People here say: “Our ${p.title} ${said}` : `Men zegt hier: „Onze ${p.title} ${said}`
+        : EN ? `In ${here.name} they say: “The ${p.title} in ${where} ${said}` : `In ${here.name} zegt men: „De ${p.title} van ${where} ${said}`, true);
   }
 
-  /** Whether the trail of the lost tale is open yet: from the second day. */
+  /** Whether the trail of the lost tale is open yet: once the landlady has started you on it. */
   get questOpen(): boolean {
-    return this.quest !== null && this.day >= 2;
+    return this.quest !== null && this.questTold;
   }
 
   /** How the one who still knows the tale can be recognised; `who` gives it as a clause after 'someone'. */
