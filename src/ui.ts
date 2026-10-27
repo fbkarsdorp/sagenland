@@ -3,7 +3,7 @@
 import { loadText, verhalenbankUrl } from './data';
 import { G } from './game';
 import { BEING_NAME, MISC_ICONS, beingIcon, svg } from './icons';
-import { CHAPTER_NEED, DARK_TITLE, DAYS, HOURS, PARTS, SEASON_NAME, partName, clockTime, durationText, weatherLine, TEMPER, WEATHER, cap, openWord, themeName, type Entry, type Weather, type Letter, type Move, type Talk, type TalkLine, type VisitResult, type Where } from './field';
+import { CHAPTER_NEED, DARK_TITLE, DAYS, PATRON_DAY, HOURS, PARTS, SEASON_NAME, partName, clockTime, durationText, weatherLine, TEMPER, WEATHER, cap, openWord, themeName, type Entry, type Weather, type Letter, type Move, type Talk, type TalkLine, type VisitResult, type Where } from './field';
 import { VILLAGE, SITE } from './land';
 import type { Narrator } from './sim';
 import { RED, RES, knownAt, px, sheets } from './sheet';
@@ -437,7 +437,7 @@ function faceChip(n: Narrator): string {
   const lead = f.leads.some((l) => l.narrator === n.id && !l.done) || f.practiceWho() === n.id;
   const pips = [0.3, 0.55, 0.8].map((v) => `<i class="${t >= v ? 'on' : ''}"></i>`).join('');
   return `<button class="face ${chosen === n.id ? 'on' : ''} ${f.away(n) ? 'is-away' : ''} ${f.met.has(n.id) ? 'met' : ''}" data-act="choose" data-n="${n.id}" title="${esc(f.sim.name(n))}, ${f.age(n)}">
-    ${portrait(n, 52)}${lead ? `<em class="flag" title="${L('Iemand heeft u over deze persoon verteld', 'Someone told you about this person')}">✎</em>` : ''}${f.ill.has(n.id) ? `<em class="flag ill" title="${L('ziek', 'ill')}">+</em>` : ''}
+    ${portrait(n, 52)}${lead ? `<em class="flag" title="${L('Iemand heeft u over deze persoon verteld', 'Someone told you about this person')}">✎</em>` : ''}${f.ill.has(n.id) ? `<em class="flag ill" title="${L('ziek', 'ill')}">+</em>` : ''}${f.day >= PATRON_DAY && f.patronOf(n.place)?.nid === n.id ? `<em class="flag cross" title="${esc(cap(f.role(n)))}">✝</em>` : ''}
     <span class="fname">${esc(n.first)}</span><span class="fage">${f.away(n) ? L('op het land', 'in the fields') : f.age(n)}</span>
     <span class="trust">${pips}</span></button>`;
 }
@@ -685,6 +685,9 @@ function renderTalk() {
           ${mv('eigen', L(`<span><b>Vertelt men hier iets wat ik nergens anders hoor?</b><br/><small>Het zeldzaamste wat ${esc(n.first)} weet. Vraagt om vertrouwen.</small></span>`,
             `<span><b>Is anything told here that I won’t hear anywhere else?</b><br/><small>The rarest thing ${esc(n.first)} knows. Takes trust.</small></span>`), '', 'rare')}
         </div>
+        ${f.canAskVouch(t.nid) ? `<div class="asks wide">${mv('voorspraak', EN
+          ? `<span><b>Would you put in a good word for me?</b><br/><small>Then all of ${esc(f.land.places[n.place].name)} will trust you sooner. But questions about superstition will get back to him.</small></span>`
+          : `<span><b>Wilt u een goed woord voor mij doen?</b><br/><small>Dan vertrouwt heel ${esc(f.land.places[n.place].name)} u sneller. Maar vragen naar bijgeloof komen hem ter ore.</small></span>`, '', 'vouch')}</div>` : ''}
         ${f.canAskLost(t.nid) ? `<div class="asks wide">${mv('verloren', f.quest!.stage === 0
           ? L(`<span><b>Het verhaal dat niemand meer kan afmaken</b><br/><small>Waar de waardin het over had.</small></span>`,
             `<span><b>The tale nobody can finish any more</b><br/><small>The one the landlady mentioned.</small></span>`)
@@ -708,7 +711,7 @@ function renderTalk() {
     const m: Move = kind === 'theme' ? { kind, being: b.dataset.being! }
       : kind === 'prompt' ? { kind, t: b.dataset.t! }
       : kind === 'again' ? { kind, num: +b.dataset.num! }
-      : { kind: kind as 'praat' | 'leven' | 'free' | 'others' | 'eigen' | 'verloren' };
+      : { kind: kind as 'praat' | 'leven' | 'free' | 'others' | 'eigen' | 'verloren' | 'voorspraak' };
     talkFrom = t.lines.length;
     const out = f.move(t, m);
     if (out.some((l) => l.entry && f.finds().includes(l.entry))) sfx('sighting');
@@ -925,6 +928,7 @@ function openIntro(first: boolean) {
         <p><b>Heard.</b> What people tell you about others is listed ${touch ? 'at the bottom' : 'on the left'}, and pencilled on the map.</p>
         <p><b>Weather and night.</b> When it rains, nobody works outside, but the roads are muddy. In the mist you lose your way off the roads. At night, or in the morning mist, you sometimes see something by the bog, the gallows or the lime tree: ${touch ? 'tap' : 'click'} it when you are close.</p>
         <p><b>The rival.</b> You keep hearing where the other collector is going tomorrow. Whatever they write down first is worth only half as much to you.</p>
+        <p><b>The priest.</b> From day ${PATRON_DAY} you can ask the priest (in Friesland the minister) of a church village for a good word: then the whole village trusts you sooner. But ask his parishioners about witches, the nightmare, second sight or sorcery, and it gets back to him. Push someone too far anywhere, and the rest of the village hears of it too.</p>
       </div></details>` : `<p class="lead-in">U hebt ${DAYS} dagen om in deze streek sagen op te tekenen. Wat u niet opschrijft, verdwijnt vroeg of laat.</p>
       <ol class="steps">
         <li>${svg(MISC_ICONS.kaart, 26)}<span><b>Ga op pad.</b> ${touch ? 'Tik' : 'Klik'} op een dorp of plek op de kaart.</span></li>
@@ -943,6 +947,7 @@ function openIntro(first: boolean) {
         <p><b>Gehoord.</b> Wat mensen over anderen vertellen, staat ${touch ? 'onderaan' : 'links'} en in potlood op de kaart.</p>
         <p><b>Weer en nacht.</b> Als het regent, werkt niemand buiten, maar de wegen zijn modderig. In de mist verdwaal je buiten de wegen. ’s Nachts, of in de ochtendmist, ziet u soms iets bij het veen, de galg of de linde: ${touch ? 'tik' : 'klik'} erop als u dichtbij bent.</p>
         <p><b>De ander.</b> U hoort steeds waar de andere verzamelaar morgen heen gaat. Wat die het eerst opschrijft, is voor u maar half zoveel waard.</p>
+        <p><b>De pastoor.</b> Vanaf dag ${PATRON_DAY} kunt u de pastoor (in Friesland de dominee) van een kerkdorp om een goed woord vragen: dan vertrouwt het hele dorp u sneller. Maar vraag zijn parochianen naar heksen, de nachtmerrie, voorgezichten of tovenaars, en het komt hem ter ore. Wie u ergens te ver drijft, vertelt het ook door aan de rest van het dorp.</p>
       </div></details>`}
       <p class="persona">${esc(f.persona.perk)}</p>
       ${first && feest() ? `<p class="feest-line">${esc(FEEST_LINE[feest()!])}</p>` : ''}
@@ -1196,7 +1201,7 @@ export function portrait(n: Narrator, size: number): string {
   const q = f.quest;
   // in the village of the lost tale, only the one who has it wears the mark of the clue
   const mark = q && n.place === q.village ? (n.id === q.target ? q.mark : 'none') : undefined;
-  return drawPortrait({ seed: n.id + f.sim.seed * 7, age: f.age(n), temper: f.temper(n), work: f.sim.map.buildings[n.home]?.kind, ill: f.ill.has(n.id), mark, woman: isWoman(n.first), year: f.year }, size);
+  return drawPortrait({ seed: n.id + f.sim.seed * 7, age: f.age(n), temper: f.temper(n), work: f.sim.map.buildings[n.home]?.kind, ill: f.ill.has(n.id), mark, woman: isWoman(n.first), year: f.year, cleric: f.patronOf(n.place)?.nid === n.id }, size);
 }
 
 // ------------------------------------------------------------------ atmosphere in the HTML layer

@@ -78,6 +78,8 @@ export interface Entry {
   vholders: number;
   /** the other collector already had this tale */
   scoop: boolean;
+  /** told in a village where the priest had put in a good word for you */
+  vouched?: boolean;
 }
 
 export interface Lead {
@@ -130,7 +132,22 @@ export interface Encounter {
 
 export type Ask = { kind: 'theme'; being: string } | { kind: 'free' } | { kind: 'others' } | { kind: 'prompt'; t: string } | { kind: 'again'; num: number } | { kind: 'eigen' };
 /** A move in a conversation: warming up, or asking. */
-export type Move = Ask | { kind: 'praat' } | { kind: 'leven' } | { kind: 'verloren' };
+export type Move = Ask | { kind: 'praat' } | { kind: 'leven' } | { kind: 'verloren' } | { kind: 'voorspraak' };
+
+/**
+ * The man of the church in a village: the priest, or in Friesland the minister. Collectors often came into a village
+ * through him, the schoolteacher or the mayor. One good word from him and the village opens up, but he sends you to
+ * decent people and wants no superstition dug up: ask his parishioners about witches and it gets back to him.
+ */
+export interface Patron {
+  nid: number;
+  place: number;
+  /** 'pastoor', 'dominee'; 'priest', 'minister' */
+  title: string;
+  state: 'none' | 'given' | 'lost';
+}
+/** From this day the landlady mentions him, and he can be asked. */
+export const PATRON_DAY = 4;
 
 /**
  * The lost tale: a rare tale only one person in the region still knows, found by following a trail of clues.
@@ -385,6 +402,8 @@ export class Field {
   /** themes asked about, for the end */
   asked = new Map<string, number>();
   quest: Quest | null = null;
+  /** the priests (or ministers) of the church villages, from day four */
+  patrons: Patron[] = [];
   /** the chapters of your sagenboek: the region's most told kinds of tale */
   chapters: string[] = [];
   /** the last journey's meeting on the road, for the scene and the HTML layer */
@@ -445,6 +464,7 @@ export class Field {
     if (this.weathers[1] === 'regen' || this.weathers[1] === 'sneeuw') this.weathers[1] = 'bewolkt';
     this.firstLeads();
     this.quest = this.makeQuest();
+    this.makePatrons();
     this.write('arrive', `${L('Aangekomen in', 'Arrived in')} ${home.name}. ${cap(this.lodgingLine())}`);
   }
 
@@ -493,6 +513,8 @@ export class Field {
   }
 
   role(n: Narrator): string {
+    const pat = this.patronOf(n.place);
+    if (pat?.nid === n.id) return pat.title;
     const b = this.sim.map.buildings[n.home];
     const r = new Rng(n.id * 7919 + 13);
     if (!b) return L('woont in het dorp', 'lives in the village');
@@ -567,6 +589,8 @@ export class Field {
     const t = this.trust.get(n.id);
     if (t !== undefined) return t;
     let base = 0.2;
+    // the priest is glad of an educated visitor
+    if (this.patronOf(n.place)?.nid === n.id) base = 0.35;
     if (n.place === 0) base = this.archetype === 'student' ? 0.55 : 0.3;
     if (this.sim.map.buildings[n.home]?.kind === 'herberg') base += 0.15;
     if (this.introduced.has(n.id)) base = Math.max(base, 0.45);
@@ -776,6 +800,7 @@ export class Field {
       for (const l of this.leads) if (l.narrator === id) l.done = true;
     }
     if (this.day === 2) this.openQuest();
+    if (this.day === PATRON_DAY) this.openPatrons();
     this.post();
     this.rivalDay();
   }
@@ -821,6 +846,10 @@ export class Field {
       : first
         ? `${n.first} doet de deur open en kijkt u afwachtend aan.`
         : `${n.first} herkent u${this.trustOf(n) >= 0.5 ? ' en laat u binnen' : ''}.` });
+    const pat = this.patronOf(n.place);
+    if (first && pat?.state === 'given' && pat.nid !== nid && !this.isLoner(n)) lines.push({ who: 'info', text: EN
+      ? `${n.first} has heard that the ${pat.title} put in a good word for you.`
+      : `${n.first} heeft gehoord dat de ${pat.title} een goed woord voor u deed.` });
     this.met.add(nid);
     this.visits.set(nid, (this.visits.get(nid) ?? 0) + 1);
     for (const l of this.leads) if (l.narrator === nid) l.done = true;
@@ -850,6 +879,7 @@ export class Field {
       case 'again': return 0.35;
       case 'eigen': return { verteller: 0.45, gelovig: 0.55, spotter: 0.65, schuchter: 0.6 }[tm];
       case 'verloren': return this.quest?.stage === 0 ? 0.35 : 0.5;
+      case 'voorspraak': return 0.45;
       case 'others': return { spotter: 0.15, verteller: 0.3, gelovig: 0.3, schuchter: 0.45 }[tm];
       default: return 0;
     }
@@ -889,13 +919,15 @@ export class Field {
     };
     const say = (who: TalkLine['who'], text: string) => out.push({ who, text });
 
+    // the priest himself is no one to joke about the priest
+    const cleric = this.patronOf(n.place)?.nid === n.id;
     if (m.kind === 'praat') {
       say('u', L('U praat wat over het weer, de oogst en de prijzen op de markt.', 'You chat a little about the weather, the harvest and prices at the market.'));
       const gain = { verteller: 0.15, spotter: 0.12, gelovig: 0.1, schuchter: 0.08 }[tm] / (times + 1);
       shift(gain);
       say('zij', EN
-        ? times ? `${name} nods politely. There is not much more to say about that.` : tm === 'spotter' ? `${name} cracks a joke about the priest. You laugh along.` : `${name} is happy to chat.`
-        : times ? `${name} knikt beleefd. Daar is alles nu wel over gezegd.` : tm === 'spotter' ? `${name} maakt een grap over de pastoor. U lacht mee.` : `${name} praat graag mee.`);
+        ? times ? `${name} nods politely. There is not much more to say about that.` : cleric ? `${name} tells a dry story about ${this.region === 'friesland' ? 'the last meeting of the church council' : 'the bishop’s last visit'}. You laugh along.` : tm === 'spotter' ? `${name} cracks a joke about the priest. You laugh along.` : `${name} is happy to chat.`
+        : times ? `${name} knikt beleefd. Daar is alles nu wel over gezegd.` : cleric ? `${name} vertelt droog over ${this.region === 'friesland' ? 'de laatste vergadering van de kerkenraad' : 'het laatste bezoek van de bisschop'}. U lacht mee.` : tm === 'spotter' ? `${name} maakt een grap over de pastoor. U lacht mee.` : `${name} praat graag mee.`);
     } else if (m.kind === 'leven') {
       say('u', L(`U vraagt naar vroeger: de ouders, het werk, het dorp zoals het was.`, 'You ask about the old days: their parents, their work, the village as it was.'));
       const gain = { gelovig: 0.16, schuchter: 0.16, verteller: 0.08, spotter: 0.05 }[tm] / (times + 1);
@@ -938,6 +970,17 @@ export class Field {
       const being = m.being;
       this.asked.set(being, (this.asked.get(being) ?? 0) + 1);
       say('u', `${L('U vraagt naar', 'You ask about')} ${themeName(being)}.`);
+      // where the priest put in a good word, asking about superstition gets back to him
+      const pat = this.patronOf(n.place);
+      if (pat?.state === 'given' && SHY.has(being) && pat.nid !== n.id) {
+        pat.state = 'lost';
+        shift(-0.12);
+        say('zij', EN ? `${name} looks uneasy. “Does the ${pat.title} know you ask about such things?”` : `${name} kijkt ongemakkelijk. „Weet de ${pat.title} dat u naar zulke dingen vraagt?”`);
+        for (const x of sim.alive(n.place)) if (x.id !== n.id && !this.isLoner(x)) this.trust.set(x.id, Math.max(0.05, this.trustOf(x) - 0.15));
+        this.write('day', EN
+          ? `The ${pat.title} in ${this.land.places[n.place].name} has heard what you ask about. People there are more reserved with you now.`
+          : `De ${pat.title} van ${this.land.places[n.place].name} heeft gehoord waar u naar vraagt. De mensen daar zijn nu terughoudender.`, true);
+      }
       const cands = untold.filter(([t]) => sim.type(t)?.being === being);
       if (tm === 'spotter' && !ok()) {
         shift(-0.04);
@@ -1063,6 +1106,26 @@ export class Field {
           shift(0.1);
         }
       }
+    } else if (m.kind === 'voorspraak') {
+      const pat = this.patronOf(n.place)!;
+      const where = this.land.places[n.place].name;
+      say('u', L('U vraagt of hij een goed woord voor u wil doen in het dorp.', 'You ask whether he would put in a good word for you in the village.'));
+      if (!ok()) say('zij', L('„Ik ken u nog nauwelijks. Komt u nog eens terug.”', '“I hardly know you yet. Come back another time.”'));
+      else {
+        pat.state = 'given';
+        for (const x of sim.alive(n.place)) if (x.id !== n.id && !this.isLoner(x)) {
+          // a little less than a storytelling evening, which also brings tales
+          this.trust.set(x.id, Math.max(this.trustOf(x), 0.45));
+          this.introduced.add(x.id);
+        }
+        say('zij', L('„Natuurlijk. Ik zal de mensen zeggen dat u een fatsoenlijk mens bent. Maar houd het bij de oude vertelsels, hoor. We hebben genoeg moeite gedaan om dat bijgeloof eruit te krijgen.”',
+          '“Of course. I’ll tell people you’re a decent sort. But keep to the old stories, mind. We’ve worked hard enough to get that superstition out of them.”'));
+        say('info', EN
+          ? `Everyone in ${where} will trust you sooner now. But if you ask them about ${listOf([...SHY].map(themeName))}, it will get back to him.`
+          : `Iedereen in ${where} vertrouwt u nu sneller. Maar als u er vraagt naar ${listOf([...SHY].map(themeName))}, komt hem dat ter ore.`);
+        this.write('visit', EN ? `The ${pat.title} in ${where} put in a good word for you.` : `De ${pat.title} van ${where} deed een goed woord voor u.`);
+        shift(0.05);
+      }
     } else if (m.kind === 'eigen') {
       // the rarest thing this teller knows: what hardly anyone else in the region still tells
       say('u', L('U vraagt of er iets is wat ze alleen hier vertellen, wat u nergens anders zult horen.', 'You ask whether there is something they only tell here, something you won’t hear anywhere else.'));
@@ -1114,6 +1177,11 @@ export class Field {
     const after = Math.max(0.05, Math.min(1, went < -0.08 ? before - 0.06 : before + gain));
     this.trust.set(talk.nid, after);
     if (went < -0.08) out.push({ who: 'info', text: EN ? `You feel you went too fast. ${n.first} will be more reserved next time.` : `U voelt dat u te snel ging. ${n.first} zal de volgende keer wat terughoudender zijn.` });
+    // and word gets around the village (not on the first evening, nor out on the heath)
+    if ((went < -0.08 || talk.closed) && !this.castPart(talk.nid) && this.at.kind === 'place') {
+      for (const x of sim.alive(n.place)) if (x.id !== n.id && !this.isLoner(x)) this.trust.set(x.id, Math.max(0.05, this.trustOf(x) - 0.04));
+      out.push({ who: 'info', text: EN ? `Word gets around in ${this.land.places[n.place].name}: the others there are a little cooler towards you too.` : `In ${this.land.places[n.place].name} gaat het rond: ook de anderen daar zijn wat koeler.` });
+    }
     else if (after > before + 0.1) out.push({ who: 'info', text: EN ? `${n.first} knows you better now.` : `${n.first} kent u nu beter.` });
     // in a village where the neighbours gather, someone will mention it
     const buurt = this.occasions.find((o) => o.kind === 'buurten' && !o.known && o.place === n.place && o.day >= this.day);
@@ -1168,6 +1236,7 @@ export class Field {
     const e: Entry = {
       num: this.notebook.length + 1, node: node.id, t, n: node.n, narrator: n.id, place: n.place, site, day: this.day, part: this.part, kind,
       frag: !!o.frag, via: o.via ?? 'bezoek', rare: holders <= 1, holders, vholders, scoop: !!this.rival?.got.some((g) => g.t === t),
+      vouched: this.patronOf(n.place)?.state === 'given' && !this.isLoner(n),
     };
     this.notebook.push(e);
     // a tale told at a place gives the place its name on your map
@@ -1500,6 +1569,50 @@ export class Field {
     this.write('day', EN
       ? `The landlady mentions ${sim.name(starter)}, who sometimes starts on a tale nobody can finish any more. The lost tale: the trail begins in ${this.land.places[0].name}.`
       : `De waardin vertelt over ${sim.name(starter)}, die soms begint over een verhaal dat niemand meer kan afmaken. Het verloren verhaal: het spoor begint in ${this.land.places[0].name}.`, true);
+  }
+
+  // ------------------------------------------------------------------ the priest
+
+  /** In each church village but the lodgings, the priest (in Friesland the minister): a man of the right age. */
+  private makePatrons() {
+    const sim = this.sim;
+    const title = this.region === 'friesland' ? L('dominee', 'minister') : L('pastoor', 'priest');
+    for (const p of this.land.places) {
+      if (p.id === 0 || !sim.placeBuildings(p.id).some((b) => b.kind === 'kerk')) continue;
+      const cands = sim.alive(p.id).filter((n) => !this.isLoner(n) && !this.ill.has(n.id) && isWoman(n.first) === false
+        && this.age(n) >= 35 && this.age(n) <= 75 && n.id !== this.quest?.target && n.id !== this.quest?.starter);
+      // the one who lives by the church, if there is one
+      const nb = cands.find((n) => sim.map.buildings[n.home]?.kind === 'kerk') ?? cands.sort((a, b) => this.age(b) - this.age(a))[0];
+      if (!nb) continue;
+      this.patrons.push({ nid: nb.id, place: p.id, title, state: 'none' });
+      // he laughs at old wives' tales, and knows who knows them
+      this.tempers.set(nb.id, 'spotter');
+    }
+  }
+
+  patronOf(place: number): Patron | null {
+    return this.patrons.find((p) => p.place === place) ?? null;
+  }
+
+  /** Whether you can ask him for a good word: from day four, once. */
+  canAskVouch(nid: number): boolean {
+    const n = this.sim.narrators[nid];
+    const p = this.patronOf(n.place);
+    return this.day >= PATRON_DAY && p?.nid === nid && p.state === 'none';
+  }
+
+  /** On the fourth morning the landlady mentions the priest of the nearest church village. */
+  private openPatrons() {
+    const home = this.land.places[0];
+    const p = [...this.patrons].sort((a, b) => dist(this.land.places[a.place], home) - dist(this.land.places[b.place], home))[0];
+    if (!p) return;
+    const where = this.land.places[p.place].name;
+    this.addLead('person', EN
+      ? [`The ${p.title} in ${where}`, 'knows everyone. A good word from him', 'opens doors; superstition he’d rather not hear of.']
+      : [`De ${p.title} van ${where}`, 'kent iedereen. Een goed woord van hem', 'opent deuren; bijgeloof hoort hij liever niet.'], { kind: 'place', id: p.place }, p.nid, L('de waardin', 'the landlady'));
+    this.write('day', EN
+      ? `The landlady: “The ${p.title} in ${where} knows everyone. If he puts in a good word for you, doors open. But he won’t hear of superstition.”`
+      : `De waardin: „De ${p.title} van ${where} kent iedereen. Als hij een goed woord voor u doet, gaan de deuren open. Maar van bijgeloof wil hij niets weten.”`, true);
   }
 
   /** Whether the trail of the lost tale is open yet: from the second day. */

@@ -54,6 +54,13 @@ the story world it was taken from. Every tale in the game is a real, recorded va
   the evening's gathering. At night, and in the mist over the low ground, things are seen at the places
   tales are tied to (lights over the bog, white women on the heath, a figure on the crossroads): tap one
   when close by to learn whom to ask about it.
+- **The priest** (in Friesland the minister): from day 4 the landlady mentions the one in the nearest church
+  village. Asked for a good word, he makes the whole village trust you sooner, as collectors who came in
+  through the priest, the teacher or the mayor found. But he sends you to decent people and wants no
+  superstition dug up: ask his parishioners about witches, the nightmare, second sight or sorcery and it
+  gets back to him, and the village grows reserved. Pushing anyone too far also cools the rest of their
+  village a little. The end screen counts the tales that came through his good word against those from
+  people living outside the villages.
 - **The lost tale**: each season one rare tale is known to a single person only, and is found by following
   a trail: an old teller at the lodgings remembers how it begins and whose it was; that person's grave at a
   church says where they came from; at that place, after dark, you learn which village the family moved to
@@ -113,6 +120,7 @@ Sources for the collectors' side: A.J. Dekker, '150 jaar Nederlands volksverhaal
     npx tsx scripts/simtest.ts friesland volhouder 7        # the underlying simulation over 25 years
     npx tsx scripts/divtest.ts friesland                     # its diversity under population and connectivity
     npx tsx scripts/prologtest.ts                            # the first evening, in every region, collector and season
+    npx tsx scripts/priesttest.ts                            # the priest's good word: what it brings, and what asking about witches costs
 
 The previous village-builder version is archived locally in `backup/` (not in the repo).
 

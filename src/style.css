@@ -1100,3 +1100,8 @@ body.night .visit-head .portrait { filter: sepia(0.2) drop-shadow(0 0 10px rgba(
 .welcome-leaf .linkbtn { margin-left: 12px; }
 
 .orig-link { margin: 6px 0 0; font-size: 14.5px; }
+
+/* the priest: a cross by his face, and his question in a conversation */
+.face .flag.cross { left: 4px; right: auto; color: #3a3640; font-style: normal; }
+.ask.vouch { border-color: rgba(58, 54, 64, 0.5); }
+.ask.vouch b { color: #3a3640; }

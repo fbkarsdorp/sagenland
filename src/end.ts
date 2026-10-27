@@ -148,6 +148,16 @@ export function openEnd(show: (html: string) => void, openTale: (num: number) =>
         : `<p>${viaLead ? `${plural(viaLead, 'verteller', 'vertellers')} vond u doordat iemand anders u de naam gaf. ` : ''}${exhausted ? `${plural(exhausted, 'verteller heeft', 'vertellers hebben')} u alles verteld wat ${exhausted === 1 ? 'die wist' : 'ze wisten'}; van de anderen kent u maar een deel.` : 'Van niemand kent u het hele repertoire.'}
         ${frags.length ? `${plural(frags.length, 'verhaal kwam', 'verhalen kwamen')} maar half boven, en ${frags.length === 1 ? 'is' : 'zijn'} nooit afgemaakt.` : ''}
         ${asked.length ? `U vroeg het vaakst naar ${asked.slice(0, 2).map(([b]) => esc(themeName(b))).join(' en ')}.` : ''}</p>`}
+      ${(() => {
+        // whom the good word brought you, and whom you found outside the villages
+        if (!f.patrons.some((p) => p.state !== 'none')) return '';
+        const through = nb.filter((e) => e.vouched).length;
+        const outside = nb.filter((e) => f.isLoner(sim.narrators[e.narrator])).length;
+        const line = EN
+          ? `${through ? `${tales(through)} came from villages where the ${f.patrons[0].title} had put in a good word for you; ` : ''}${outside ? `${tales(outside)} from people who live outside the villages, whom no ${f.patrons[0].title} sends you to.` : 'none from the people who live outside the villages, whom no ' + f.patrons[0].title + ' sends you to.'}`
+          : `${through ? `${plural(through, 'verhaal', 'verhalen')} kwam${through === 1 ? '' : 'en'} uit dorpen waar de ${f.patrons[0].title} een goed woord voor u deed; ` : ''}${outside ? `${plural(outside, 'verhaal', 'verhalen')} van mensen die buiten de dorpen wonen, naar wie geen ${f.patrons[0].title} u stuurt.` : `geen van de mensen die buiten de dorpen wonen, naar wie geen ${f.patrons[0].title} u stuurt.`}`;
+        return `<p>${line.charAt(0).toUpperCase()}${line.slice(1)}</p>`;
+      })()}
       <p class="sub">${L('Ook echte verzamelaars vonden hun vertellers via anderen, kwamen terug om af te maken wat de vorige keer niet bovenkwam, en vroegen vooral naar wat ze zelf zochten.', 'Real collectors, too, found their storytellers through others, came back to finish what had not come up the time before, and asked mostly about what they themselves were looking for.')}</p>
 
       ${rv ? (EN ? `<h2>The other collector</h2>

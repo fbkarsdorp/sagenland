@@ -16,6 +16,8 @@ export interface PortraitSpec {
   woman?: boolean | null;
   /** the year of the season: from the 1950s brown and dark faces are less rare in the countryside */
   year?: number;
+  /** the priest or the minister: clean-shaven, bareheaded, in black with a white collar */
+  cleric?: boolean;
 }
 
 /**
@@ -75,20 +77,21 @@ export function drawPortrait(o: PortraitSpec, size: number): string {
   const drawn = woman ? pick(['geen', 'geen', 'kap', 'kap', 'hoofddoek', 'muts'] as const)
     : man ? (work === 'smidse' ? 'pet' : pick(['geen', 'geen', 'geen', 'pet', 'hoed', 'baret', 'muts'] as const))
     : work === 'smidse' ? 'pet' : pick(['geen', 'geen', 'geen', 'pet', 'hoed', 'kap', 'hoofddoek', 'baret', 'muts', 'kap'] as const);
-  const headwear = o.mark === 'oorijzer' ? 'kap' : drawn;
+  const headwear = o.cleric ? 'geen' : o.mark === 'oorijzer' ? 'kap' : drawn;
   const veiled = headwear === 'kap' || headwear === 'hoofddoek';
   const hairStyle = veiled ? 'onder'
     : woman ? pick(age >= 55 ? ['knot', 'knot', 'krullen'] as const : ['knot', 'lang', 'vlechten', 'krullen'] as const)
     : man ? pick(age >= 55 ? ['kaal', 'kort', 'scheiding', 'krullen', 'kaal'] as const : ['kort', 'scheiding', 'krullen', 'kort'] as const)
     : pick(age >= 55 ? ['kaal', 'kort', 'scheiding', 'knot', 'krullen', 'kaal'] as const : ['kort', 'scheiding', 'krullen', 'knot', 'lang', 'vlechten'] as const);
-  const facial = veiled || woman || chance(0.55) ? 'geen' : pick(['baard', 'sik', 'snor', 'snor', 'bakkebaarden', 'stoppels'] as const);
-  const clothes = work === 'kerk' || work === 'school' ? 'jas'
+  const facial = veiled || woman || o.cleric || chance(0.55) ? 'geen' : pick(['baard', 'sik', 'snor', 'snor', 'bakkebaarden', 'stoppels'] as const);
+  const clothes = o.cleric || work === 'kerk' || work === 'school' ? 'jas'
     : woman ? (work === 'boerderij' ? pick(['schort', 'schort', 'omslagdoek'] as const) : pick(['omslagdoek', 'schort', 'omslagdoek', 'trui'] as const))
     : work === 'boerderij' ? pick(['kiel', 'kiel', 'vest', 'trui'] as const)
     : work === 'herberg' ? pick(['vest', 'schort'] as const)
     : man ? pick(['jas', 'vest', 'trui', 'kiel'] as const)
     : veiled ? pick(['omslagdoek', 'schort', 'omslagdoek'] as const) : pick(['jas', 'vest', 'trui', 'kiel', 'omslagdoek'] as const);
-  const cloth = pick(['#3d4a5a', '#4a3a2e', '#2f3b33', '#5a4632', '#463c4e', '#2e2a28', '#55422e']);
+  const drawnCloth = pick(['#3d4a5a', '#4a3a2e', '#2f3b33', '#5a4632', '#463c4e', '#2e2a28', '#55422e']);
+  const cloth = o.cleric ? '#1e1c22' : drawnCloth;
 
   // ---------------------------------------------------------------- expression, leaning to the temper
   const t = o.temper;
@@ -142,6 +145,11 @@ export function drawPortrait(o: PortraitSpec, size: number): string {
   } else if (clothes === 'schort') {
     P(`<path d="${body}" fill="${cloth}" stroke="${INK}" stroke-width="0.9"/>`);
     P(`<path d="M22 50 L42 50 L44 66 L20 66 Z" fill="#f1ece0" stroke="${INK}" stroke-width="0.7"/><path d="M22 50 L19 45 M42 50 L45 45" stroke="#f1ece0" stroke-width="1.6"/>`);
+  } else if (o.cleric) {
+    // black, buttoned to the throat, with the white collar
+    P(`<path d="${body}" fill="${cloth}" stroke="${INK}" stroke-width="0.9"/>`);
+    P(`<path d="M25.6 44.4 Q32 47.6 38.4 44.4 L38 46.6 Q32 49.6 26 46.6 Z" fill="#f6f2e8" stroke="${INK}" stroke-width="0.5"/><path d="M30.6 47.6 L33.4 47.6 L33 50.4 L31 50.4 Z" fill="#f6f2e8" stroke="${INK}" stroke-width="0.4"/>`);
+    for (let k = 0; k < 4; k++) P(`<circle cx="32" cy="${53 + k * 3.4}" r="0.6" fill="#55525a"/>`);
   } else {
     P(`<path d="${body}" fill="${cloth}" stroke="${INK}" stroke-width="0.9"/>`);
     P(`<path d="M26 44.5 L32 56 L38 44.5 Z" fill="#f1ece0" stroke="${INK}" stroke-width="0.6"/><path d="M26 44.5 L24 52 L32 60 M38 44.5 L40 52 L32 60" stroke="${INK}" stroke-width="0.7" fill="none"/>`);
