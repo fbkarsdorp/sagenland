@@ -15,6 +15,7 @@ import { openColofon } from './colofon';
 import { markRead } from './catalogue';
 import { openEnd } from './end';
 import { drawPortrait } from './portrait';
+import { isWoman } from './names';
 import { TILE, W } from './world';
 
 const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector(sel) as T;
@@ -956,7 +957,7 @@ function openIntro(first: boolean) {
 
 /** The old collector's face: a lace cap with the gold ear irons, and the lines of her years. */
 function mentorFace(size: number): string {
-  return drawPortrait({ seed: G.field.sim.seed * 7 + 1905, age: 76, temper: 'verteller', work: 'school', ill: false, mark: 'oorijzer' }, size);
+  return drawPortrait({ seed: G.field.sim.seed * 7 + 1905, age: 76, temper: 'verteller', work: 'school', ill: false, mark: 'oorijzer', woman: true }, size);
 }
 
 /** Remember that this player has had the first evening, or did not want it. */
@@ -1195,7 +1196,7 @@ export function portrait(n: Narrator, size: number): string {
   const q = f.quest;
   // in the village of the lost tale, only the one who has it wears the mark of the clue
   const mark = q && n.place === q.village ? (n.id === q.target ? q.mark : 'none') : undefined;
-  return drawPortrait({ seed: n.id + f.sim.seed * 7, age: f.age(n), temper: f.temper(n), work: f.sim.map.buildings[n.home]?.kind, ill: f.ill.has(n.id), mark }, size);
+  return drawPortrait({ seed: n.id + f.sim.seed * 7, age: f.age(n), temper: f.temper(n), work: f.sim.map.buildings[n.home]?.kind, ill: f.ill.has(n.id), mark, woman: isWoman(n.first) }, size);
 }
 
 // ------------------------------------------------------------------ atmosphere in the HTML layer

@@ -12,6 +12,8 @@ export interface PortraitSpec {
   ill: boolean;
   /** a feature someone can be recognised by: the gold ear irons of the old costume, or a pipe; 'none' rules both out */
   mark?: 'oorijzer' | 'pijp' | 'none';
+  /** a woman or a man, by the first name; undecided names may get anything */
+  woman?: boolean | null;
 }
 
 const INK = '#2a211a';
@@ -50,15 +52,24 @@ export function drawPortrait(o: PortraitSpec, size: number): string {
 
   // ---------------------------------------------------------------- what they wear
   const work = o.work;
-  const drawn = work === 'smidse' ? 'pet'
-    : pick(['geen', 'geen', 'geen', 'pet', 'hoed', 'kap', 'hoofddoek', 'baret', 'muts', 'kap'] as const);
+  // women wear the cap, the headscarf or nothing, and their hair long, plaited or in a bun; men the cap, the hat,
+  // the beret, a beard or a bald crown. Undecided names may get any of it.
+  const woman = o.woman === true, man = o.woman === false;
+  const drawn = woman ? pick(['geen', 'geen', 'kap', 'kap', 'hoofddoek', 'muts'] as const)
+    : man ? (work === 'smidse' ? 'pet' : pick(['geen', 'geen', 'geen', 'pet', 'hoed', 'baret', 'muts'] as const))
+    : work === 'smidse' ? 'pet' : pick(['geen', 'geen', 'geen', 'pet', 'hoed', 'kap', 'hoofddoek', 'baret', 'muts', 'kap'] as const);
   const headwear = o.mark === 'oorijzer' ? 'kap' : drawn;
   const veiled = headwear === 'kap' || headwear === 'hoofddoek';
-  const hairStyle = veiled ? 'onder' : pick(age >= 55 ? ['kaal', 'kort', 'scheiding', 'knot', 'krullen', 'kaal'] as const : ['kort', 'scheiding', 'krullen', 'knot', 'lang', 'vlechten'] as const);
-  const facial = veiled || chance(0.55) ? 'geen' : pick(['baard', 'sik', 'snor', 'snor', 'bakkebaarden', 'stoppels'] as const);
-  const clothes = work === 'boerderij' ? pick(['kiel', 'kiel', 'vest', 'trui'] as const)
-    : work === 'kerk' || work === 'school' ? 'jas'
+  const hairStyle = veiled ? 'onder'
+    : woman ? pick(age >= 55 ? ['knot', 'knot', 'krullen'] as const : ['knot', 'lang', 'vlechten', 'krullen'] as const)
+    : man ? pick(age >= 55 ? ['kaal', 'kort', 'scheiding', 'krullen', 'kaal'] as const : ['kort', 'scheiding', 'krullen', 'kort'] as const)
+    : pick(age >= 55 ? ['kaal', 'kort', 'scheiding', 'knot', 'krullen', 'kaal'] as const : ['kort', 'scheiding', 'krullen', 'knot', 'lang', 'vlechten'] as const);
+  const facial = veiled || woman || chance(0.55) ? 'geen' : pick(['baard', 'sik', 'snor', 'snor', 'bakkebaarden', 'stoppels'] as const);
+  const clothes = work === 'kerk' || work === 'school' ? 'jas'
+    : woman ? (work === 'boerderij' ? pick(['schort', 'schort', 'omslagdoek'] as const) : pick(['omslagdoek', 'schort', 'omslagdoek', 'trui'] as const))
+    : work === 'boerderij' ? pick(['kiel', 'kiel', 'vest', 'trui'] as const)
     : work === 'herberg' ? pick(['vest', 'schort'] as const)
+    : man ? pick(['jas', 'vest', 'trui', 'kiel'] as const)
     : veiled ? pick(['omslagdoek', 'schort', 'omslagdoek'] as const) : pick(['jas', 'vest', 'trui', 'kiel', 'omslagdoek'] as const);
   const cloth = pick(['#3d4a5a', '#4a3a2e', '#2f3b33', '#5a4632', '#463c4e', '#2e2a28', '#55422e']);
 
@@ -78,7 +89,7 @@ export function drawPortrait(o: PortraitSpec, size: number): string {
   const pipeDrawn = !veiled && facial !== 'baard' && mouth !== 'grin' && chance(0.1);
   const pipe = o.mark === 'pijp' ? true : o.mark === 'none' ? false : pipeDrawn;
   const cheeks = chance(0.5);
-  const earrings = veiled && chance(0.3);
+  const earrings = !man && (veiled || woman) && chance(0.3);
 
   const parts: string[] = [];
   const P = (x: string) => parts.push(x);

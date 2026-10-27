@@ -14,6 +14,7 @@ import { SITE, VILLAGE, generateLand, type Land, type Site } from './land';
 import { H, N4, W, idx, inb, placeRoadTile } from './world';
 import { listOf, placeNames } from './text';
 import { EN, L } from './i18n';
+import { isWoman } from './names';
 
 export const PARTS = [L('ochtend', 'morning'), L('middag', 'afternoon'), L('avond', 'evening')];
 /** Each part of the day has two stretches of about two hours: a visit takes one, a journey as many as it needs. */
@@ -1482,7 +1483,8 @@ export class Field {
     const words = variant.d.split(' ');
     const opening = words.slice(0, Math.max(8, Math.floor(words.length * 0.4))).join(' ');
     const q: Quest = { t, n: variant.n, grand, starter: starter.id, church: church.id, site: site.id, village: village.id, target: target.id,
-      mark: r.chance(0.6) ? 'oorijzer' : 'pijp', stage: 0, clues: [], opening, hinted: false };
+      // the gold ear iron belongs to a woman's costume; a pipe anyone may smoke
+      mark: r.chance(0.6) && isWoman(target.first) !== false ? 'oorijzer' : 'pijp', stage: 0, clues: [], opening, hinted: false };
     return q;
   }
 
