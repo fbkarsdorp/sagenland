@@ -716,11 +716,8 @@ function renderTalk() {
     renderTalk();
     $('#modal').scrollTop = 0;
   }));
-  $('#modal').querySelector('#talk-end')?.addEventListener('click', () => {
-    talkFrom = t.lines.length;
-    f.endTalk(t);
-    renderTalk();
-  });
+  // taking your leave closes the leaf; how it went comes as a notice on the map
+  $('#modal').querySelector('#talk-end')?.addEventListener('click', closeModal);
   $('#modal').querySelector('#talk-ok')?.addEventListener('click', closeModal);
 }
 
@@ -1093,7 +1090,11 @@ export function showModal(html: string) {
 }
 
 export function closeModal() {
-  if (talk && !talk.ended) G.field.endTalk(talk);
+  if (talk && !talk.ended) {
+    const n = G.field.sim.narrators[talk.nid];
+    const out = G.field.endTalk(talk);
+    if (out.length) notice(`${portrait(n, 30)}<span>${out.map((l) => esc(l.text)).join(' ')}${out.some((l) => l.lead) ? ` <i>${L('(In potlood op uw kaart.)', '(Pencilled on your map.)')}</i>` : ''}</span>`);
+  }
   talk = null;
   // whatever was written down meanwhile leaves a splash of ink on the map
   const f = G.field;
@@ -1153,16 +1154,36 @@ function letterHtml(l: Letter): string {
   </div>`;
 }
 
+/** A line of news at the top of the map. When several come at once, each stays at least a few seconds before the next. */
 let noticeTimer = 0;
+let noticeAt = 0;
+const notices: string[] = [];
 function notice(html: string) {
+  const el = $('#notice');
+  const shown = performance.now() - noticeAt;
+  if (!el.classList.contains('hidden') && shown < 3200) {
+    notices.push(html);
+    clearTimeout(noticeTimer);
+    noticeTimer = window.setTimeout(nextNotice, 3200 - shown);
+    return;
+  }
+  showNotice(html);
+}
+function showNotice(html: string) {
   const el = $('#notice');
   el.innerHTML = html;
   el.classList.remove('hidden');
   el.style.animation = 'none';
   void el.offsetWidth;
   el.style.animation = '';
+  noticeAt = performance.now();
   clearTimeout(noticeTimer);
-  noticeTimer = window.setTimeout(() => el.classList.add('hidden'), 7000);
+  noticeTimer = window.setTimeout(nextNotice, notices.length ? 3200 : 7000);
+}
+function nextNotice() {
+  const next = notices.shift();
+  if (next) showNotice(next);
+  else $('#notice').classList.add('hidden');
 }
 
 // ------------------------------------------------------------------ portraits
