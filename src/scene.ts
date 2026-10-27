@@ -129,7 +129,7 @@ export class MapScene extends Phaser.Scene {
     this.rider = this.add.image(0, 0, 'rider', 'i0').setOrigin(0.47, 58 / BOX).setScale(this.pace.scale / RES).setDepth(7);
     this.placeRider();
     if (f.practising) this.mentor = this.add.image(this.rider.x - 17, this.rider.y + 2, 'mentor', 'i0').setOrigin(0.47, 58 / BOX)
-      .setScale(PACE.voet.scale / RES).setDepth(6.95);
+      .setScale(PACE.voet.scale / RES).setDepth(7.05);
     this.makeLife();
 
     this.knownShown = f.known.length;
@@ -952,7 +952,9 @@ export class MapScene extends Phaser.Scene {
       return;
     }
     const facing = this.journey ? this.journey.facing : 1;
-    const tx = this.rider.x - facing * (this.journey ? 15 : 17), ty = this.rider.y + 2;
+    // on the road a step behind; standing still, clear of the bicycle, car or gig, a little in front of it
+    const clear = this.onFoot || G.field.persona.travel === 'voet' ? 17 : 32;
+    const tx = this.rider.x - facing * (this.journey ? 15 : clear), ty = this.rider.y + (this.journey ? 2 : 4);
     const k = Math.min(1, dt * (this.journey ? 7 : 4));
     const dx = (tx - m.x) * k, dy = (ty - m.y) * k;
     m.setPosition(m.x + dx, m.y + dy);
