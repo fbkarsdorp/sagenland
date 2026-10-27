@@ -37,7 +37,7 @@ async function main() {
   }
   const r = PARAMS.get('region'), a = PARAMS.get('arch');
   if (PARAMS.has('go') && r && meta.regions[r] && a && archetypesFor(meta, r).includes(a)) {
-    start(r, a, placeNames(r, new Rng(+(PARAMS.get('seed') ?? 1)))[0], setup);
+    start(r, a, placeNames(r, new Rng(+(PARAMS.get('seed') ?? 1)))[0], setup, PARAMS.has('intro'));
     return;
   }
   renderSetup(meta, setup);
@@ -122,6 +122,8 @@ function renderSetup(meta: Meta, setup: HTMLElement) {
         <div class="field"><label for="village" class="sub">${L('Logeert in', 'Staying in')}</label><input id="village" maxlength="28" autocomplete="off" />
           <button class="iconbtn reroll" id="reroll" title="${L('Een andere naam', 'Another name')}">↻</button></div>
         <button class="btn primary" id="begin">${L('Begin in', 'Start in')} <span id="begin-region"></span></button>
+        <label class="intro-opt"><input type="checkbox" id="with-intro" ${hadIntro() ? '' : 'checked'} />
+          <span>${L('Begin met de eerste avond: een korte inleiding, met een oude verzamelaar die u rondleidt in het dorp.', 'Begin with the first evening: a short introduction, with an old collector who takes you round the village.')}</span></label>
       </div>
 
       <details class="howto-wrap">
@@ -230,12 +232,21 @@ function renderSetup(meta: Meta, setup: HTMLElement) {
     cancelAnimationFrame(raf);
     hero.destroy();
     loc.destroy();
-    start(region, arch, name.trim() || placeNames(region, rng)[0], setup);
+    start(region, arch, name.trim() || placeNames(region, rng)[0], setup, setup.querySelector<HTMLInputElement>('#with-intro')!.checked);
   });
   draw();
 }
 
-async function start(region: string, arch: string, homeName: string, setup: HTMLElement) {
+/** Whether this player has had the first evening before (or skipped it): then the start page leaves it out. */
+function hadIntro(): boolean {
+  try {
+    return localStorage.getItem('sagenland-intro') === 'done';
+  } catch {
+    return false;
+  }
+}
+
+async function start(region: string, arch: string, homeName: string, setup: HTMLElement, intro = false) {
   setup.innerHTML = `<div class="leaf sheet" style="text-align:center;margin-top:20vh;width:min(520px,100%)"><p class="fell" style="font-size:24px">${esc(homeName)}</p><p class="sub">${L('De streek wordt opgemeten. Er wordt gezocht in het archief…', 'Surveying the region. Searching the archive…')}</p></div>`;
   const [corpus] = await Promise.all([
     loadCorpus(region),
@@ -248,6 +259,7 @@ async function start(region: string, arch: string, homeName: string, setup: HTML
   const asked = PARAMS.get('season');
   const season: Season = asked === 'lente' || asked === 'zomer' || asked === 'winter' ? asked : 'herfst';
   G.field = newField(corpus, arch, seed, homeName, season);
+  if (intro) G.field.startPrologue();
   const { mountUI } = await import('./ui');
   const { startGame } = await import('./scene');
   if (import.meta.env.DEV) (window as unknown as { __G: typeof G }).__G = G;

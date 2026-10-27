@@ -6,7 +6,7 @@ import { durationText, type Where } from './field';
 import {
   RES, SH, SW, addKnown, compose, composeRect, knownAt, knownMask, px, renderNotes, renderSheet, sheets, type Features,
 } from './sheet';
-import { ANIMALS, BOX, IDLE_FRAMES, RIDE_FRAMES, drawAnimal, drawRider, drawVehicle, drawWalker, type AnimalKind } from './rider';
+import { ANIMALS, BOX, IDLE_FRAMES, RIDE_FRAMES, drawAnimal, drawOldCollector, drawRider, drawVehicle, drawWalker, type AnimalKind } from './rider';
 import { Night, Spirits, WeatherScene, makeAtmosphereTextures, splash } from './atmosphere';
 import { TILE, W, idx, placeRoadTile, roadPath } from './world';
 import { Rng } from './rng';
@@ -39,6 +39,8 @@ interface Journey {
   /** where the road begins and ends along the path: off it, the collector goes on foot */
   roadFrom: number;
   roadTo: number;
+  /** walked all the way, on the first evening: at the pace of the ride, so it takes no longer to watch */
+  walked: boolean;
 }
 
 interface Beast {
@@ -89,6 +91,9 @@ export class MapScene extends Phaser.Scene {
   private rivalLabel: Phaser.GameObjects.Text | null = null;
   private rivalAt = -1;
   private rivalTween: Phaser.Tweens.Tween | null = null;
+  /** the old collector at your side on the first evening, and how far she has walked */
+  private mentor: Phaser.GameObjects.Image | null = null;
+  private mentorWalked = 0;
 
   constructor() {
     super('map');
@@ -123,6 +128,8 @@ export class MapScene extends Phaser.Scene {
     this.lamp = this.add.image(0, 0, 'glow').setTint(0xffe08a).setBlendMode(Phaser.BlendModes.ADD).setScale(0.5).setAlpha(0).setDepth(6.9);
     this.rider = this.add.image(0, 0, 'rider', 'i0').setOrigin(0.47, 58 / BOX).setScale(this.pace.scale / RES).setDepth(7);
     this.placeRider();
+    if (f.practising) this.mentor = this.add.image(this.rider.x - 17, this.rider.y + 2, 'mentor', 'i0').setOrigin(0.47, 58 / BOX)
+      .setScale(PACE.voet.scale / RES).setDepth(6.95);
     this.makeLife();
 
     this.knownShown = f.known.length;
@@ -236,6 +243,20 @@ export class MapScene extends Phaser.Scene {
       }
       t.refresh();
     }
+
+    // the old collector of the first evening
+    const mt = this.textures.createCanvas('mentor', B * n, B)!;
+    const mc = mt.getContext();
+    for (let i = 0; i < n; i++) {
+      mc.save();
+      mc.translate(i * B, 0);
+      mc.scale(RES, RES);
+      if (i < RIDE_FRAMES) drawOldCollector(mc, i, null);
+      else drawOldCollector(mc, 0, i - RIDE_FRAMES);
+      mc.restore();
+      mt.add(i < RIDE_FRAMES ? `r${i}` : `i${i - RIDE_FRAMES}`, 0, i * B, 0, B, B);
+    }
+    mt.refresh();
 
     // the other collector, and a passer-by on the road
     const mk = (key: string, mode: string) => {
@@ -624,15 +645,16 @@ export class MapScene extends Phaser.Scene {
       if (bd < 2.5 && best > 3 && best < tiles.length - 4) dogs.push({ at: rawLen[best + 1] * scaleL, done: false });
     }
     // long journeys go a little quicker, so no ride lasts much over ten seconds
-    const speed = Math.max(this.pace.speed, total / 10);
+    const speed = Math.max(f.departed?.walked ? PACE.voet.speed * 1.4 : this.pace.speed, total / 10);
     const meetAt = f.encounter ? rawLen[Math.min(rawLen.length - 1, f.encounter.at + 1)] * scaleL : null;
     // the stretch on the road: before it and after it, the collector walks (the vehicle waits at the road's end)
     const d = f.departed;
     const footStart = f.persona.travel === 'voet' ? 0 : d?.footStart ?? 0;
     const footEnd = f.persona.travel === 'voet' ? 0 : d?.footEnd ?? 0;
-    const roadFrom = footStart > 0 ? rawLen[Math.min(rawLen.length - 1, footStart + 1)] * scaleL : -1;
+    // on the first evening the whole way is walked, and the vehicle stays at the lodgings
+    const roadFrom = d?.walked ? total + 1 : footStart > 0 ? rawLen[Math.min(rawLen.length - 1, footStart + 1)] * scaleL : -1;
     const roadTo = footEnd > 0 ? rawLen[Math.max(0, tiles.length - footEnd)] * scaleL : total + 1;
-    this.journey = { pts, len, dist: 0, speed, fast: false, reveal, trailFrom: f.trail.length - tiles.length, dogs, lastPuff: 0, facing: 1, meetAt, pauseUntil: 0, roadFrom, roadTo };
+    this.journey = { pts, len, dist: 0, speed, fast: false, reveal, trailFrom: f.trail.length - tiles.length, dogs, lastPuff: 0, facing: 1, meetAt, pauseUntil: 0, roadFrom, roadTo, walked: !!d?.walked };
     this.redraw();
     if (this.cameras.main.zoom < 1.3) this.zoomTo(1.5, 900);
     sfx('click');
@@ -674,7 +696,7 @@ export class MapScene extends Phaser.Scene {
     // on foot or on the road: leave the vehicle at the end of the road, or take it up again
     const walking = j.dist < j.roadFrom || j.dist > j.roadTo;
     if (walking !== this.onFoot) this.setOnFoot(walking, j.facing);
-    const v = (walking ? Math.min(j.speed, PACE.voet.speed * 1.4) : j.speed) * (j.fast ? 4 : 1);
+    const v = (walking && !j.walked ? Math.min(j.speed, PACE.voet.speed * 1.4) : j.speed) * (j.fast ? 4 : 1);
     const end = j.len[j.len.length - 1];
     j.dist = Math.min(end, j.dist + v * dt);
     // position along the smoothed path
@@ -865,6 +887,8 @@ export class MapScene extends Phaser.Scene {
     this.rider.setRotation(0);
     this.revealUpTo(f.known.length);
     this.placeRider();
+    // home from the first evening's walk: back to the bicycle, car or gig
+    if (this.onFoot && f.departed?.walked && !f.practising) this.setOnFoot(false, 1);
     G.walking = false;
     this.redraw();
     sfx('collector');
@@ -902,6 +926,7 @@ export class MapScene extends Phaser.Scene {
       lights.push({ x: px(p.x), y: px(p.y) - 6, r: 120 });
     }
     lights.push(...this.spirits.lights());
+    this.followMentor(dt, lights);
     // the feast's lights: pumpkins by the doors, stars over the churches, the saint going over
     const dark = this.night.isDark;
     for (const l of this.feastLights) {
@@ -915,6 +940,32 @@ export class MapScene extends Phaser.Scene {
     this.lamp.setPosition(this.rider.x + facing * 14, this.rider.y - 16).setAlpha(this.night.isDark && f.persona.travel !== 'voet' && !this.onFoot ? 0.75 : 0);
     if (this.rival && this.rivalLabel) this.rivalLabel.setPosition(this.rival.x, this.rival.y - 44);
     if (!this.camTween && !this.journey) this.clampCamera();
+  }
+
+  /** The old collector keeps at your side, a step behind on the road, with her lantern lit after dark. */
+  private followMentor(dt: number, lights: { x: number; y: number; r: number }[]) {
+    const m = this.mentor;
+    if (!m) return;
+    if (!G.field.practising && !this.journey) {
+      this.mentor = null;
+      this.tweens.add({ targets: m, alpha: 0, duration: 1200, onComplete: () => m.destroy() });
+      return;
+    }
+    const facing = this.journey ? this.journey.facing : 1;
+    const tx = this.rider.x - facing * (this.journey ? 15 : 17), ty = this.rider.y + 2;
+    const k = Math.min(1, dt * (this.journey ? 7 : 4));
+    const dx = (tx - m.x) * k, dy = (ty - m.y) * k;
+    m.setPosition(m.x + dx, m.y + dy);
+    const moved = Math.hypot(dx, dy);
+    if (moved > 0.15) {
+      this.mentorWalked += moved;
+      m.setFrame(`r${Math.floor(this.mentorWalked / PACE.voet.step) % RIDE_FRAMES}`);
+      if (Math.abs(dx) > 0.05) m.setFlipX(dx < 0);
+    } else {
+      m.setFrame(`i${Math.floor(this.idleT * 2) % IDLE_FRAMES}`);
+      m.setFlipX(false);
+    }
+    if (this.night.isDark) lights.push({ x: m.x + (m.flipX ? 4 : -4), y: m.y - 14, r: 36 });
   }
 
   // ------------------------------------------------------------------ camera

@@ -281,8 +281,10 @@ export class Spirits {
         }
         continue;
       }
-      if (now < sp.next) continue;
-      sp.showing = !sp.showing;
+      // on the first evening, what she brought you out to see stays until you have looked
+      const shown = f.prologue?.step === 'kijken' && f.prologue.site === sp.site;
+      if (now < sp.next || (shown && sp.showing)) continue;
+      sp.showing = shown || !sp.showing;
       this.scene.tweens.add({ targets: sp.c, alpha: sp.showing ? 0.95 : 0, duration: 1200 });
       // on All Hallows' Eve they linger, and come back sooner
       const hallows = feest() === 'halloween';

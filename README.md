@@ -7,6 +7,15 @@ the story world it was taken from. Every tale in the game is a real, recorded va
 
 ## Play
 
+- **The first evening** (optional, offered on the start page until you have had it once): the evening
+  before day 1, an old collector who has worked the region for forty years takes you round the village of
+  your lodgings. Three people each show one side of the work, without dice: a born storyteller who tells
+  after a little small talk; a believer who will not tell about witches until you have asked about the old
+  days first; and a shy one who only remembers once you tell one of tonight's tales yourself, and then
+  gives you a name. At night you walk with her to a place nearby where things are seen, and walk back to
+  the first morning. What you write down that evening goes into your notebook. It can be skipped at any
+  moment. The trail of the lost tale and the appeal in the weekly only open on day 2, so the first day
+  is quieter either way.
 - **The map** is your own field map: a faded printed sheet that comes into watercolour where you have
   been. Villages have a character (church village, farming village, hamlet, mill village, peat or
   heath village); outside them lie places tales are tied to (a gallows field, a crossroads, an old
@@ -103,6 +112,7 @@ Sources for the collectors' side: A.J. Dekker, '150 jaar Nederlands volksverhaal
     npx tsx scripts/landstats.ts oosten 3                   # how different the villages' repertoires are
     npx tsx scripts/simtest.ts friesland volhouder 7        # the underlying simulation over 25 years
     npx tsx scripts/divtest.ts friesland                     # its diversity under population and connectivity
+    npx tsx scripts/prologtest.ts                            # the first evening, in every region, collector and season
 
 The previous village-builder version is archived locally in `backup/` (not in the repo).
 
@@ -118,7 +128,8 @@ The previous village-builder version is archived locally in `backup/` (not in th
   go, dust, a dog in every village you pass), mills, smoke, birds, cattle, the light of the day, the camera
 - `src/atmosphere.ts` the night layer, apparitions, ink splashes, and the weather scene (rain, leaves, mist)
 - `src/portrait.ts` the faces
-- `src/rider.ts` the collector drawn frame by frame (bicycle, on foot, car with tape recorder, doctor's gig), and the animals
+- `src/rider.ts` the collector drawn frame by frame (bicycle, on foot, car with tape recorder, doctor's gig), the old
+  collector of the first evening, and the animals
 - `src/ui.ts`, `src/end.ts` HTML layer (where you are, hearsay, visits, notebook, diary, end)
 - `src/locator.ts`, `src/geo.ts`, `src/region.ts` index map and region profile on the start screen
 - `src/sound.ts` synthesized sound (Web Audio, no assets)

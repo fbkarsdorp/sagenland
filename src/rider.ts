@@ -343,6 +343,120 @@ function walker(ctx: CanvasRenderingContext2D, f: number, idle: number | null, l
   head(ctx, shoulder[0] + 1.2, shoulder[1] - 5 + bob * 0.2, look.hat, look.hat === 'brim');
 }
 
+// ------------------------------------------------------------------ the old collector
+
+/**
+ * The old collector who shows you round on the first evening: a long dark skirt, a shawl over the shoulders, a white
+ * lace cap over a grey bun, a stick in one hand and a lantern in the other.
+ */
+function oldCollector(ctx: CanvasRenderingContext2D, f: number, idle: number | null) {
+  const walking = idle === null;
+  const a = (f / RIDE_FRAMES) * Math.PI * 2;
+  const t = ((idle ?? 0) / IDLE_FRAMES) * Math.PI * 2;
+  const bob = walking ? -Math.abs(Math.sin(a)) * 0.8 : Math.sin(t) * 0.3;
+  const x = 31;
+  const shoulder: P = [x + 0.5, 30 + bob];
+  // the lantern, swinging a little from the far hand
+  const swing = walking ? Math.sin(a) * 3 : Math.sin(t) * 0.6;
+  const hand: P = [x - 7.5 - swing * 0.6, 40 + bob];
+  line(ctx, [[shoulder[0] - 1.5, shoulder[1] + 1], hand], 2.2, '#26222a');
+  line(ctx, [hand, [hand[0] - swing * 0.15, hand[1] + 2.2]], 0.6, INK);
+  const lx = hand[0] - 2.2 - swing * 0.15, ly = hand[1] + 2.2;
+  ctx.fillStyle = '#f2c45a';
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 0.7;
+  ctx.fillRect(lx, ly, 4.4, 5);
+  ctx.strokeRect(lx, ly, 4.4, 5);
+  line(ctx, [[lx - 0.4, ly], [lx + 4.8, ly]], 1, INK);
+  line(ctx, [[lx + 2.2, ly + 1], [lx + 2.2, ly + 4]], 0.5, '#b8862a');
+  // feet, peeping out under the hem in turn
+  const step = (ph: number) => (walking ? Math.sin(a + ph) * 3.6 : 0);
+  line(ctx, [[x - 1.5 + step(Math.PI), 57.6], [x + 1.2 + step(Math.PI), 57.9]], 2, INK);
+  line(ctx, [[x + 0.5 + step(0), 57.6], [x + 3.2 + step(0), 57.9]], 2.1, INK);
+  // the long skirt, swaying as she goes, with a blue apron in front
+  const sway = walking ? Math.sin(a) * 1.3 : 0;
+  ctx.fillStyle = '#2b2730';
+  ctx.beginPath();
+  ctx.moveTo(x - 3.8, 38 + bob);
+  ctx.lineTo(x + 3.8, 38 + bob);
+  ctx.quadraticCurveTo(x + 6.5 + sway, 47, x + 7.4 + sway, 56.8);
+  ctx.lineTo(x - 7.2 + sway * 0.5, 56.8);
+  ctx.quadraticCurveTo(x - 6.4 + sway * 0.5, 47, x - 3.8, 38 + bob);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#4d6585';
+  ctx.beginPath();
+  ctx.moveTo(x + 1.2, 39 + bob);
+  ctx.lineTo(x + 3.9, 39 + bob);
+  ctx.quadraticCurveTo(x + 6 + sway, 47, x + 6.6 + sway, 54.5);
+  ctx.lineTo(x + 2.6 + sway * 0.7, 54.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.lineWidth = 0.5;
+  ctx.stroke();
+  // the bodice, and a plum shawl over the shoulders, its point hanging at the back
+  ctx.fillStyle = '#2b2730';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.moveTo(x - 3.3, 29.5 + bob);
+  ctx.lineTo(x + 3.6, 29.5 + bob);
+  ctx.lineTo(x + 4, 39 + bob);
+  ctx.lineTo(x - 4, 39 + bob);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#7a4a5e';
+  ctx.beginPath();
+  ctx.moveTo(x - 4.6, 29 + bob);
+  ctx.lineTo(x + 4.4, 29 + bob);
+  ctx.lineTo(x + 3, 33.5 + bob);
+  ctx.lineTo(x - 2.5 - swing * 0.2, 38.5 + bob);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  // the near arm, on the stick; the stick goes ahead of her and back
+  const reach = walking ? Math.sin(a + Math.PI / 2) * 2.4 : 0;
+  const grip: P = [x + 6.2 + reach * 0.5, 40.5 + bob];
+  const tip: P = [x + 8.6 + reach, 58];
+  line(ctx, [[grip[0] - 0.6, grip[1] - 1.4], tip], 1.2, '#5e3f22');
+  line(ctx, [[grip[0] - 0.6, grip[1] - 1.4], [grip[0] - 2.4, grip[1] - 2]], 1.2, '#5e3f22');
+  line(ctx, [[shoulder[0] + 1.8, shoulder[1] + 0.5], [x + 4.6, 36 + bob], grip], 2.4, '#26222a');
+  circle(ctx, grip[0], grip[1], 1.1, SKIN, INK, 0.5);
+  // the head: a grey bun at the back, under a white cap with a frill
+  const hx = x + 1.2, hy = 25 + bob;
+  circle(ctx, hx - 3.6, hy - 0.2, 1.8, '#cfcabe', INK, 0.6);
+  circle(ctx, hx, hy, 3.9, SKIN, INK, 0.9);
+  ctx.fillStyle = SKIN;
+  ctx.beginPath();
+  ctx.moveTo(hx + 3.7, hy - 0.3);
+  ctx.lineTo(hx + 5, hy + 0.9);
+  ctx.lineTo(hx + 3.6, hy + 1.2);
+  ctx.fill();
+  ctx.lineWidth = 0.7;
+  ctx.stroke();
+  circle(ctx, hx + 1.9, hy - 0.4, 0.5, INK, INK, 0);
+  ctx.lineWidth = 0.6;
+  ctx.beginPath();
+  ctx.arc(hx + 2, hy - 0.4, 1.3, 0, Math.PI * 2);
+  ctx.moveTo(hx + 0.7, hy - 0.6);
+  ctx.lineTo(hx - 2.4, hy - 1);
+  ctx.stroke();
+  ctx.fillStyle = '#f6f0e0';
+  ctx.beginPath();
+  ctx.moveTo(hx - 4.4, hy + 1.6);
+  ctx.quadraticCurveTo(hx - 5, hy - 5, hx + 0.6, hy - 5.2);
+  ctx.quadraticCurveTo(hx + 3.8, hy - 5, hx + 3.4, hy - 2.4);
+  ctx.quadraticCurveTo(hx, hy - 2.8, hx - 1.6, hy + 1.8);
+  ctx.closePath();
+  ctx.fill();
+  ctx.lineWidth = 0.7;
+  ctx.stroke();
+  ctx.setLineDash([0.8, 0.8]);
+  line(ctx, [[hx + 3.6, hy - 2.2], [hx + 0.6, hy - 2.6], [hx - 1.4, hy + 2.2]], 0.6, '#9a927f');
+  ctx.setLineDash([]);
+}
+
 // ------------------------------------------------------------------ in the little car
 
 function car(ctx: CanvasRenderingContext2D, f: number, idle: number | null, empty = false) {
@@ -529,6 +643,11 @@ export function drawRider(ctx: CanvasRenderingContext2D, travel: string, frame: 
 /** The collector on foot, dressed as they are: for the last stretch to a place off the road. */
 export function drawWalker(ctx: CanvasRenderingContext2D, travel: string, frame: number, idle: number | null) {
   walker(ctx, frame, idle, LOOK[travel] ?? LOOK.voet);
+}
+
+/** The old collector of the first evening: walking (`idle` null) or standing still. */
+export function drawOldCollector(ctx: CanvasRenderingContext2D, frame: number, idle: number | null) {
+  oldCollector(ctx, frame, idle);
 }
 
 /** The bicycle, car or gig left at the end of the road while the collector walks on (the horse grazes). */

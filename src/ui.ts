@@ -52,6 +52,7 @@ export function mountUI() {
       <h3 class="gehoord">${L('Gehoord', 'Heard')}</h3><div id="leadlist"></div></aside>
     <section id="here" class="sheet"></section>
     <div id="notice" class="sheet hidden"></div>
+    <div id="guide" class="sheet hidden"></div>
     <div id="dayveil" class="hidden"></div>
     <div id="daycard" class="hidden"></div>
     <div id="tooltip" class="hidden"></div>
@@ -91,6 +92,9 @@ export function mountUI() {
     if (e.target === $('#modal')) closeModal();
   });
   $('#here').addEventListener('click', onHereClick);
+  $('#guide').addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('[data-act="skip"]')) skipPrologue();
+  });
   swipePanel($('#here'));
   $('#leads h3.gehoord').addEventListener('click', () => $('#leads').classList.toggle('open'));
   // on a phone the book and the hearsay live in a drawer along the bottom
@@ -157,16 +161,18 @@ export function mountUI() {
         notice(`${svg(MISC_ICONS.kroniek, 20)} ${esc(d.text)}`);
       }
     }
-    // the rival's news, but not the routine line about where they were today
-    for (const d of f.diary.slice(diaryLen)) if (d.kind === 'rival' && d.notice) notice(`${svg(MISC_ICONS.verzamelaar, 20)} ${esc(d.text)}`);
+    // the rival's news, but not the routine line about where they were today; and news of the day, like the trail
+    for (const d of f.diary.slice(diaryLen)) if (d.notice) notice(`${svg(d.kind === 'rival' ? MISC_ICONS.verzamelaar : MISC_ICONS.kroniek, 20)} ${esc(d.text)}`);
     diaryLen = f.diary.length;
     G.emit('changed', undefined);
     if (!G.walking && !modalOpen) setTimeout(showPost, 400);
     if (f.over && !G.walking && !modalOpen) setTimeout(finish, 600);
   });
+  lastDay = G.field.day;
   render();
   renderSound();
-  openIntro(true);
+  if (G.field.practising) openWelcome();
+  else openIntro(true);
 }
 
 let finished = false;
@@ -223,10 +229,18 @@ function render() {
     }
   }
   chaptersDone = sc.done;
+  // the first find: what makes a tale worth something, said once
+  const finds = f.finds().length;
+  if (finds && !findsSeen && !modalOpen) {
+    findsSeen = finds;
+    notice(`${svg(MISC_ICONS.catalogus, 20, RED)} ${L('<b>Een vondst.</b> Een verhaal dat alleen deze verteller nog kent, of dat in het hele archief zelden is opgetekend. Vondsten zijn het meeste waard.',
+      '<b>A find.</b> A tale only this storyteller still knows, or one rarely recorded in the whole archive. Finds are worth the most.')}`);
+  }
   $('#rivalscore').textContent = f.rival ? L(`punten · de ander ${f.rivalScore()}`, `points · rival ${f.rivalScore()}`) : L('punten', 'points');
   renderBook();
   renderLeads();
   renderHere();
+  renderGuide();
   const here = f.at.kind === 'place' ? f.sim.placeBuildings(f.at.id).map((b) => b.kind) : [];
   const [x, y] = f.tileOf(f.at);
   const nearWater = f.land.tiles.some((t, i) => t.t === 'water' && Math.abs((i % W) - x) + Math.abs(Math.floor(i / W) - y) < 6);
@@ -261,7 +275,7 @@ function renderBook() {
 function questBox(): string {
   const f = G.field;
   const q = f.quest;
-  if (!q) return '';
+  if (!q || !f.questOpen) return '';
   const steps = EN ? ['The beginning', 'The grave', 'Where the family went', 'The tale'] : ['Het begin', 'Het graf', 'Waar de familie bleef', 'Het verhaal'];
   const starter = esc(f.sim.name(f.sim.narrators[q.starter]));
   const church = esc(f.land.places[q.church].name), site = esc(f.land.sites[q.site].name), village = esc(f.land.places[q.village].name);
@@ -374,7 +388,7 @@ function renderHereBody(f: typeof G.field, el: HTMLElement) {
       <div class="here-body">
         <div class="kicker">${L('Onderweg naar', 'On the way to')}</div>
         <h2>${esc(f.whereName(f.at))}</h2>
-        <p class="sub" id="road-time">${esc(cap(partName(G.clock?.part ?? f.part, G.clock?.slot ?? f.slot)))} ${L('van dag', 'of day')} ${G.clock?.day ?? f.day}.</p>
+        <p class="sub" id="road-time">${esc(roadTime(G.clock ?? f))}</p>
         <div class="here-foot"><button class="btn" data-act="hurry">${L('Sneller', 'Faster')}</button>
           <span class="muted">${touch ? L('Of tik op de kaart.', 'Or tap the map.') : L('Of klik op de kaart, of druk op de spatiebalk.', 'Or click the map, or press the space bar.')}</span></div>
       </div>`;
@@ -405,13 +419,13 @@ function renderHereBody(f: typeof G.field, el: HTMLElement) {
   el.innerHTML = `
     ${vignette(w)}
     <div class="here-body">
-      <div class="kicker">${f.part === 2 ? `${LAMP}${L('Avond', 'Evening')} ${w.kind === 'place' ? 'in' : L('bij', 'at')}` : `${L('U bent', 'You are')} ${w.kind === 'place' ? 'in' : L('bij', 'at')}`}</div>
+      <div class="kicker">${f.part === 2 ? `${LAMP}${f.isNight() ? L('Nacht', 'Night') : L('Avond', 'Evening')} ${w.kind === 'place' ? 'in' : L('bij', 'at')}` : `${L('U bent', 'You are')} ${w.kind === 'place' ? 'in' : L('bij', 'at')}`}</div>
       <h2>${esc(name)}</h2>
       <p class="sub">${esc(sub)}</p>
       ${evening}
       ${people.length ? `<div class="faces">${people.map(faceChip).join('')}</div>` : `<p class="sub">${s && s.hut === null ? L('Er is hier vandaag niemand. Misschien morgen.', 'Nobody here today. Maybe tomorrow.') : L('Er is hier niemand meer.', 'There is nobody here any more.')}</p>`}
       ${card || (people.length ? `<p class="sub small pick-hint">${EN ? `${touch ? 'Tap' : 'Click'} someone to see who they are.` : `${touch ? 'Tik' : 'Klik'} op iemand om te zien wie het is.`}</p>` : '')}
-      <div class="here-foot"><button class="btn" data-act="wait">${f.part === 2 && (f.slot === 1 || f.season === 'winter') ? L('Ga slapen', 'Go to sleep') : f.part === 2 ? L('Wacht tot de nacht', 'Wait for the night') : L(`Wacht tot de ${PARTS[f.part + 1]}`, `Wait for the ${PARTS[f.part + 1]}`)}</button>${appeal}</div>
+      ${f.practising ? '' : `<div class="here-foot"><button class="btn" data-act="wait">${f.part === 2 && (f.slot === 1 || f.season === 'winter') ? L('Ga slapen', 'Go to sleep') : f.part === 2 ? L('Wacht tot de nacht', 'Wait for the night') : L(`Wacht tot de ${PARTS[f.part + 1]}`, `Wait for the ${PARTS[f.part + 1]}`)}</button>${appeal}</div>`}
     </div>`;
 }
 
@@ -419,7 +433,7 @@ function renderHereBody(f: typeof G.field, el: HTMLElement) {
 function faceChip(n: Narrator): string {
   const f = G.field;
   const t = f.trustOf(n);
-  const lead = f.leads.some((l) => l.narrator === n.id && !l.done);
+  const lead = f.leads.some((l) => l.narrator === n.id && !l.done) || f.practiceWho() === n.id;
   const pips = [0.3, 0.55, 0.8].map((v) => `<i class="${t >= v ? 'on' : ''}"></i>`).join('');
   return `<button class="face ${chosen === n.id ? 'on' : ''} ${f.away(n) ? 'is-away' : ''} ${f.met.has(n.id) ? 'met' : ''}" data-act="choose" data-n="${n.id}" title="${esc(f.sim.name(n))}, ${f.age(n)}">
     ${portrait(n, 52)}${lead ? `<em class="flag" title="${L('Iemand heeft u over deze persoon verteld', 'Someone told you about this person')}">✎</em>` : ''}${f.ill.has(n.id) ? `<em class="flag ill" title="${L('ziek', 'ill')}">+</em>` : ''}
@@ -437,8 +451,21 @@ function personCard(n: Narrator): string {
     <div class="pinfo"><span class="pname"><b>${esc(f.sim.name(n))}</b> <span class="age">${f.age(n)}</span></span>
       <span class="role">${esc(f.role(n))}${traits.length ? ' · ' + traits.map((x, i) => (i === 0 && f.ill.has(n.id) ? `<span class="red">${esc(x)}</span>` : esc(x))).join(' · ') : ''}</span>
       ${said}</div>
-    ${f.away(n) ? `<span class="away">${L('op het land, kom ’s avonds terug', 'in the fields, come back in the evening')}</span>` : `<button class="btn primary" data-act="visit" data-n="${n.id}">${L('Bezoek', 'Visit')}</button>`}
+    ${f.practising && !f.canVisit(n) ? `<span class="away">${esc(notNow(n))}</span>`
+      : f.away(n) ? `<span class="away">${L('op het land, kom ’s avonds terug', 'in the fields, come back in the evening')}</span>` : `<button class="btn primary" data-act="visit" data-n="${n.id}">${L('Bezoek', 'Visit')}</button>`}
   </div>`;
+}
+
+/** On the first evening, why not this one now. */
+function notNow(n: Narrator): string {
+  const f = G.field;
+  const p = f.prologue!;
+  const who = f.practiceWho();
+  const part = f.castPart(n.id);
+  if (part && f.notebook.some((e) => e.narrator === n.id)) return EN ? `${cap(p.mentor)}: “You’ve had your tale from ${n.first}.”` : `${cap(p.mentor)}: „Van ${n.first} hebt u uw verhaal.”`;
+  if (who !== null && part) return EN ? `${cap(p.mentor)}: “In a moment. ${f.sim.narrators[who].first} first.”` : `${cap(p.mentor)}: „Zo meteen. Eerst ${f.sim.narrators[who].first}.”`;
+  if (who !== null) return EN ? `${cap(p.mentor)}: “Tomorrow. Tonight, ${f.sim.narrators[who].first} first.”` : `${cap(p.mentor)}: „Morgen. Vanavond eerst ${f.sim.narrators[who].first}.”`;
+  return EN ? `${cap(p.mentor)}: “Tomorrow.”` : `${cap(p.mentor)}: „Morgen.”`;
 }
 
 function destView(w: Where): string {
@@ -451,7 +478,16 @@ function destView(w: Where): string {
   const notYet = L('U bent er nog niet geweest.', 'You haven’t been there yet.');
   const desc = been ? f.arrivalLine(w) : kind ? `${L('Een', /^[aeiou]/i.test(kind) ? 'An' : 'A')} ${kind}. ${notYet}` : notYet;
   const recs = f.notebook.filter((e) => (w.kind === 'place' ? e.place === w.id && e.site === null : e.site === w.id)).length;
-  const how = r ? `${durationText(r.parts)} ${r.foot > 3 && f.persona.travel !== 'voet' ? `${f.persona.verb}${L(', het laatste stuk te voet', ', the last stretch on foot')}` : f.persona.verb}` : '';
+  if (f.practising && !f.mayGoTo(w)) return `
+    ${vignette(w)}
+    <div class="here-body">
+      <div class="kicker">${L('Erheen?', 'Go there?')}</div>
+      <h2>${esc(name)}</h2>
+      <p class="sub">${esc(cap(f.prologue!.mentor))}: ${L('„Vanavond niet. Morgen hebt u twaalf dagen.”', '“Not tonight. Tomorrow you have twelve days.”')}</p>
+      <div class="here-foot"><button class="btn" data-act="stay">${L('Terug', 'Back')}</button></div>
+    </div>`;
+  const how = r && f.practising ? `${durationText(r.parts)} ${L('lopen, met', 'on foot, with')} ${f.prologue!.mentor}`
+    : r ? `${durationText(r.parts)} ${r.foot > 3 && f.persona.travel !== 'voet' ? `${f.persona.verb}${L(', het laatste stuk te voet', ', the last stretch on foot')}` : f.persona.verb}` : '';
   const arrive = r ? f.part * 2 + f.slot + r.parts : 0;
   const late = (r && arrive > 5 ? L(' U komt er pas morgen aan.', ' You won’t get there until tomorrow.')
     : r && Math.floor(arrive / 2) > f.part ? L(` U komt aan in de ${PARTS[Math.floor(arrive / 2)]}.`, ` You arrive in the ${PARTS[Math.floor(arrive / 2)]}.`) : '')
@@ -545,16 +581,7 @@ function onHereClick(e: Event) {
   if (act === 'go' && dest) {
     const to = dest;
     dest = null;
-    $('#btn-overview').classList.remove('on');
-    // on the road from here: the scene rides it, the panel says where to
-    G.walking = true;
-    // the light stays as it is at departure; the scene lets the day pass along the way
-    G.clock = { day: f.day, part: f.part, slot: f.slot };
-    const tiles = f.travel(to);
-    if (!tiles) G.clock = null;
-    if (tiles) G.emit('walk', tiles);
-    else G.walking = false;
-    render();
+    setOut(() => f.travel(to));
   } else if (act === 'stay') {
     dest = null;
     render();
@@ -570,6 +597,20 @@ function onHereClick(e: Event) {
     f.appeal();
     notice(`${svg(MISC_ICONS.notitieboek, 20)} ${L('Uw oproep staat volgende week in het weekblad. Wie weet schrijft er iemand terug.', 'Your appeal will be in the local paper next week. Perhaps someone will write back.')}`);
   }
+}
+
+/** On the road: the scene rides it, the panel says where to. */
+function setOut(go: () => number[] | null) {
+  const f = G.field;
+  $('#btn-overview').classList.remove('on');
+  G.walking = true;
+  // the light stays as it is at departure; the scene lets the day pass along the way
+  G.clock = { day: f.day, part: f.part, slot: f.slot };
+  const tiles = go();
+  if (!tiles) G.clock = null;
+  if (tiles) G.emit('walk', tiles);
+  else G.walking = false;
+  render();
 }
 
 // ------------------------------------------------------------------ a visit
@@ -595,7 +636,12 @@ function renderTalk() {
   const frags = f.notebook.filter((e) => e.narrator === t.nid && e.frag);
   const prompts = f.prompts();
   const themes = f.themes();
-  const mv = (kind: string, inner: string, extra = '', cls = '') => `<button class="ask ${cls}" data-move="${kind}" ${extra}>${inner}</button>`;
+  // on the first evening, the move the old collector would make lights up
+  const hint = f.practiceHint(t);
+  const mv = (kind: string, inner: string, extra = '', cls = '') => {
+    const key = kind === 'theme' ? `theme:${/data-being="([^"]+)"/.exec(extra)?.[1]}` : kind;
+    return `<button class="ask ${cls}${hint === key ? ' hint' : ''}" data-move="${kind}" ${extra}>${inner}</button>`;
+  };
   const html = `
     <div class="leaf sheet visit-leaf talk">
       ${closeBtn()}
@@ -605,9 +651,9 @@ function renderTalk() {
         <p class="sub">${f.age(n)} ${L('jaar', 'years old')} · ${esc(f.role(n))}${f.ill.has(t.nid) ? ` · <span class="red">${L('ziek', 'ill')}</span>` : ''}</p></div></div>
       <div class="mood">
         <span class="mood-k">${L('Sfeer', 'Mood')}</span><span class="mood-bar"><i style="width:${Math.round(t.open * 100)}%"></i></span><span class="mood-w">${openWord(t.open)}</span>
-        <span class="moves" title="${L('Wat u nog kunt zeggen voor het tijd is om te gaan', 'What you can still say before it is time to go')}">${Array.from({ length: f.part === 2 ? 4 : 3 }, (_, k) => `<b class="${k < t.moves ? 'on' : ''}"></b>`).join('')}</span>
+        <span class="moves" title="${L('Wat u nog kunt zeggen voor het tijd is om te gaan', 'What you can still say before it is time to go')}">${Array.from({ length: f.castPart(t.nid) ? 6 : f.part === 2 ? 4 : 3 }, (_, k) => `<b class="${k < t.moves ? 'on' : ''}"></b>`).join('')}</span>
       </div>
-      ${known ? `<p class="temper"><b>${esc(cap(TEMPER[tm].name))}.</b> ${esc(TEMPER[tm].hint)}</p>` : ''}
+      ${known || f.castPart(t.nid) ? `<p class="temper"><b>${esc(cap(TEMPER[tm].name))}.</b> ${esc(TEMPER[tm].hint)}</p>` : ''}
       <div class="talk-log" id="talk-log">${t.lines.map((l, i) => `<div class="tl" data-i="${i}">${lineHtml(l)}</div>`).join('')}</div>
       ${live ? `
         <h3 class="ask-h">${L('Op gang komen', 'Getting started')}</h3>
@@ -645,7 +691,7 @@ function renderTalk() {
             `<span><b>Do you know the tale of ${esc(f.quest!.grand)}?</b><br/><small>Only the right person knows it. Anyone else will find the question odd.</small></span>`), '', 'quest')}</div>` : ''}` : ''}
       <p class="talk-foot">${t.ended
         ? `<button class="btn primary" id="talk-ok">${L('Verder', 'Continue')}</button>`
-        : `<button class="btn ${live ? '' : 'primary'}" id="talk-end">${L('Neem afscheid', 'Say goodbye')}</button> <span class="sub">${L('Een bezoek duurt een uur of twee, hoe het ook gaat.', 'A visit takes two hours or so, however it goes.')}</span>`}</p>
+        : `<button class="btn ${live ? '' : 'primary'}${hint === 'bye' ? ' hint' : ''}" id="talk-end">${L('Neem afscheid', 'Say goodbye')}</button> <span class="sub">${L('Een bezoek duurt een uur of twee, hoe het ook gaat.', 'A visit takes two hours or so, however it goes.')}</span>`}</p>
     </div>`;
   if (modalOpen && $('#modal .talk')) {
     $('#modal').innerHTML = html;
@@ -681,6 +727,7 @@ function renderTalk() {
 function lineHtml(l: TalkLine): string {
   if (l.entry) return taleCard(l.entry);
   if (l.opening) return `<article class="tale-card opening"><div class="kicker">${svg(MISC_ICONS.kroniek, 18)} <span>${L('Het begin van een verloren verhaal', 'The beginning of a lost tale')}</span></div><p class="summary">${esc(l.opening)} …</p></article>`;
+  if (l.who === 'mentor') return `<p class="line mentor">${mentorFace(26)}<span><b>${esc(cap(G.field.prologue?.mentor ?? ''))}</b> ${esc(l.text)}</span></p>`;
   if (l.lead) return `<p class="line zij">${esc(l.text)}</p><div class="pencil-card">${svg(MISC_ICONS.kaart, 18)} <span>${L('In potlood, in uw schrift en op de kaart:', 'In pencil, in your notebook and on the map:')} ${l.lead.lines.map(esc).join(' ')}</span></div>`;
   return `<p class="line ${l.who}">${esc(l.text)}</p>`;
 }
@@ -781,7 +828,8 @@ export function openTale(num: number) {
     <div class="leaf sheet visit-leaf">
       ${closeBtn()}
       ${taleCard(e)}
-      <p class="sub">${L(`Verteld door ${esc(f.sim.name(n))} (${f.age(n)}), ${esc(where)}, dag ${e.day} in de ${PARTS[e.part]}.`,
+      <p class="sub">${e.day === 0 ? L(`Verteld door ${esc(f.sim.name(n))} (${f.age(n)}), ${esc(where)}, op de eerste avond.`, `Told by ${esc(f.sim.name(n))} (${f.age(n)}), ${esc(where)}, on the first evening.`)
+        : L(`Verteld door ${esc(f.sim.name(n))} (${f.age(n)}), ${esc(where)}, dag ${e.day} in de ${PARTS[e.part]}.`,
         `Told by ${esc(f.sim.name(n))} (${f.age(n)}), ${esc(where)}, day ${e.day}, in the ${PARTS[e.part]}.`)}${n.died !== null ? ` <span class="red">${L('Inmiddels overleden.', 'Has since died.')}</span>` : ''}</p>
     </div>`);
   wireTales();
@@ -811,7 +859,7 @@ function openNotebook() {
         const card = (e: Entry) => {
           const n = f.sim.narrators[e.narrator];
           const where = e.site !== null ? f.land.sites[e.site].name : f.land.places[e.place].name;
-          return `<button class="card ${e.kind}${finds.includes(e) ? ' find' : ''}" data-num="${e.num}"><div class="no"><span>${L('nr.', 'no.')} ${e.num}</span><span>+${f.points(e)} · ${L('dag', 'day')} ${e.day}</span></div>
+          return `<button class="card ${e.kind}${finds.includes(e) ? ' find' : ''}" data-num="${e.num}"><div class="no"><span>${L('nr.', 'no.')} ${e.num}</span><span>+${f.points(e)} · ${dayName(e.day)}</span></div>
             <div class="ti">${svg(beingIcon(f.sim.type(e.t).being), 16, RED)} ${esc(f.sim.type(e.t).name)}</div>
             <div class="who">${esc(f.sim.name(n))}, ${esc(where)}${e.frag ? ' · <i>fragment</i>' : e.kind === 'same' ? ` · <i>${L('al gehoord', 'heard before')}</i>` : e.kind === 'version' ? ` · <i>${L('andere versie', 'other version')}</i>` : ''}</div></button>`;
         };
@@ -836,9 +884,9 @@ function openNotebook() {
 
 function openDiary() {
   const f = G.field;
-  let day = 0;
+  let day = -1;
   const body = f.diary.map((d) => {
-    const head = d.day !== day ? `<h3 class="chron-year">${L('Dag', 'Day')} ${(day = d.day)} <span class="wx">${WX_ICON[f.weathers[d.day] ?? 'bewolkt']} ${WEATHER[f.weathers[d.day] ?? 'bewolkt'].name}</span></h3>` : '';
+    const head = d.day !== day ? `<h3 class="chron-year">${cap(dayName((day = d.day)))} <span class="wx">${WX_ICON[f.weathers[d.day] ?? 'bewolkt']} ${WEATHER[f.weathers[d.day] ?? 'bewolkt'].name}</span></h3>` : '';
     return `${head}<div class="entry d-${d.kind}"><span class="d">${PARTS[d.part]}</span>${esc(d.text)}</div>`;
   }).join('');
   showModal(`
@@ -865,7 +913,7 @@ function openIntro(first: boolean) {
         <li>${svg(MISC_ICONS.kaart, 26)}<span><b>Set out.</b> ${touch ? 'Tap' : 'Click'} a village or a place on the map.</span></li>
         <li>${svg(MISC_ICONS.verzamelaar, 26)}<span><b>Have a chat.</b> People who don’t know you yet need to warm up first. Ask too soon, and the mood turns.</span></li>
         <li>${svg(MISC_ICONS.catalogus, 26, RED)}<span><b>Look for finds.</b> What only your storyteller still knows, or what was rarely recorded, counts most.</span></li>
-        <li>${svg(MISC_ICONS.notitieboek, 26, RED)}<span><b>Follow the trail.</b> Somewhere one tale lives on that only one person still knows. The landlady knows where the trail begins.</span></li>
+        <li>${svg(MISC_ICONS.notitieboek, 26, RED)}<span><b>Follow the trail.</b> Somewhere one tale lives on that only one person still knows. From the second day, the landlady knows where the trail begins.</span></li>
         <li>${svg(MISC_ICONS.kroniek, 26)}<span><b>Time is short.</b> The old and the ill can’t wait, and from day three someone else is collecting too.</span></li>
       </ol>
       <details class="more"${first ? '' : ' open'}><summary>More</summary>
@@ -883,7 +931,7 @@ function openIntro(first: boolean) {
         <li>${svg(MISC_ICONS.kaart, 26)}<span><b>Ga op pad.</b> ${touch ? 'Tik' : 'Klik'} op een dorp of plek op de kaart.</span></li>
         <li>${svg(MISC_ICONS.verzamelaar, 26)}<span><b>Maak een praatje.</b> Wie u nog niet kent, moet eerst wat ontdooien. Vraag te vroeg, en de sfeer slaat om.</span></li>
         <li>${svg(MISC_ICONS.catalogus, 26, RED)}<span><b>Zoek vondsten.</b> Wat alleen uw verteller nog weet, of wat zelden is opgetekend, telt het meest.</span></li>
-        <li>${svg(MISC_ICONS.notitieboek, 26, RED)}<span><b>Volg het spoor.</b> Ergens leeft nog één verhaal dat nog maar één mens kent. De waardin weet waar het spoor begint.</span></li>
+        <li>${svg(MISC_ICONS.notitieboek, 26, RED)}<span><b>Volg het spoor.</b> Ergens leeft nog één verhaal dat nog maar één mens kent. Vanaf de tweede dag weet de waardin waar het spoor begint.</span></li>
         <li>${svg(MISC_ICONS.kroniek, 26)}<span><b>De tijd dringt.</b> Wie oud en ziek is, kan niet wachten, en vanaf dag drie verzamelt er nog iemand.</span></li>
       </ol>
       <details class="more"${first ? '' : ' open'}><summary>Meer uitleg</summary>
@@ -904,6 +952,128 @@ function openIntro(first: boolean) {
     </div>`);
   $('#intro-ok').addEventListener('click', closeModal);
   document.querySelector('#intro-colofon')?.addEventListener('click', openColofon);
+}
+
+// ------------------------------------------------------------------ the first evening
+
+/** The old collector's face: a lace cap with the gold ear irons, and the lines of her years. */
+function mentorFace(size: number): string {
+  return drawPortrait({ seed: G.field.sim.seed * 7 + 1905, age: 76, temper: 'verteller', work: 'school', ill: false, mark: 'oorijzer' }, size);
+}
+
+/** Remember that this player has had the first evening, or did not want it. */
+function introDone() {
+  try {
+    localStorage.setItem('sagenland-intro', 'done');
+  } catch {
+    // without storage the start page simply offers it again
+  }
+}
+
+function openWelcome() {
+  const f = G.field;
+  const p = f.prologue!;
+  const home = esc(f.land.places[0].name);
+  const season = SEASON_NAME[f.season];
+  const mentor = esc(p.mentor), Mentor = esc(cap(p.mentor));
+  showModal(`
+    <div class="leaf sheet intro-leaf welcome-leaf">
+      ${closeBtn()}
+      <div class="kicker">${L('De avond voor de eerste dag', 'The evening before the first day')} · ${esc(f.sim.corpus.meta.regions[f.region].name)}, ${season} ${f.year}</div>
+      <div class="visit-head">${mentorFace(72)}<div><h1>${L('Aangekomen in', 'Arrived in')} ${home}</h1>
+        <p class="sub">${Mentor} ${L('wacht op u bij de waardin', 'is waiting for you at the inn')}</p></div></div>
+      <p class="lead-in">${EN
+        ? `${Mentor} has collected tales in this region for forty years. This ${season} she is handing it over to you.`
+        : `${Mentor} verzamelt al veertig jaar verhalen in deze streek. ${f.season === 'zomer' || f.season === 'winter' ? 'Deze' : 'Dit'} ${season} draagt ze die aan u over.`}</p>
+      <p class="said-line">${L(`„U bent de nieuwe. Goed. Morgen gaat u alleen op pad, maar vanavond loopt u met mij mee door ${home}. Ik stel u voor aan drie mensen. Kijk goed hoe het gaat, want ze zijn alle drie anders.”`,
+        `“So you’re the new one. Good. Tomorrow you go out alone, but tonight you come round ${home} with me. I’ll introduce you to three people. Watch closely, because all three are different.”`)}</p>
+      <p class="persona">${esc(f.persona.perk)}</p>
+      ${feest() ? `<p class="feest-line">${esc(FEEST_LINE[feest()!])}</p>` : ''}
+      <p style="margin-top:16px"><button class="btn primary" id="intro-ok">${L(`Ga mee met ${mentor}`, `Go with ${mentor}`)}</button>
+        <button class="linkbtn" id="intro-skip">${L('Sla de eerste avond over', 'Skip the first evening')}</button></p>
+    </div>`);
+  const go = () => {
+    if (p.step === 'welkom') p.step = 'verteller';
+    closeModal();
+  };
+  $('#intro-ok').addEventListener('click', go);
+  $('#modal').querySelectorAll('.close').forEach((b) => b.addEventListener('click', go));
+  $('#intro-skip').addEventListener('click', () => {
+    closeModal();
+    skipPrologue();
+  });
+}
+
+/** What the old collector says on the map, between visits: whom to see, where to go, and how. */
+let guideStep = '';
+function renderGuide() {
+  const f = G.field;
+  const el = $('#guide');
+  const p = f.prologue;
+  const line = p && f.practising && !G.walking ? f.practiceLine() : '';
+  el.classList.toggle('hidden', !line);
+  if (!p || !line) return;
+  const tap = touch ? L('Tik', 'Tap') : L('Klik', 'Click');
+  const who = f.practiceWho();
+  const site = esc(f.land.sites[p.site].name);
+  const todo = who !== null
+    ? EN ? `${tap} ${esc(f.sim.narrators[who].first)} ${touch ? 'below' : 'on the right'}, then Visit.` : `${tap} op ${esc(f.sim.narrators[who].first)} ${touch ? 'onderaan' : 'rechts'}, en dan op Bezoek.`
+    : p.step === 'erheen' ? EN ? `${tap} ${site} on the map, then Go.` : `${tap} op ${site} op de kaart, en dan op Ga erheen.`
+    : EN ? `${tap} what you see at ${site}.` : `${tap} op wat u bij ${site} ziet.`;
+  el.innerHTML = `${mentorFace(44)}<div class="guide-text"><b>${esc(cap(p.mentor))}</b> <span>${esc(line)}</span>
+    <p class="guide-do">${todo}</p><button class="linkbtn" data-act="skip">${L('Sla de eerste avond over', 'Skip the first evening')}</button></div>`;
+  // when it is time to go out, the map shows where
+  if (p.step !== guideStep && !modalOpen) {
+    guideStep = p.step;
+    if (p.step === 'erheen') {
+      const s = f.land.sites[p.site];
+      setTimeout(() => G.emit('focus', { x: s.x, y: s.y }), 400);
+    }
+  }
+}
+
+/** After the night out: her last words, and the walk back to the lodgings. */
+function farewell(): boolean {
+  const f = G.field;
+  const p = f.prologue;
+  if (modalOpen || G.walking || p?.step !== 'afscheid') return false;
+  const Mentor = esc(cap(p.mentor));
+  showModal(`
+    <div class="leaf sheet visit-leaf">
+      ${closeBtn()}
+      <div class="visit-head">${mentorFace(64)}<div><div class="kicker">${L('Nacht', 'Night')} · ${esc(f.land.sites[p.site].name)}</div>
+        <h1>${L('Morgen gaat u alleen', 'Tomorrow you go alone')}</h1></div></div>
+      ${(EN ? [
+        '“Now you know how it goes. One tells straight away, another must trust you first, and a third only remembers once you tell something yourself.”',
+        '“Write everything down, including what people say about others. The old and the ill can’t wait for you. And you’re not the only one: in a few days someone else will come collecting.”',
+        '“Twelve days. Make good use of them.”',
+      ] : [
+        '„Nu weet u hoe het gaat. De een vertelt zomaar, de ander moet u eerst vertrouwen, en een derde weet het pas weer als u zelf iets vertelt.”',
+        '„Schrijf alles op, ook wat mensen over anderen zeggen. Wie oud en ziek is, kan niet op u wachten. En u bent niet de enige: over een paar dagen komt er nog iemand verhalen halen.”',
+        '„Twaalf dagen. Maak er wat van.”',
+      ]).map((l) => `<p class="said-line">${esc(l)}</p>`).join('')}
+      <p class="sub">${EN ? `${Mentor} lights her lantern and walks back with you to ${esc(f.land.places[0].name)}.` : `${Mentor} steekt haar lantaarn aan en loopt met u terug naar ${esc(f.land.places[0].name)}.`}</p>
+      <p style="margin-top:16px"><button class="btn primary" id="res-ok">${L('Terug naar het dorp', 'Back to the village')}</button></p>
+    </div>`);
+  const home = () => {
+    closeModal();
+    introDone();
+    setOut(() => f.homeward());
+  };
+  $('#res-ok').addEventListener('click', home);
+  $('#modal').querySelectorAll('.close').forEach((b) => b.addEventListener('click', home));
+  return true;
+}
+
+/** Straight on to the first morning, with the usual explanation. */
+function skipPrologue() {
+  const f = G.field;
+  if (G.walking || !f.practising) return;
+  introDone();
+  // the explanation first, so the morning's card waits until it is read
+  openIntro(true);
+  if (f.skipPrologue()) G.emit('teleport', undefined);
+  render();
 }
 
 // ------------------------------------------------------------------ leaves and notices
@@ -935,7 +1105,7 @@ export function closeModal() {
   modalOpen = false;
   render();
   if (G.field.over && !G.walking) setTimeout(finish, 300);
-  else if (!G.walking) setTimeout(() => checkQuest() || showPost(), 300);
+  else if (!G.walking) setTimeout(() => farewell() || checkQuest() || showPost(), 300);
 }
 
 /** Someone met on the road, and what they told. */
@@ -1009,6 +1179,7 @@ export function portrait(n: Narrator, size: number): string {
 // ------------------------------------------------------------------ atmosphere in the HTML layer
 
 const shownOnce = new Set<number>();
+let findsSeen = 0;
 let inked = 0;
 let lastDay = 1;
 
@@ -1106,7 +1277,7 @@ function renderClock() {
   const hour = HOURS[c.part][Math.min(1, c.slot ?? 0)];
   const time = L(`${hour}.00`, `${hour}:00`);
   const rt = document.querySelector('#road-time');
-  if (rt) rt.textContent = `${cap(partName(c.part, c.slot))} ${L('van dag', 'of day')} ${c.day}.`;
+  if (rt) rt.textContent = roadTime(c);
   // music only in the dark: it comes with the evening, on the road as it comes, and stays over the end
   // (not by the clock: a summer evening is light until late, a winter afternoon dark early)
   const dark = f.isDark(c);
@@ -1114,7 +1285,8 @@ function renderClock() {
   setNightMusic(f.isNight(c));
   // the panels and leaves go to lamplight when the evening comes, on the road as it comes
   document.body.classList.toggle('night', dark && !f.over);
-  $('#day').textContent = narrow ? `${L('Dag', 'Day')} ${c.day}/${DAYS} · ${time}` : `${L('Dag', 'Day')} ${c.day} ${L('van', 'of')} ${DAYS}, ${partName(c.part, c.slot)} ${time}`;
+  $('#day').textContent = c.day === 0 ? `${narrow ? L('Avond ervoor', 'Evening before') : L('De avond voor dag 1', 'The evening before day 1')} · ${time}`
+    : narrow ? `${L('Dag', 'Day')} ${c.day}/${DAYS} · ${time}` : `${L('Dag', 'Day')} ${c.day} ${L('van', 'of')} ${DAYS}, ${partName(c.part, c.slot)} ${time}`;
   // and the weather of that day
   const w = f.weathers[c.day] ?? f.weather;
   const misty = w === 'mist' && c.part === 0;
@@ -1123,6 +1295,16 @@ function renderClock() {
   const clearNight = shown === 'helder' && f.isDark(c);
   $('#wx').innerHTML = `${clearNight ? MOON_ICON : WX_ICON[shown]}<span>${clearNight ? L('sterrenhemel', 'starry sky') : WEATHER[shown].name}</span>`;
   $('#wx').title = weatherLine(f.season, w);
+}
+
+/** 'Evening of day 3.', or the night of the first evening. */
+function roadTime(c: { day: number; part: number; slot?: number }): string {
+  return `${cap(partName(c.part, c.slot))} ${c.day === 0 ? L('voor de eerste dag', 'before the first day') : `${L('van dag', 'of day')} ${c.day}`}.`;
+}
+
+/** 'dag 3', or the first evening. */
+function dayName(day: number): string {
+  return day === 0 ? L('de eerste avond', 'the first evening') : `${L('dag', 'day')} ${day}`;
 }
 
 /** A small oil lamp, flickering, for the evening. */

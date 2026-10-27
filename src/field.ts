@@ -156,6 +156,26 @@ export interface Quest {
   hinted: boolean;
 }
 
+/**
+ * The first evening, before the twelve days: an old collector who has worked the region for forty years takes you
+ * round the village of your lodgings. Three people each show one side of the work (one tells freely, one must trust
+ * you first, one only remembers when you tell something yourself), and at night you walk out to where things are seen.
+ */
+export type PrologueStep = 'welkom' | 'verteller' | 'gelovige' | 'schuchtere' | 'erheen' | 'kijken' | 'afscheid' | 'klaar';
+export type CastPart = 'verteller' | 'gelovige' | 'schuchtere';
+export interface Prologue {
+  step: PrologueStep;
+  /** the old collector: 'juffrouw Hylkema', 'Miss Hylkema' */
+  mentor: string;
+  /** who plays which part */
+  cast: Record<CastPart, number>;
+  /** what the believer is asked about, too soon */
+  being: string;
+  /** where things are seen at night, a short walk from the lodgings */
+  site: number;
+}
+const CAST_ORDER: CastPart[] = ['verteller', 'gelovige', 'schuchtere'];
+
 /** The title of what you learn at the site of the trail after dark (the interface plays the sighting sound for it). */
 export const DARK_TITLE = L('In het donker', 'In the dark');
 
@@ -163,7 +183,8 @@ export const DARK_TITLE = L('In het donker', 'In the dark');
 export const QUEST_BONUS = 10;
 
 export interface TalkLine {
-  who: 'u' | 'zij' | 'info';
+  /** you, the one you are visiting, what happens, or the old collector at your side on the first evening */
+  who: 'u' | 'zij' | 'info' | 'mentor';
   text: string;
   /** the beginning of the lost tale */
   opening?: string;
@@ -369,9 +390,13 @@ export class Field {
   encounter: Encounter | null = null;
   visitedPlaces = new Set<number>([0]);
   /** the time the last journey set out, and how many parts of the day it took */
-  departed: { day: number; part: number; slot: number; parts: number; footStart: number; footEnd: number } | null = null;
-  /** the weather, day by day */
+  departed: { day: number; part: number; slot: number; parts: number; footStart: number; footEnd: number; walked?: boolean } | null = null;
+  /** the weather, day by day (day 0 is the first evening) */
   weathers: Weather[] = [];
+  /** the first evening with the old collector, if you began with it */
+  prologue: Prologue | null = null;
+  /** tempers set for the first evening, over what memory and age would make them */
+  private tempers = new Map<number, Temper>();
   /** sites where you have seen something */
   seen = new Set<number>();
   visitedSites = new Set<number>();
@@ -485,6 +510,8 @@ export class Field {
 
   /** How this teller takes to being asked: read from memory, talent and age. */
   temper(n: Narrator): Temper {
+    const set = this.tempers.get(n.id);
+    if (set) return set;
     if (n.know.size >= 6 && n.talent < 0.85) return 'schuchter';
     if (n.talent > 1.05) return 'verteller';
     if (this.age(n) < 48 && n.know.size <= 4) return 'spotter';
@@ -523,7 +550,8 @@ export class Field {
       return sim.alive(w.id).filter((n) => !this.isLoner(n) && this.age(n) >= 16).sort((a, b) => this.age(b) - this.age(a));
     const s = this.land.sites[w.id];
     if (s.hut !== null) return sim.alive().filter((n) => n.home === s.hut && this.age(n) >= 16);
-    // at an open site you might meet someone from the nearest village
+    // at an open site you might meet someone from the nearest village (not on the first evening: she brought you here)
+    if (this.practising) return [];
     const key = `${s.id}:${this.day}`;
     if (!this.passers.has(key)) {
       const r = new Rng(this.sim.seed + s.id * 31 + this.day * 977);
@@ -619,13 +647,15 @@ export class Field {
     const lost = this.misty ? 0.5 : 1;
     const way = quickest(map, from, goal, 1 / (this.persona.speed * wet), 1 / (8 * lost));
     if (!way) return null;
+    // on the first evening you walk with the old collector, and it is never far
+    if (this.practising) return { tiles: way.tiles, parts: 1, foot: way.tiles.length, footStart: way.tiles.length, footEnd: 0 };
     // in stretches of two hours (half a part of the day)
     return { tiles: way.tiles, parts: Math.max(1, Math.ceil(2 * way.cost)), foot: way.foot, footStart: way.footStart, footEnd: way.footEnd };
   }
 
   travel(to: Where): number[] | null {
     const r = this.route(to);
-    if (!r || this.over) return null;
+    if (!r || this.over || !this.mayGo(to)) return null;
     const from = this.whereName(this.at);
     const fromWhere = this.at;
     const evening = this.part === 2;
@@ -640,9 +670,12 @@ export class Field {
     for (const l of this.leads) if ((l.kind === 'site' || l.kind === 'place') && this.same(l.at, to)) l.done = true;
     const dur = durationText(r.parts);
     this.write('travel', `${L('Van', 'From')} ${from} ${L('naar', 'to')} ${this.whereName(to)} (${dur}).${first ? ' ' + this.arrivalLine(to) : ''}`);
-    this.encounter = this.meetOnRoad(r.tiles, fromWhere, to, evening);
+    this.encounter = this.practising ? null : this.meetOnRoad(r.tiles, fromWhere, to, evening);
     // when the journey began, so the day can pass by on the way rather than all at once
-    this.departed = { day: this.day, part: this.part, slot: this.slot, parts: r.parts, footStart: r.footStart, footEnd: r.footEnd };
+    this.departed = { day: this.day, part: this.part, slot: this.slot, parts: r.parts, footStart: r.footStart, footEnd: r.footEnd, walked: this.practising };
+    const p = this.prologue;
+    if (p?.step === 'erheen' && this.same(to, { kind: 'site', id: p.site })) p.step = 'kijken';
+    else if (p?.step === 'afscheid') p.step = 'klaar';
     this.advance(r.parts);
     return r.tiles;
   }
@@ -741,6 +774,7 @@ export class Field {
           : `${this.sim.name(n)} uit ${where} is overleden. Wat er te vertellen was, staat in uw schrift.`);
       for (const l of this.leads) if (l.narrator === id) l.done = true;
     }
+    if (this.day === 2) this.openQuest();
     this.post();
     this.rivalDay();
   }
@@ -748,6 +782,7 @@ export class Field {
   // ------------------------------------------------------------------ visits
 
   canVisit(n: Narrator): boolean {
+    if (this.practising && n.id !== this.practiceWho()) return false;
     return !this.over && n.died === null && !this.away(n) && this.people(this.at).includes(n);
   }
 
@@ -790,13 +825,18 @@ export class Field {
     for (const l of this.leads) if (l.narrator === nid) l.done = true;
     if (!this.toldUs.has(nid)) this.toldUs.set(nid, new Set());
     open = Math.max(0.05, Math.min(1, open));
-    return { nid, open, start: open, moves: this.part === 2 ? 4 : 3, used: new Map(), lines, entries: [], ended: false, closed: false };
+    const part = this.castPart(nid);
+    if (part) lines.push(...this.coachOpening(part, n));
+    return { nid, open, start: open, moves: part ? 6 : this.part === 2 ? 4 : 3, used: new Map(), lines, entries: [], ended: false, closed: false };
   }
 
   /** What each kind of teller needs before they will tell this way: higher means more warming up first. */
   need(talk: Talk, m: Move): number {
     const n = this.sim.narrators[talk.nid];
     const tm = this.temper(n);
+    const part = this.castPart(talk.nid);
+    const set = part ? this.practiceNeed(part, talk, m) : null;
+    if (set !== null) return set;
     switch (m.kind) {
       case 'free': return { verteller: 0.3, gelovig: 0.45, spotter: 0.4, schuchter: 0.75 }[tm];
       case 'theme': {
@@ -834,9 +874,11 @@ export class Field {
       .map(([t, mem]) => [t, mem, (0.4 + mem.s) * (heardHere.has(t) ? 0.15 : heardAny.has(t) ? 0.6 : 1) * r.range(0.6, 1.4)] as const)
       .sort((a, b) => b[2] - a[2]);
     const shift = (d: number) => (talk.open = Math.max(0, Math.min(1, talk.open + d)));
-    const ok = () => talk.open + r.range(-0.05, 0.05) >= this.need(talk, m);
+    // on the first evening the three play their parts without the dice
+    const practice = this.castPart(talk.nid) !== null;
+    const ok = () => (practice ? talk.open : talk.open + r.range(-0.05, 0.05)) >= this.need(talk, m);
     const tell = (t: string, fragScale = 1) => {
-      const frag = r.chance(this.fragChance(n, talk.open) * fragScale);
+      const frag = !practice && r.chance(this.fragChance(n, talk.open) * fragScale);
       const e = this.record(n, t, { frag });
       talk.entries.push(e);
       out.push({ who: 'zij', text: '', entry: e });
@@ -944,9 +986,9 @@ export class Field {
         out.splice(out.length - 1, 0, { who: 'zij', text: e.kind === 'same'
           ? L('„Ja, dat ken ik. Zo heb ik het ook altijd gehoord.”', '“Yes, I know that one. That’s how I always heard it too.”')
           : L('„Ja, dat ken ik. Maar bij ons ging het anders.”', '“Yes, I know that one. But round here it went differently.”') });
-      } else if (ok() && related.length) {
+      } else if (ok() && (related.length || (practice && untold.length))) {
         say('zij', EN ? `${name} thinks for a long time. “No, I don’t know that one. But I do know something else…”` : `${name} denkt lang na. „Nee, dat ken ik niet. Maar ik weet wel iets anders…”`);
-        tell(related[0][0], tm === 'schuchter' ? 0.4 : 0.8);
+        tell(related[0]?.[0] ?? untold[0][0], tm === 'schuchter' ? 0.4 : 0.8);
       } else if (tm === 'spotter') {
         shift(-0.03);
         say('zij', EN ? `${name} chuckles. “And you believe all that?”` : `${name} grinnikt. „En dat gelooft u allemaal?”`);
@@ -1048,6 +1090,7 @@ export class Field {
         else say('zij', L(`${name} weet niemand meer te noemen die u nog niet kent.`, `${name} cannot think of anyone you have not met yet.`));
       }
     }
+    out.push(...this.coach(talk, m, out));
     // pushed too far: the visit is over
     if (talk.open < 0.06) {
       talk.closed = true;
@@ -1090,7 +1133,12 @@ export class Field {
       ? k ? `${k === 1 ? 'one tale' : `${k} tales`} written down` : 'nothing written down'
       : k ? `${k === 1 ? 'een verhaal' : `${k} verhalen`} opgeschreven` : 'niets opgeschreven';
     this.write('visit', `${L('Bij', 'Visited')} ${sim.name(n)} in ${this.whereName(this.at)}: ${what}.`);
-    this.advance(1);
+    // on the first evening the clock waits until the three have each told you something
+    const part = this.castPart(talk.nid);
+    if (part) {
+      if (k && this.prologue!.step === part) this.prologue!.step = CAST_ORDER[CAST_ORDER.indexOf(part) + 1] ?? 'erheen';
+      this.changed();
+    } else this.advance(1);
     return out;
   }
 
@@ -1206,6 +1254,199 @@ export class Field {
     return `${this.persona.perk} ${L('Bij de waardin hoort u over een vertelavond, over een zieke oude man of vrouw die veel weet, en over plekken waar het niet pluis is.', 'From the landlady you hear about a storytelling evening, about an old man or woman who is ill and knows a great deal, and about places that are not quite right.')}`;
   }
 
+  // ------------------------------------------------------------------ the first evening
+
+  /**
+   * Begin with the first evening: day 0, at seven, at the lodgings, where the old collector is waiting. Three people of
+   * the village are given their parts, with a tale or two to tell where they had none. Returns false when the village
+   * is too small to play it, and the season simply begins.
+   */
+  startPrologue(): boolean {
+    const sim = this.sim;
+    const r = new Rng(sim.seed + 1905);
+    const pool = sim.alive(0).filter((n) => !this.isLoner(n) && !this.ill.has(n.id) && this.age(n) >= 18);
+    if (pool.length < 3) return false;
+    // the one who knows most is the shy one; of the others, the best talker tells, and the oldest believes
+    const shy = [...pool].sort((a, b) => b.know.size - a.know.size)[0];
+    const rest = pool.filter((n) => n !== shy);
+    const teller = [...rest].sort((a, b) => b.talent - a.talent)[0];
+    const believer = rest.filter((n) => n !== teller).sort((a, b) => this.age(b) - this.age(a))[0];
+    // the believer is asked about what people do not tell a stranger: witches, if they are told of here
+    const themes = this.themes();
+    const being = ['heks', ...SHY].find((b) => themes.includes(b)) ?? themes[0] ?? 'heks';
+    // a common tale of a kind, for whoever has nothing of it to tell
+    const give = (n: Narrator, b: string | null) => {
+      const types = [...sim.corpus.byType.keys()].filter((t) => sim.type(t) && (!b || sim.type(t).being === b) && !n.know.has(t))
+        .sort((x, y) => this.knowers(y) - this.knowers(x));
+      if (types.length) sim.implant(n, r.pick(sim.corpus.byType.get(types[r.int(Math.min(5, types.length))])!));
+    };
+    if (![...believer.know.keys()].some((t) => sim.type(t)?.being === being)) give(believer, being);
+    if (teller.know.size < 1) give(teller, null);
+    for (let k = 0; k < 3 && shy.know.size < 3; k++) give(shy, null);
+    this.tempers.set(teller.id, 'verteller');
+    this.tempers.set(believer.id, 'gelovig');
+    this.tempers.set(shy.id, 'schuchter');
+    for (const [n, t] of [[teller, 0.4], [believer, 0.35], [shy, 0.3]] as const) this.trust.set(n.id, Math.max(this.trustOf(n), t));
+    // the evening before the first day, clear, at seven
+    this.day = 0;
+    this.part = 2;
+    this.slot = 0;
+    this.weathers[0] = 'helder';
+    // the nearest place where things are seen at night, though far enough out of the village to be a walk
+    const ways = this.land.sites.filter((s) => APPARITION[s.kind])
+      .map((s) => [s, this.route({ kind: 'site', id: s.id })] as const)
+      .filter((x): x is [Site, NonNullable<ReturnType<Field['route']>>] => x[1] !== null)
+      .sort((a, b) => a[1].parts - b[1].parts || a[1].tiles.length - b[1].tiles.length);
+    const site = (ways.find(([, w]) => w.tiles.length >= 6 && w.tiles.length <= 18) ?? ways.find(([, w]) => w.tiles.length >= 6) ?? ways[0])?.[0];
+    if (!site) {
+      this.day = 1;
+      this.part = 0;
+      return false;
+    }
+    const lasts = sim.corpus.meta.regions[this.region].lasts;
+    const mentor = `${L('juffrouw', 'Miss')} ${r.pick(lasts.slice(0, 80))}`;
+    this.prologue = { step: 'welkom', mentor, cast: { verteller: teller.id, gelovige: believer.id, schuchtere: shy.id }, being, site: site.id };
+    for (const d of this.diary) {
+      d.day = 0;
+      d.part = 2;
+    }
+    this.changed();
+    return true;
+  }
+
+  /** On the first evening, still. */
+  get practising(): boolean {
+    return this.prologue !== null && this.prologue.step !== 'klaar';
+  }
+
+  /** The part someone plays on the first evening, while it lasts. */
+  castPart(nid: number): CastPart | null {
+    if (!this.practising) return null;
+    const c = this.prologue!.cast;
+    return CAST_ORDER.find((k) => c[k] === nid) ?? null;
+  }
+
+  /** Whom the old collector wants you to see now. */
+  practiceWho(): number | null {
+    const p = this.prologue;
+    if (!p || !CAST_ORDER.includes(p.step as CastPart)) return null;
+    return p.cast[p.step as CastPart];
+  }
+
+  /** Where you may go on the first evening: out to the site with her, and back to the lodgings. */
+  private mayGo(to: Where): boolean {
+    const p = this.prologue;
+    if (!this.practising) return true;
+    if (p!.step === 'erheen') return this.same(to, { kind: 'site', id: p!.site });
+    return p!.step === 'afscheid' && this.same(to, { kind: 'place', id: 0 });
+  }
+
+  /** Whether a place can be gone to now: the same rule, for the panel. */
+  mayGoTo(to: Where): boolean {
+    return this.mayGo(to);
+  }
+
+  /** How much warming up each of the three needs on the first evening: each shows one thing, and shows it every time. */
+  private practiceNeed(part: CastPart, talk: Talk, m: Move): number | null {
+    if (part === 'verteller') return m.kind === 'free' || m.kind === 'theme' || m.kind === 'others' || m.kind === 'prompt' ? 0 : null;
+    if (part === 'gelovige') return m.kind === 'theme' && m.being === this.prologue!.being ? (talk.used.has('leven') ? 0 : 9) : null;
+    return m.kind === 'free' ? 9 : m.kind === 'prompt' || m.kind === 'others' ? 0 : null;
+  }
+
+  /** What the old collector says as you sit down with someone. */
+  private coachOpening(part: CastPart, n: Narrator): TalkLine[] {
+    if (this.notebook.some((e) => e.narrator === n.id)) return [];
+    const first = n.first, about = themeName(this.prologue!.being);
+    const text = part === 'verteller'
+      ? EN ? `“${first} is a born storyteller. Chat a little first, then simply ask whether they know any old tales.”`
+        : `„${first} is een rasverteller. Praat eerst wat, en vraag dan gewoon of ${first} nog oude verhalen kent.”`
+      : part === 'gelovige'
+        ? EN ? `“${first} believes every word of it, and knows about ${about}. Go on, ask.”`
+          : `„${first} gelooft alles wat er verteld wordt, en weet van ${about}. Vraag er maar naar.”`
+        : EN ? `“Nobody in ${this.land.places[0].name} knows more than ${first}. But ${first} won’t just tell. Ask, and you’ll see.”`
+          : `„Niemand in ${this.land.places[0].name} weet meer dan ${first}. Maar ${first} vertelt niet zomaar. Vraag maar, dan ziet u het.”`;
+    return [{ who: 'mentor', text }];
+  }
+
+  /** What she says after a move, when there is something to learn from it. */
+  private coach(talk: Talk, m: Move, out: TalkLine[]): TalkLine[] {
+    const part = this.castPart(talk.nid);
+    if (!part) return [];
+    const p = this.prologue!;
+    const told = out.some((l) => l.entry);
+    const about = themeName(p.being);
+    let text = '';
+    if (part === 'verteller' && told && talk.entries.length === out.filter((l) => l.entry).length) text = L(
+      '„Daar is uw eerste verhaal. Kijk naar het kaartje: wat voor verhaal het is, en hoe zeldzaam. Zeldzame verhalen zijn het meeste waard. Neem nu afscheid. Vanaf morgen kost elk bezoek u twee uur.”',
+      '“There’s your first tale. Look at the card: what kind of tale it is, and how rare. Rare tales are worth the most. Now say goodbye. From tomorrow, every visit costs you two hours.”');
+    else if (part === 'gelovige' && m.kind === 'theme' && m.being === p.being) {
+      if (!told) text = EN
+        ? `“Too fast. Believers are afraid of being laughed at. Ask about the old days first, and only then about ${about}.”`
+        : `„Te snel. Wie het gelooft, is bang om uitgelachen te worden. Vraag eerst naar vroeger, en dan pas naar ${about}.”`;
+      else if ((talk.used.get(`theme:${p.being}`) ?? 0) > 1) text = L(
+        '„Zo gaat dat. Eerst het vertrouwen, dan het verhaal. Wie u eenmaal kent, vertelt de volgende keer sneller.”',
+        '“That’s how it goes. First the trust, then the tale. Once people know you, they tell more readily the next time.”');
+      else text = L('„Goed gedaan: u nam er de tijd voor. Wie het gelooft, vertelt niet aan een vreemde die te snel vraagt.”',
+        '“Well done: you took your time. A believer won’t tell a stranger who asks too soon.”');
+    } else if (part === 'gelovige' && m.kind === 'leven' && talk.used.has(`theme:${p.being}`) && !talk.entries.length) text = L('„Ziet u? Vraag het nu nog eens.”', '“You see? Now ask again.”');
+    else if (part === 'schuchtere' && m.kind === 'free' && !told) text = L('„Vertel zelf een verhaal, een van vanavond. Dan komt er vaak iets boven.”', '“Tell a tale yourself, one from tonight. That often brings something back.”');
+    else if (part === 'schuchtere' && told && !talk.used.has('others')) text = L('„Ziet u wel. Vraag nu nog wie er meer weet. Een naam is soms evenveel waard als een verhaal.”', '“There you are. Now ask who else knows something. A name can be worth as much as a tale.”');
+    else if (part === 'schuchtere' && m.kind === 'others' && out.some((l) => l.lead)) text = L('„Dat is voor morgen. Het staat nu in potlood op uw kaart.”', '“That’s for tomorrow. It’s in pencil on your map now.”');
+    return text ? [{ who: 'mentor', text }] : [];
+  }
+
+  /** The move she would make now: 'praat', 'theme:heks', … or 'bye' to take your leave. */
+  practiceHint(talk: Talk): string | null {
+    const part = this.castPart(talk.nid);
+    if (!part || talk.ended) return null;
+    if (talk.closed || talk.moves <= 0) return 'bye';
+    const theme = `theme:${this.prologue!.being}`;
+    if (part === 'verteller') return talk.entries.length ? 'bye' : talk.used.has('praat') ? 'free' : 'praat';
+    if (part === 'gelovige') return talk.entries.length ? 'bye' : talk.used.has(theme) && !talk.used.has('leven') ? 'leven' : theme;
+    if (!talk.entries.length) return talk.used.has('free') ? 'prompt' : 'free';
+    return talk.used.has('others') ? 'bye' : 'others';
+  }
+
+  /** What she says while you are not in a conversation: who to see next, or where to go. */
+  practiceLine(): string {
+    const p = this.prologue;
+    if (!p) return '';
+    const who = this.practiceWho();
+    if (who !== null) {
+      const n = this.sim.narrators[who];
+      const name = this.sim.name(n);
+      return p.step === 'verteller'
+        ? EN ? `“Let’s begin with ${name}. ${n.first} loves to tell; that’s an easy start.”` : `„We beginnen bij ${name}. ${n.first} vertelt graag; dat is een makkelijk begin.”`
+        : p.step === 'gelovige'
+          ? EN ? `“Now ${name}. Let’s see how you do.”` : `„Nu ${name}. Eens kijken hoe u het doet.”`
+          : EN ? `“And then ${name}, the hardest of the three.”` : `„En dan ${name}, de lastigste van de drie.”`;
+    }
+    const site = this.land.sites[p.site];
+    if (p.step === 'erheen') return EN
+      ? `“It’s dark. Come, we’ll walk out to ${site.name}. People see things there at night.”`
+      : `„Het is donker. Kom, we lopen naar ${site.name}. Daar ziet men ’s nachts dingen.”`;
+    if (p.step === 'kijken') return L('„Daar. Ziet u dat? Ga er eens naartoe kijken.”', '“There. Do you see that? Go and have a closer look.”');
+    return '';
+  }
+
+  /** After the night out: back to the lodgings, and the first day begins on arrival. */
+  homeward(): number[] | null {
+    return this.prologue?.step === 'afscheid' ? this.travel({ kind: 'place', id: 0 }) : null;
+  }
+
+  /** Skip the rest of the first evening: back at the lodgings, and on to the first morning. */
+  skipPrologue(): boolean {
+    const p = this.prologue;
+    if (!p || p.step === 'klaar') return false;
+    const moved = !this.same(this.at, { kind: 'place', id: 0 });
+    p.step = 'klaar';
+    this.at = { kind: 'place', id: 0 };
+    this.part = 2;
+    this.slot = 1;
+    this.advance(1);
+    return moved;
+  }
+
   // ------------------------------------------------------------------ the lost tale
 
   private makeQuest(): Quest | null {
@@ -1242,10 +1483,26 @@ export class Field {
     const opening = words.slice(0, Math.max(8, Math.floor(words.length * 0.4))).join(' ');
     const q: Quest = { t, n: variant.n, grand, starter: starter.id, church: church.id, site: site.id, village: village.id, target: target.id,
       mark: r.chance(0.6) ? 'oorijzer' : 'pijp', stage: 0, clues: [], opening, hinted: false };
+    return q;
+  }
+
+  /** On the second morning the landlady mentions the tale nobody can finish: the trail begins. */
+  private openQuest() {
+    const q = this.quest;
+    if (!q || q.stage > 0) return;
+    const sim = this.sim, starter = sim.narrators[q.starter];
+    if (starter.died !== null) return;
     this.addLead('quest', EN
       ? [`${sim.name(starter)} (${this.age(starter)}) sometimes`, 'talks about a tale that nobody', 'can finish any more.']
       : [`${sim.name(starter)} (${this.age(starter)}) begint soms`, 'over een verhaal dat niemand', 'meer kan afmaken.'], { kind: 'place', id: 0 }, starter.id, L('de waardin', 'the landlady'));
-    return q;
+    this.write('day', EN
+      ? `The landlady mentions ${sim.name(starter)}, who sometimes starts on a tale nobody can finish any more. The lost tale: the trail begins in ${this.land.places[0].name}.`
+      : `De waardin vertelt over ${sim.name(starter)}, die soms begint over een verhaal dat niemand meer kan afmaken. Het verloren verhaal: het spoor begint in ${this.land.places[0].name}.`, true);
+  }
+
+  /** Whether the trail of the lost tale is open yet: from the second day. */
+  get questOpen(): boolean {
+    return this.quest !== null && this.day >= 2;
   }
 
   /** How the one who still knows the tale can be recognised; `who` gives it as a clause after 'someone'. */
@@ -1267,7 +1524,7 @@ export class Field {
   /** Whether the lost tale can be asked about in this conversation. */
   canAskLost(nid: number): boolean {
     const q = this.quest;
-    if (!q) return false;
+    if (!q || !this.questOpen) return false;
     const n = this.sim.narrators[nid];
     return (q.stage === 0 && nid === q.starter) || (q.stage === 3 && n.place === q.village && !this.isLoner(n));
   }
@@ -1375,6 +1632,7 @@ export class Field {
     else lines.push(L(`Niemand die u kent, weet hier iets van. Maar vraag er eens naar.`, 'Nobody you know knows anything about this. But do ask around.'));
     void near;
     this.write('day', EN ? `Saw something at ${s.name}: ${themeName(a.being)}?` : `Bij ${s.name} iets gezien: ${themeName(a.being)}?`);
+    if (this.prologue?.step === 'kijken') this.prologue.step = 'afscheid';
     this.changed();
     return { lines, lead, being: a.being };
   }
@@ -1431,7 +1689,8 @@ export class Field {
 
   /** An appeal can be placed once, from the lodgings, with the local weekly. */
   canAppeal(): boolean {
-    return !this.over && this.appealDay === null && this.at.kind === 'place' && this.at.id === 0;
+    // not on the first day: there is enough to find out first
+    return !this.over && this.day >= 2 && this.appealDay === null && this.at.kind === 'place' && this.at.id === 0;
   }
 
   appeal() {

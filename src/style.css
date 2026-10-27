@@ -889,7 +889,7 @@ a { color: var(--red); }
 /* ---------------- lamplight: the panels and leaves in the evening */
 .sheet, .tale-card, .face, .person-card, .ask, .card { transition: background-color 1.6s, box-shadow 1.6s, color 1.6s, filter 1.6s; }
 .vignette { transition: filter 1.6s; }
-body.night #here, body.night #leads, body.night #topbar, body.night .leaf, body.night #notice {
+body.night #here, body.night #leads, body.night #topbar, body.night .leaf, body.night #notice, body.night #guide {
   --paper: #d4bc8e; --paper-hi: #e0c99c; --paper-lo: #c2a776; --ink-3: #66513b; --rule: rgba(42, 33, 26, 0.38);
   background-image: radial-gradient(ellipse at 50% 0%, rgba(255, 196, 110, 0.38), transparent 62%);
   box-shadow: inset 0 0 70px rgba(48, 26, 8, 0.42), 0 6px 26px rgba(0, 0, 0, 0.55);
@@ -1058,3 +1058,40 @@ body.night .visit-head .portrait { filter: sepia(0.2) drop-shadow(0 0 10px rgba(
 .lang-switch { position: absolute; top: 12px; right: 18px; z-index: 3; font-size: 13.5px; color: var(--ink-3); background: rgba(237, 226, 198, 0.9); padding: 3px 10px; border-radius: 3px; }
 .lang-switch b { color: var(--ink); font-weight: 500; }
 .lang-switch .linkbtn { font-size: 13.5px; }
+
+/* ---------------- the first evening: an old collector shows you round */
+.intro-opt { flex-basis: 100%; display: flex; gap: 8px; align-items: flex-start; margin: -6px 0 0; font-size: 14.5px; color: var(--ink-2); cursor: pointer; }
+.intro-opt input { margin-top: 4px; accent-color: var(--red); }
+#guide {
+  position: fixed; bottom: 18px; left: 274px; right: 404px; margin: 0 auto; width: min(520px, calc(100vw - 700px)); z-index: 9;
+  display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; animation: rise 0.5s ease-out;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+#guide .portrait { flex: none; width: 44px; height: 44px; }
+#guide .guide-text { font-family: var(--fell); font-size: 16.5px; line-height: 1.35; }
+#guide .guide-text > b { font-family: var(--fell-sc); font-weight: normal; letter-spacing: 0.06em; color: var(--red); margin-right: 2px; }
+#guide .guide-do { margin: 4px 0 2px; font-family: var(--serif); font-size: 14px; color: var(--ink-2); font-style: italic; }
+#guide .linkbtn { font-size: 13px; }
+@media (max-width: 1100px) {
+  #guide { left: 232px; right: 364px; width: min(480px, calc(100vw - 610px)); }
+}
+@media (max-width: 900px) {
+  #guide { top: 66px; bottom: auto; left: 12px; right: 12px; width: auto; max-width: 520px; z-index: 12; }
+}
+@media (max-width: 700px), (max-height: 520px) {
+  #guide { top: calc(48px + env(safe-area-inset-top)); left: 6px; right: 6px; max-width: none; padding: 6px 10px; gap: 8px; }
+  #guide .portrait { width: 34px; height: 34px; }
+  #guide .guide-text { font-size: 15px; }
+  #guide .guide-do { font-size: 13px; }
+}
+.line.mentor {
+  display: flex; gap: 8px; align-items: flex-start; font-family: var(--fell); font-style: italic; font-size: 16.5px; line-height: 1.35;
+  color: #34405a; background: rgba(77, 101, 133, 0.09); border-left: 3px solid #4d6585; padding: 6px 10px;
+}
+.line.mentor .portrait { flex: none; width: 28px; height: 28px; }
+.line.mentor b { font-style: normal; font-family: var(--fell-sc); font-weight: normal; letter-spacing: 0.05em; margin-right: 4px; color: #4d6585; }
+.ask.hint, .btn.hint { border-color: var(--red); box-shadow: 0 0 0 2px rgba(168, 50, 31, 0.4); animation: hintpulse 1.6s ease-in-out infinite; }
+@keyframes hintpulse { 50% { box-shadow: 0 0 0 5px rgba(168, 50, 31, 0.12); } }
+.welcome-leaf .visit-head { margin-bottom: 8px; }
+.welcome-leaf .visit-head h1 { margin: 0; }
+.welcome-leaf .linkbtn { margin-left: 12px; }
