@@ -809,9 +809,10 @@ function wireTales() {
     markRead(f.region, f.sim.variant(n).t);
     wrap.innerHTML = `<p class="sub">${L('Het archief wordt doorzocht…', 'Searching the archive…')}</p>`;
     const text = await loadText(f.region, n).catch(() => null);
-    // the record itself stays as it was written down, in Dutch or in dialect
-    wrap.innerHTML = text ? `${EN ? '<p class="sub">The original record, in Dutch or dialect:</p>' : ''}<div class="original">${esc(text)}</div>`
-      : `<p class="sub">${L('Van deze variant is alleen de samenvatting bewaard.', 'Only the summary of this variant has been kept.')}</p>`;
+    // the record itself stays as it was written down, in Dutch or in dialect; and the way to the archive stays open
+    const link = `<a href="${verhalenbankUrl(n)}" target="_blank" rel="noopener" class="muted">${L('Bekijk het in de Verhalenbank', 'See it in the Verhalenbank')} ↗</a>`;
+    wrap.innerHTML = text ? `${EN ? '<p class="sub">The original record, in Dutch or dialect:</p>' : ''}<div class="original">${esc(text)}</div><p class="orig-link">${link}</p>`
+      : `<p class="sub">${L('Van deze variant is alleen de samenvatting bewaard.', 'Only the summary of this variant has been kept.')} ${link}</p>`;
   }));
 }
 

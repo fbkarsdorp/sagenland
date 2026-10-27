@@ -1098,3 +1098,5 @@ body.night .visit-head .portrait { filter: sepia(0.2) drop-shadow(0 0 10px rgba(
 .welcome-leaf .visit-head { margin-bottom: 8px; }
 .welcome-leaf .visit-head h1 { margin: 0; }
 .welcome-leaf .linkbtn { margin-left: 12px; }
+
+.orig-link { margin: 6px 0 0; font-size: 14.5px; }
