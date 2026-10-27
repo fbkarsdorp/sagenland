@@ -838,7 +838,9 @@ a { color: var(--red); }
 #dayveil { position: fixed; inset: 0; z-index: 29; background: #121018; cursor: pointer; animation: dayveil 6.4s ease-in-out both; }
 @keyframes dayveil { 0% { opacity: 0; } 19% { opacity: 0.9; } 55% { opacity: 0.9; } 100% { opacity: 0; } }
 #daycard.skip, #dayveil.skip { animation: none; opacity: 0; transition: opacity 0.6s; }
-.apparition { background: linear-gradient(#e7e3d6, #d9d6cc); }
+/* a solid colour under the gradient: at night the lamplight replaces the gradient, and the leaf must not go see-through */
+.apparition { background-color: #e0dccf; background-image: linear-gradient(#e7e3d6, #d9d6cc); }
+body.night .apparition { background-color: #cdc6b3; }
 .apparition .said-line:first-of-type { font-style: italic; }
 @media (max-width: 700px), (max-height: 520px) {
   .wx span { display: none; }
