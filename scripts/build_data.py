@@ -323,6 +323,7 @@ def main():
         not_names = {"Mevrouw", "Meneer", "Mijnheer", "Juffrouw", "Weduwe", "Zuster", "Broeder", "Pastoor", "Pater",
                      "Frater", "Heer", "Vrouw", "Moeder", "Vader", "Meester", "Dokter", "Onbekend", "Mevr", "Familie"}
         firsts, lasts = collections.Counter(), collections.Counter()
+        particles = {"van", "de", "der", "den", "ter", "ten", "te", "het", "in", "op", "la", "le", "du", "von"}
         for r in rs:
             tel = r[6] or ""
             for person in re.split(r";|\s+en\s+", tel):
@@ -332,7 +333,8 @@ def main():
                     parts = first.split()
                     if parts and len(parts[0]) > 2 and not parts[0].endswith(".") and parts[0][0].isupper() and parts[0] not in not_names:
                         firsts[parts[0]] += 1
-                        prefix = " ".join(p for p in parts[1:] if p.isalpha() and p.islower())
+                        # only real particles: the field sometimes ends in a stray word ("Tienstra, Jan schrijft")
+                        prefix = " ".join(p for p in parts[1:] if p in particles)
                         last = re.sub(r"[\(\[].*?[\)\]]", "", last).split(" - ")[0].strip()
                         if (last and last[0].isupper() and len(last) > 2 and "." not in last
                                 and re.fullmatch(r"[A-Za-zÀ-ÿ' ]+", last)):
